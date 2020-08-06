@@ -1,6 +1,6 @@
 <html>
     <head>
-        <link href="https://fonts.googleapis.com/css2?family=Fjalla+One&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;700&display=swap" rel="stylesheet">
         <link rel='stylesheet' type='text/css' href='style.css'/>
         <script src="data.js" type="text/javascript"></script>
         <script src="main.js" type="text/javascript"></script>
@@ -8,12 +8,28 @@
     <body>
         <div class="mainContainer">
 
-            <div id="debug">Fill selection: Aztec Condotierro vs British Champion</div>
+            <div class="debug">
+                <p>Presets:</p>
+                <ul>
+                    <li id="debug_0">Aztec Condotierro vs British Champion</li>
+                    <li id="debug_1">Burmese Halbardier vs Celts Elite Woad Raider</li>
+                    <li id="debug_2">Italian Condotierro vs Viking Champion</li>
+                    <li id="debug_random">Random</li>
+                </ul>
+            </div>
 
             <div class="content leftContent">
-                <img id="leftCivImage" class="mainImage"></img>
-                <img id="leftUnitImage" class="mainImage"></img>
-                <table id="leftStats">
+
+                <div style="overflow: auto;">
+                    <img id="leftCivImage" style="float:left" class="mainImage"></img>
+                    <div style="float:left; text-align: center; width:130px">
+                        <p id="leftCivName"></p>
+                        <p id="leftUnitName"></p>
+                    </div>
+                    <img id="leftUnitImage" style="float:right" class="mainImage"></img>
+                </div>
+
+                <table id="leftStats" class="statsTable">
 
                 </table>
                 <table id="battleLogLeft">
@@ -21,9 +37,17 @@
                 </table>
             </div>
             <div class="content rightContent">
-                <img id="rightCivImage" class="mainImage"></img>
-                <img id="rightUnitImage" class="mainImage"></img>
-                <table id="rightStats">
+
+                <div style="overflow: auto;">
+                    <img id="rightCivImage" style="float:left" class="mainImage"></img>
+                    <div style="float:left; text-align: center; width:130px">
+                        <p id="rightCivName"></p>
+                        <p id="rightUnitName"></p>
+                    </div>
+                    <img id="rightUnitImage" style="float:right" class="mainImage"></img>
+                </div>
+
+                <table id="rightStats" class="statsTable">
                     
                 </table>
                 <table id="battleLogRight">

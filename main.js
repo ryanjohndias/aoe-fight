@@ -8,6 +8,8 @@ var leftCivImage;
 var rightCivImage;
 var leftUnitImage;
 var rightUnitImage;
+var leftStatsTable;
+var rightStatsTable;
 var modalOverlay;
 var modalContent;
 var Side;
@@ -35,10 +37,15 @@ function initialise() {
     rightUnitImage = Utils.$("rightUnitImage");
     leftUnitImage.addEventListener("click", leftUnitImageClicked);
     rightUnitImage.addEventListener("click", rightUnitImageClicked);
+    leftStatsTable = Utils.$("leftStats");
+    rightStatsTable = Utils.$("rightStats");
     modalOverlay = Utils.$("modalOverlay");
     modalContent = Utils.$("modalContent");
     Utils.$("modalClose").onclick = hideOverlay;
-    Utils.$("debug").onclick = fillSelection;
+    Utils.$("debug_0").onclick = function () { return populateWithOption(0); };
+    Utils.$("debug_1").onclick = function () { return populateWithOption(1); };
+    Utils.$("debug_2").onclick = function () { return populateWithOption(2); };
+    Utils.$("debug_random").onclick = function () { return populateWithOption(null); };
 }
 function showOverlay() {
     modalOverlay.classList.remove("modalHidden");
@@ -51,7 +58,7 @@ function hideOverlay() {
 }
 function leftCivImageClicked() {
     modalContent.innerHTML = "";
-    Civs.forEach(function (civ) {
+    civs.forEach(function (civ) {
         modalContent.innerHTML += WidgetFactory.civ(civ.id, civ.name, civ.image);
     });
     state.selectedSide = Side.left;
@@ -59,7 +66,7 @@ function leftCivImageClicked() {
 }
 function rightCivImageClicked() {
     modalContent.innerHTML = "";
-    Civs.forEach(function (civ) {
+    civs.forEach(function (civ) {
         modalContent.innerHTML += WidgetFactory.civ(civ.id, civ.name, civ.image);
     });
     state.selectedSide = Side.right;
@@ -88,8 +95,8 @@ function rightUnitImageClicked() {
     showOverlay();
 }
 function getCiv(id) {
-    for (var i = 0; i < Civs.length; i++) {
-        var civ = Civs[i];
+    for (var i = 0; i < civs.length; i++) {
+        var civ = civs[i];
         if (civ.id == id) {
             return civ;
         }
@@ -100,10 +107,12 @@ function civClicked(id) {
     if (state.selectedSide == Side.left) {
         state.left.civ = civ;
         leftCivImage.src = civ.image;
+        Utils.$("leftCivName").textContent = civ.name;
     }
     else {
         state.right.civ = civ;
         rightCivImage.src = civ.image;
+        Utils.$("rightCivName").textContent = civ.name;
     }
     hideOverlay();
 }
@@ -115,12 +124,14 @@ function unitClicked(id) {
         state.left.unit = unit;
         leftUnitImage.src = unit.img;
         targetTable = "leftStats";
+        Utils.$("leftUnitName").textContent = unit.name;
         civ = state.left.civ;
     }
     else {
         state.right.unit = unit;
         rightUnitImage.src = unit.img;
         targetTable = "rightStats";
+        Utils.$("rightUnitName").textContent = unit.name;
         civ = state.right.civ;
     }
     hideOverlay();
@@ -137,17 +148,48 @@ function showUnitStats(tableId, unit, civ) {
     TableUtils.createRow(body, ["DPS", civUnit.unit.dps().toFixed(2), "-", "-", civUnit.total.dps().toFixed(2)]);
     TableUtils.createRow(body, ["Melee armor", civUnit.unit.ma, "+" + civUnit.upgrades.ma, "-", civUnit.total.ma]);
     TableUtils.createRow(body, ["Pierce armor", civUnit.unit.pa, "+" + civUnit.upgrades.pa, "-", civUnit.total.pa]);
+    var rows = table.rows;
+    var _loop_1 = function () {
+        var row = rows[i];
+        row.addEventListener('mouseover', function (e) { return statsHover(row.rowIndex, true); });
+        row.addEventListener('mouseout', function (e) { return statsHover(row.rowIndex, false); });
+    };
+    for (var i = 0; i < rows.length; i += 1) {
+        _loop_1();
+    }
     if (state.left.unit != null && state.right.unit != null) {
         showBattle(new CivUnit(state.left.unit, state.left.civ), new CivUnit(state.right.unit, state.right.civ));
     }
 }
-function fillSelection() {
+function statsHover(row, on) {
+    leftStatsTable.rows[row].style.backgroundColor = on ? "#D3D3D3" : "#FFFFFF";
+    rightStatsTable.rows[row].style.backgroundColor = on ? "#D3D3D3" : "#FFFFFF";
+}
+function populateWithOption(option) {
+    switch (option) {
+        case 0:
+            populate(0, UnitId.condottiero, 2, UnitId.champion);
+            break;
+        case 1:
+            populate(4, UnitId.halbardier, 5, UnitId.eWoadRaider);
+            break;
+        case 2:
+            populate(14, UnitId.condottiero, 33, UnitId.champion);
+            break;
+        case null:
+            var civ1 = civs[Math.floor(Math.random() * civs.length)];
+            var civ2 = civs[Math.floor(Math.random() * civs.length)];
+            populate(civ1.id, civ1.units[Math.floor(Math.random() * civ1.units.length)].id, civ2.id, civ2.units[Math.floor(Math.random() * civ2.units.length)].id);
+            break;
+    }
+}
+function populate(civA, unitA, civB, unitB) {
     state.selectedSide = Side.left;
-    civClicked(0);
-    unitClicked(UnitId.condottiero);
+    civClicked(civA);
+    unitClicked(unitA);
     state.selectedSide = Side.right;
-    civClicked(5262523);
-    unitClicked(UnitId.champion);
+    civClicked(civB);
+    unitClicked(unitB);
 }
 function showBattle(a, b) {
     createBattleLog(a, b, "battleLogLeft");

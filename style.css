@@ -1,41 +1,50 @@
 body{
-    /* font-family: 'Fjalla One', sans-serif; */
-    font-family: sans-serif;
+    font-family: 'Roboto Condensed', sans-serif;
+}
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
 }
 
 .mainContainer {
-    width: 600px;
+    width: 800px;
     margin-left: auto;
     margin-right: auto;
 }
 
 .content {
-    width: 50%;
+    width: 49%;
+    border-radius: 10px;
+    border: 1px solid lightgray;
+    padding: 10px;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;  
 }
 
 .leftContent {
-    background-color: cornflowerblue;
+    /* background-color: cornflowerblue; */
     float: left;
 }
 
 .rightContent {
-    background-color: darkcyan;
+    /* background-color: darkcyan; */
     float: right;
 }
 
 .mainImage {
     background-color: black;
-    /* width: 49%; */
-    /* height: auto; */
     min-width: 120px;
     height: 120px;
     cursor: pointer;
+    border-radius: 10px;
+    transition: all 0.2s ease 0s;
 }
-
-/* .civsGrid {
-    display: grid;
-    grid-gap: 10px;
-} */
+.mainImage:hover {
+    transform: scale(0.95);
+    transition: all 0.2s ease 0s;
+}
 
 .civCell {
     float: left;
@@ -45,6 +54,7 @@ body{
     cursor: pointer;
     transform: scale(1.0);
     transition: all 0.4s ease 0s;
+    border-radius: 10px;
 }
 
 .civCell p {
@@ -54,6 +64,7 @@ body{
 
 .civCell img {
     width: 104px;
+    border-radius: 10px;
 }
 
 .civCell:hover {
@@ -90,7 +101,7 @@ body{
   .modalContent {
     display:inline-block;
     background-color: white;
-    margin: 10% auto; /* 10% from the top and centered */
+    margin: 5% auto; /* 10% from the top and centered */
     padding: 24px;
     width: 800px;
     text-align: left;
@@ -110,6 +121,36 @@ body{
     cursor: pointer;
   }
 
-  #debug {
-      cursor: pointer;
+  .debug {
+      position: absolute;
+      top: 16px;
+      left: 16px;
   }
+
+  .debug p {
+    padding-left: 4px;
+}
+
+ .debug ul {
+     list-style: none;
+     padding-left: 0;
+ }
+  
+  .debug li {
+    cursor: pointer;
+    padding: 4px;
+}
+
+.debug li:hover {
+
+    background-color: lightgray;
+}
+
+.statsTable {
+    margin-top: 16px;
+    width: 100%;
+}
+
+/* .statsTable tr:hover {
+    background-color: lightgray;
+} */
