@@ -51,6 +51,7 @@ enum UnitId {
     halbardier = "halbardier",
     eliteEagleWarrior = "eliteEagleWarrior",
     eliteHuskarl = "eliteHuskarl",
+    eliteJaguarWarrior = "eliteJaguarWarrior",
     eliteTeutonicKnight = "eliteTeutonicKnight",
     eWoadRaider = "eWoadRaider"
 }
@@ -58,9 +59,11 @@ enum UnitId {
 // TODO: Unit, or UnitType
 class AttackBonus {
     id: UnitId
+    type: UnitType
     value: number
-    constructor(id: UnitId, value: number) {
+    constructor(id: UnitId, type: UnitType, value: number) {
         this.id = id
+        this.type = type
         this.value = value
     }
 }
@@ -94,11 +97,13 @@ class CivUnit {
         // Armor modification
         const maUpgrades = civ.totalBlacksmithMAUpgrade()
         const paUpgrades = civ.totalBlacksmithPAUpgrade()
-        const maTotal = unit.ma + maUpgrades
-        const paTotal = unit.pa + paUpgrades
+        const maSpecial = civ.totalSpecialMAUpgrade(unit.id)
+        const paSpecial = civ.totalSpecialPAUpgrade(unit.id)
+        const maTotal = unit.ma + maSpecial + maUpgrades
+        const paTotal = unit.pa + paSpecial + paUpgrades
 
         this.upgrades = new UpgradeableStats(0, atkUpgrades, 0, maUpgrades, paUpgrades)
-        this.special = new UpgradeableStats(hpSpecial, atkSpecial, rofSpecial, 0, 0)
+        this.special = new UpgradeableStats(hpSpecial, atkSpecial, rofSpecial, maSpecial, paSpecial)
         this.total = new UpgradeableStats(hpTotal, atkTotal, rofTotal, maTotal, paTotal)
     }
 }
@@ -148,9 +153,8 @@ const units = {
         "https://vignette.wikia.nocookie.net/ageofempires/images/5/54/Champion_aoe2DE.png/revision/latest?cb=20200402012808",
         new Cost(60, 20, 0, 0),
         70, 13, 2.0, 0.63, 1, 1,
-        [new AttackBonus(UnitId.eliteEagleWarrior, 8)]
+        [new AttackBonus(UnitId.eliteEagleWarrior, null, 8)]
     ),
-    // TODO: Pavise
     condottiero: new Unit (
         UnitId.condottiero,
         "Condottiero",
@@ -166,7 +170,7 @@ const units = {
         "https://vignette.wikia.nocookie.net/ageofempires/images/a/aa/Halberdier_aoe2DE.png/revision/latest?cb=20200403174747",
         new Cost(35, 0, 25, 0),
         60, 6, 3.05, 0.5, 0, 0,
-        [new AttackBonus(UnitId.eliteEagleWarrior, 1)]
+        [new AttackBonus(UnitId.eliteEagleWarrior, null, 1)]
     ),
     eliteEagleWarrior: new Unit (
         UnitId.eliteEagleWarrior,
@@ -184,11 +188,21 @@ const units = {
         "https://vignette.wikia.nocookie.net/ageofempires/images/7/79/HuskarlIcon-DE.png/revision/latest?cb=20191230145804",
         new Cost(52, 26, 0, 0),
         70, 12, 2, 0.8, 0, 8,
-        [new AttackBonus(UnitId.eliteEagleWarrior, 3)]
+        [new AttackBonus(UnitId.eliteEagleWarrior, null, 3)]
     ),
-
-    
-
+    eliteJaguarWarrior: new Unit (
+        UnitId.eliteJaguarWarrior,
+        "Elite Jaguar Warrior",
+        UnitType.infantry,
+        "https://vignette.wikia.nocookie.net/ageofempires/images/3/32/JaguarWarriorIcon-DE.png/revision/latest?cb=20191230143816",
+        new Cost(60, 30, 0, 0),
+        75, 12, 2, 0.8, 2, 1,
+        [
+            new AttackBonus(null, UnitType.infantry, 11),
+            new AttackBonus(UnitId.eliteEagleWarrior, null, 2),
+            new AttackBonus(UnitId.condottiero, null, 10)
+        ]
+    ),
     eliteTeutonicKnight: new Unit (
         UnitId.eliteTeutonicKnight,
         "Elite Teutonic Knight",
@@ -196,7 +210,7 @@ const units = {
         "https://vignette.wikia.nocookie.net/ageofempires/images/9/95/TeutonicKnightIcon-DE.png/revision/latest?cb=20200325131355",
         new Cost(85, 40, 0, 0),
         100, 17, 2.0, 0.75, 10, 2,
-        [new AttackBonus(UnitId.eliteEagleWarrior, 4)]
+        [new AttackBonus(UnitId.eliteEagleWarrior, null, 4)]
     ),
     eWoadRaider: new Unit (
         UnitId.eWoadRaider,
@@ -205,7 +219,7 @@ const units = {
         "https://vignette.wikia.nocookie.net/ageofempires/images/5/55/WoadRaiderIcon-DE.png/revision/latest?cb=20191230150759",
         new Cost(65, 25, 0, 0),
         80, 13, 2, 0.72, 0, 1,
-        [new AttackBonus(UnitId.eliteEagleWarrior, 3)]
+        [new AttackBonus(UnitId.eliteEagleWarrior, null, 3)]
     )
 }
 
@@ -260,13 +274,54 @@ class Civ {
         this.infantryArmourUpgrades.forEach((upgrade) => pa += upgrade.pa)
         return pa
     }
-    // xxx
+    
+    public totalSpecialMAUpgrade(unitId: UnitId) {
+        if (this.special.specificUnits == null) {
+            return 0
+        }
+
+        let ma = 0
+        let data = this.special.specificUnits
+        for (let i = 0; i < data.length; i++) {
+            let upgrade = data[i];
+            if (this.contains(upgrade.units, unitId)) {
+                ma += upgrade.ma
+            }
+        }
+        return ma
+    }
+
+    public totalSpecialPAUpgrade(unitId: UnitId) {
+        if (this.special.specificUnits == null) {
+            return 0
+        }
+
+        let pa = 0
+        let data = this.special.specificUnits
+        for (let i = 0; i < data.length; i++) {
+            let upgrade = data[i];
+            if (this.contains(upgrade.units, unitId)) {
+                pa += upgrade.pa
+            }
+        }
+        return pa
+    }
+
+    public contains(a: Array<UnitId>, unitId: UnitId) {
+        var i = a.length
+        while (i--) {
+           if (a[i] === unitId) {
+               return true
+           }
+        }
+        return false
+    }
 }
 
 const civs = [
     new Civ(0, "Aztecs",
         "https://vignette.wikia.nocookie.net/ageofempires/images/0/0c/CivIcon-Aztecs.png/revision/latest?cb=20191107173129",
-        [units.champion, units.condottiero, units.eliteEagleWarrior],
+        [units.champion, units.condottiero, units.eliteEagleWarrior, units.eliteJaguarWarrior],
         [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace],
         [upgrades.scaleMailArmor, upgrades.chainMailArmor, upgrades.plateMailArmor],
         {
@@ -384,7 +439,12 @@ const civs = [
         [units.champion, units.condottiero],
         [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace],
         [upgrades.scaleMailArmor, upgrades.chainMailArmor, upgrades.plateMailArmor],
-        {infantry: []}
+        {
+            infantry: [],
+            specificUnits: [
+                { name: "Pavise", atk: 0, rof: 0, hp: 0, ma: 1, pa: 1, units: [UnitId.condottiero] }
+            ]
+        }
     ),
     new Civ(15, "Japanese",
         "https://vignette.wikia.nocookie.net/ageofempires/images/9/9a/CivIcon-Japanese.png/revision/latest?cb=20191107173240",

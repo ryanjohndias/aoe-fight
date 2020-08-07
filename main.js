@@ -147,8 +147,8 @@ function showUnitStats(tableId, unit, civ) {
     TableUtils.createRow(body, ["RoF", civUnit.unit.rof, "-", "" + (civUnit.special.rof != 0 ? civUnit.special.rof + "%" : "-"), civUnit.total.rof.toFixed(2)]);
     TableUtils.createRow(body, ["AD", civUnit.unit.ad, "-", "-", civUnit.unit.ad]);
     TableUtils.createRow(body, ["DPS", civUnit.unit.dps().toFixed(2), "-", "-", civUnit.total.dps().toFixed(2)]);
-    TableUtils.createRow(body, ["Melee armor", civUnit.unit.ma, "+" + civUnit.upgrades.ma, "-", civUnit.total.ma]);
-    TableUtils.createRow(body, ["Pierce armor", civUnit.unit.pa, "+" + civUnit.upgrades.pa, "-", civUnit.total.pa]);
+    TableUtils.createRow(body, ["Melee armor", civUnit.unit.ma, "+" + civUnit.upgrades.ma, formatUpgradeValue(civUnit.special.ma), civUnit.total.ma]);
+    TableUtils.createRow(body, ["Pierce armor", civUnit.unit.pa, "+" + civUnit.upgrades.pa, formatUpgradeValue(civUnit.special.pa), civUnit.total.pa]);
     var rows = table.rows;
     var _loop_1 = function () {
         var row = rows[i];
@@ -161,6 +161,9 @@ function showUnitStats(tableId, unit, civ) {
     if (state.left.unit != null && state.right.unit != null) {
         showBattle(new CivUnit(state.left.unit, state.left.civ), new CivUnit(state.right.unit, state.right.civ));
     }
+}
+function formatUpgradeValue(value) {
+    return value != 0 ? "+" + value : "-";
 }
 function statsHover(row, on) {
     leftStatsTable.rows[row].style.backgroundColor = on ? "#D3D3D3" : "#FFFFFF";
@@ -185,6 +188,10 @@ function populateWithOption(option) {
     }
 }
 function populate(civA, unitA, civB, unitB) {
+    state.left.civ = null;
+    state.right.civ = null;
+    state.left.unit = null;
+    state.right.unit = null;
     state.selectedSide = Side.left;
     civClicked(civA);
     unitClicked(unitA);
@@ -193,33 +200,89 @@ function populate(civA, unitA, civB, unitB) {
     unitClicked(unitB);
 }
 function showBattle(a, b) {
-    createBattleLog(a, b, "battleLogLeft");
-    createBattleLog(b, a, "battleLogRight");
+    var leftReport = createBattleReport(a, b);
+    var rightReport = createBattleReport(b, a);
+    renderBattleReport(a, b, leftReport, "battleLogLeft");
+    renderBattleReport(b, a, rightReport, "battleLogRight");
+    var winner;
+    var lastLeft = leftReport.log[leftReport.log.length - 1];
+    var lastRight = rightReport.log[rightReport.log.length - 1];
+    if (lastLeft.time < lastRight.time) {
+        winner = a;
+    }
+    else if (lastLeft.time > lastRight.time) {
+        winner = b;
+    }
+    else {
+        winner = null;
+    }
+    if (winner != null) {
+        console.log("Winner is " + winner.unit.name + " (" + (winner == a ? "left" : "right") + ")");
+    }
+    else {
+        console.log("It's a draw");
+    }
 }
-function createBattleLog(attacker, defender, tableId) {
+function createBattleReport(attacker, defender) {
     // TODO: Rof and AD might be at game speed 1, so would have to cater for 1.7
-    var effectiveDamage = attacker.total.atk - defender.total.ma;
+    // Bonus damage is currently non-accumulative
+    var bonusDamage = 0;
+    var bonuses = attacker.unit.atkBonuses;
+    for (var _i = 0, bonuses_1 = bonuses; _i < bonuses_1.length; _i++) {
+        var bonus = bonuses_1[_i];
+        if (bonus.id == defender.unit.id || bonus.type == defender.unit.type) {
+            bonusDamage = bonus.value;
+        }
+    }
+    var effectiveDamage = attacker.total.atk + bonusDamage - defender.total.ma;
     if (effectiveDamage < 1) {
         effectiveDamage = 1;
     }
     var numsHitsToKill = Math.ceil(defender.total.hp / effectiveDamage);
     var timeTakenToKill = attacker.unit.ad + (numsHitsToKill * attacker.total.rof);
-    var log = Utils.$(tableId);
-    var body = TableUtils.newBody(log);
-    TableUtils.createMergedRow(body, "<p>" + attacker.unit.name + " attacking " + defender.unit.name + ":</p>", 4);
-    TableUtils.createRow(body, ["Hit", "Time", "Damage", "Total", "HP left"]);
+    var entries = [];
     var totDamage = 0;
     for (var i = 0; i < numsHitsToKill; i++) {
         totDamage += effectiveDamage;
+        var entry = new BattleLogEntry(i + 1, attacker.unit.ad + (i * attacker.total.rof), effectiveDamage, totDamage, defender.total.hp - totDamage);
+        entries.push(entry);
+    }
+    return new BattleReport(bonusDamage, entries);
+}
+function renderBattleReport(attacker, defender, report, tableId) {
+    var log = Utils.$(tableId);
+    var body = TableUtils.newBody(log);
+    var bonus = attacker.unit.name + " deals <b>" + report.bonusDamage + "</b> bonus damage to " + defender.unit.name;
+    TableUtils.createMergedRow(body, "<p style=\"padding-top:16px; padding-bottom:16px\">" + bonus + "</p>", 5);
+    TableUtils.createRow(body, ["Hit", "Time", "Damage", "Total", "HP left"]);
+    for (var i = 0; i < report.log.length; i++) {
+        var entry = report.log[i];
         TableUtils.createRow(body, [
-            i + 1,
-            "" + (attacker.unit.ad + (i * attacker.total.rof)).toFixed(2),
-            effectiveDamage,
-            totDamage,
-            defender.total.hp - totDamage
+            entry.hit,
+            "" + entry.time.toFixed(2),
+            entry.damage,
+            entry.total,
+            entry.hpLeft
         ]);
     }
 }
+var BattleReport = /** @class */ (function () {
+    function BattleReport(bonusDamage, log) {
+        this.bonusDamage = bonusDamage;
+        this.log = log;
+    }
+    return BattleReport;
+}());
+var BattleLogEntry = /** @class */ (function () {
+    function BattleLogEntry(hit, time, damage, total, hpLeft) {
+        this.hit = hit;
+        this.time = time;
+        this.damage = damage;
+        this.total = total;
+        this.hpLeft = hpLeft;
+    }
+    return BattleLogEntry;
+}());
 var WidgetFactory = {
     civ: function (id, name, imageUrl) {
         return "<div class=\"civCell\" onClick=\"javascript:civClicked(" + id + ")\">\n                   <img src=\"" + imageUrl + "\"></img>\n                   <p>" + name + "</p>\n               </div>";

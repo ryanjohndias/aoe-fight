@@ -40,13 +40,15 @@ var UnitId;
     UnitId["halbardier"] = "halbardier";
     UnitId["eliteEagleWarrior"] = "eliteEagleWarrior";
     UnitId["eliteHuskarl"] = "eliteHuskarl";
+    UnitId["eliteJaguarWarrior"] = "eliteJaguarWarrior";
     UnitId["eliteTeutonicKnight"] = "eliteTeutonicKnight";
     UnitId["eWoadRaider"] = "eWoadRaider";
 })(UnitId || (UnitId = {}));
 // TODO: Unit, or UnitType
 var AttackBonus = /** @class */ (function () {
-    function AttackBonus(id, value) {
+    function AttackBonus(id, type, value) {
         this.id = id;
+        this.type = type;
         this.value = value;
     }
     return AttackBonus;
@@ -71,10 +73,12 @@ var CivUnit = /** @class */ (function () {
         // Armor modification
         var maUpgrades = civ.totalBlacksmithMAUpgrade();
         var paUpgrades = civ.totalBlacksmithPAUpgrade();
-        var maTotal = unit.ma + maUpgrades;
-        var paTotal = unit.pa + paUpgrades;
+        var maSpecial = civ.totalSpecialMAUpgrade(unit.id);
+        var paSpecial = civ.totalSpecialPAUpgrade(unit.id);
+        var maTotal = unit.ma + maSpecial + maUpgrades;
+        var paTotal = unit.pa + paSpecial + paUpgrades;
         this.upgrades = new UpgradeableStats(0, atkUpgrades, 0, maUpgrades, paUpgrades);
-        this.special = new UpgradeableStats(hpSpecial, atkSpecial, rofSpecial, 0, 0);
+        this.special = new UpgradeableStats(hpSpecial, atkSpecial, rofSpecial, maSpecial, paSpecial);
         this.total = new UpgradeableStats(hpTotal, atkTotal, rofTotal, maTotal, paTotal);
     }
     return CivUnit;
@@ -103,14 +107,18 @@ var Unit = /** @class */ (function () {
     return Unit;
 }());
 var units = {
-    champion: new Unit(UnitId.champion, "Champion", UnitType.infantry, "https://vignette.wikia.nocookie.net/ageofempires/images/5/54/Champion_aoe2DE.png/revision/latest?cb=20200402012808", new Cost(60, 20, 0, 0), 70, 13, 2.0, 0.63, 1, 1, [new AttackBonus(UnitId.eliteEagleWarrior, 8)]),
-    // TODO: Pavise
+    champion: new Unit(UnitId.champion, "Champion", UnitType.infantry, "https://vignette.wikia.nocookie.net/ageofempires/images/5/54/Champion_aoe2DE.png/revision/latest?cb=20200402012808", new Cost(60, 20, 0, 0), 70, 13, 2.0, 0.63, 1, 1, [new AttackBonus(UnitId.eliteEagleWarrior, null, 8)]),
     condottiero: new Unit(UnitId.condottiero, "Condottiero", UnitType.infantry, "https://vignette.wikia.nocookie.net/ageofempires/images/1/1c/CondottieroIcon-DE.png/revision/latest?cb=20191230141010", new Cost(50, 35, 0, 0), 80, 10, 1.9, 0.75, 1, 0, []),
-    halbardier: new Unit(UnitId.halbardier, "Halbardier", UnitType.infantry, "https://vignette.wikia.nocookie.net/ageofempires/images/a/aa/Halberdier_aoe2DE.png/revision/latest?cb=20200403174747", new Cost(35, 0, 25, 0), 60, 6, 3.05, 0.5, 0, 0, [new AttackBonus(UnitId.eliteEagleWarrior, 1)]),
+    halbardier: new Unit(UnitId.halbardier, "Halbardier", UnitType.infantry, "https://vignette.wikia.nocookie.net/ageofempires/images/a/aa/Halberdier_aoe2DE.png/revision/latest?cb=20200403174747", new Cost(35, 0, 25, 0), 60, 6, 3.05, 0.5, 0, 0, [new AttackBonus(UnitId.eliteEagleWarrior, null, 1)]),
     eliteEagleWarrior: new Unit(UnitId.eliteEagleWarrior, "Elite Eagle Warrior", UnitType.infantry, "https://vignette.wikia.nocookie.net/ageofempires/images/a/a5/Eliteeaglewarrior_aoe2DE.png/revision/latest?cb=20200331191114", new Cost(20, 50, 0, 0), 60, 9, 2, 0.8, 0, 4, []),
-    eliteHuskarl: new Unit(UnitId.eliteHuskarl, "Elite Huskarl", UnitType.infantry, "https://vignette.wikia.nocookie.net/ageofempires/images/7/79/HuskarlIcon-DE.png/revision/latest?cb=20191230145804", new Cost(52, 26, 0, 0), 70, 12, 2, 0.8, 0, 8, [new AttackBonus(UnitId.eliteEagleWarrior, 3)]),
-    eliteTeutonicKnight: new Unit(UnitId.eliteTeutonicKnight, "Elite Teutonic Knight", UnitType.infantry, "https://vignette.wikia.nocookie.net/ageofempires/images/9/95/TeutonicKnightIcon-DE.png/revision/latest?cb=20200325131355", new Cost(85, 40, 0, 0), 100, 17, 2.0, 0.75, 10, 2, [new AttackBonus(UnitId.eliteEagleWarrior, 4)]),
-    eWoadRaider: new Unit(UnitId.eWoadRaider, "Elite Woad Raider", UnitType.infantry, "https://vignette.wikia.nocookie.net/ageofempires/images/5/55/WoadRaiderIcon-DE.png/revision/latest?cb=20191230150759", new Cost(65, 25, 0, 0), 80, 13, 2, 0.72, 0, 1, [new AttackBonus(UnitId.eliteEagleWarrior, 3)])
+    eliteHuskarl: new Unit(UnitId.eliteHuskarl, "Elite Huskarl", UnitType.infantry, "https://vignette.wikia.nocookie.net/ageofempires/images/7/79/HuskarlIcon-DE.png/revision/latest?cb=20191230145804", new Cost(52, 26, 0, 0), 70, 12, 2, 0.8, 0, 8, [new AttackBonus(UnitId.eliteEagleWarrior, null, 3)]),
+    eliteJaguarWarrior: new Unit(UnitId.eliteJaguarWarrior, "Elite Jaguar Warrior", UnitType.infantry, "https://vignette.wikia.nocookie.net/ageofempires/images/3/32/JaguarWarriorIcon-DE.png/revision/latest?cb=20191230143816", new Cost(60, 30, 0, 0), 75, 12, 2, 0.8, 2, 1, [
+        new AttackBonus(null, UnitType.infantry, 11),
+        new AttackBonus(UnitId.eliteEagleWarrior, null, 2),
+        new AttackBonus(UnitId.condottiero, null, 10)
+    ]),
+    eliteTeutonicKnight: new Unit(UnitId.eliteTeutonicKnight, "Elite Teutonic Knight", UnitType.infantry, "https://vignette.wikia.nocookie.net/ageofempires/images/9/95/TeutonicKnightIcon-DE.png/revision/latest?cb=20200325131355", new Cost(85, 40, 0, 0), 100, 17, 2.0, 0.75, 10, 2, [new AttackBonus(UnitId.eliteEagleWarrior, null, 4)]),
+    eWoadRaider: new Unit(UnitId.eWoadRaider, "Elite Woad Raider", UnitType.infantry, "https://vignette.wikia.nocookie.net/ageofempires/images/5/55/WoadRaiderIcon-DE.png/revision/latest?cb=20191230150759", new Cost(65, 25, 0, 0), 80, 13, 2, 0.72, 0, 1, [new AttackBonus(UnitId.eliteEagleWarrior, null, 3)])
 };
 var Civ = /** @class */ (function () {
     function Civ(id, name, image, units, meleeUpgrades, infantryArmourUpgrades, special) {
@@ -149,10 +157,47 @@ var Civ = /** @class */ (function () {
         this.infantryArmourUpgrades.forEach(function (upgrade) { return pa += upgrade.pa; });
         return pa;
     };
+    Civ.prototype.totalSpecialMAUpgrade = function (unitId) {
+        if (this.special.specificUnits == null) {
+            return 0;
+        }
+        var ma = 0;
+        var data = this.special.specificUnits;
+        for (var i = 0; i < data.length; i++) {
+            var upgrade = data[i];
+            if (this.contains(upgrade.units, unitId)) {
+                ma += upgrade.ma;
+            }
+        }
+        return ma;
+    };
+    Civ.prototype.totalSpecialPAUpgrade = function (unitId) {
+        if (this.special.specificUnits == null) {
+            return 0;
+        }
+        var pa = 0;
+        var data = this.special.specificUnits;
+        for (var i = 0; i < data.length; i++) {
+            var upgrade = data[i];
+            if (this.contains(upgrade.units, unitId)) {
+                pa += upgrade.pa;
+            }
+        }
+        return pa;
+    };
+    Civ.prototype.contains = function (a, unitId) {
+        var i = a.length;
+        while (i--) {
+            if (a[i] === unitId) {
+                return true;
+            }
+        }
+        return false;
+    };
     return Civ;
 }());
 var civs = [
-    new Civ(0, "Aztecs", "https://vignette.wikia.nocookie.net/ageofempires/images/0/0c/CivIcon-Aztecs.png/revision/latest?cb=20191107173129", [units.champion, units.condottiero, units.eliteEagleWarrior], [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace], [upgrades.scaleMailArmor, upgrades.chainMailArmor, upgrades.plateMailArmor], {
+    new Civ(0, "Aztecs", "https://vignette.wikia.nocookie.net/ageofempires/images/0/0c/CivIcon-Aztecs.png/revision/latest?cb=20191107173129", [units.champion, units.condottiero, units.eliteEagleWarrior, units.eliteJaguarWarrior], [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace], [upgrades.scaleMailArmor, upgrades.chainMailArmor, upgrades.plateMailArmor], {
         infantry: [
             { name: "Garland Wars", atk: 4, rof: 0, hp: 0, ma: 0, pa: 0 }
         ]
@@ -184,7 +229,12 @@ var civs = [
     new Civ(11, "Huns", "https://vignette.wikia.nocookie.net/ageofempires/images/1/17/CivIcon-Huns.png/revision/latest?cb=20191107173238", [units.condottiero, units.halbardier], [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace], [upgrades.scaleMailArmor, upgrades.chainMailArmor], { infantry: [] }),
     new Civ(12, "Incas", "https://vignette.wikia.nocookie.net/ageofempires/images/5/5e/CivIcon-Incas.png/revision/latest?cb=20191107173239", [units.champion, units.condottiero, units.eliteEagleWarrior, units.halbardier], [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace], [upgrades.scaleMailArmor, upgrades.chainMailArmor, upgrades.plateMailArmor], { infantry: [] }),
     new Civ(13, "Indians", "https://vignette.wikia.nocookie.net/ageofempires/images/8/8b/CivIcon-Indians.png/revision/latest?cb=20191107173239", [units.champion, units.condottiero, units.halbardier], [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace], [upgrades.scaleMailArmor, upgrades.chainMailArmor], { infantry: [] }),
-    new Civ(14, "Italians", "https://vignette.wikia.nocookie.net/ageofempires/images/e/e1/CivIcon-Italians.png/revision/latest?cb=20191116050557", [units.champion, units.condottiero], [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace], [upgrades.scaleMailArmor, upgrades.chainMailArmor, upgrades.plateMailArmor], { infantry: [] }),
+    new Civ(14, "Italians", "https://vignette.wikia.nocookie.net/ageofempires/images/e/e1/CivIcon-Italians.png/revision/latest?cb=20191116050557", [units.champion, units.condottiero], [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace], [upgrades.scaleMailArmor, upgrades.chainMailArmor, upgrades.plateMailArmor], {
+        infantry: [],
+        specificUnits: [
+            { name: "Pavise", atk: 0, rof: 0, hp: 0, ma: 1, pa: 1, units: [UnitId.condottiero] }
+        ]
+    }),
     new Civ(15, "Japanese", "https://vignette.wikia.nocookie.net/ageofempires/images/9/9a/CivIcon-Japanese.png/revision/latest?cb=20191107173240", [units.champion, units.condottiero, units.halbardier], [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace], [upgrades.scaleMailArmor, upgrades.chainMailArmor, upgrades.plateMailArmor], {
         infantry: [
             { name: "Civ bonus", atk: 0, rof: 33, hp: 0, ma: 0, pa: 0 }

@@ -178,8 +178,8 @@ function civClicked(id: number) {
     TableUtils.createRow(body, ["RoF", civUnit.unit.rof, "-", `${civUnit.special.rof != 0 ? `${civUnit.special.rof}%` : "-"}`, civUnit.total.rof.toFixed(2)]);
     TableUtils.createRow(body, ["AD", civUnit.unit.ad, "-", "-", civUnit.unit.ad]);
     TableUtils.createRow(body, ["DPS", civUnit.unit.dps().toFixed(2), "-", "-", civUnit.total.dps().toFixed(2)]);
-    TableUtils.createRow(body, ["Melee armor", civUnit.unit.ma, `+${civUnit.upgrades.ma}`, "-", civUnit.total.ma]);
-    TableUtils.createRow(body, ["Pierce armor", civUnit.unit.pa, `+${civUnit.upgrades.pa}`, "-", civUnit.total.pa]);
+    TableUtils.createRow(body, ["Melee armor", civUnit.unit.ma, `+${civUnit.upgrades.ma}`, formatUpgradeValue(civUnit.special.ma), civUnit.total.ma]);
+    TableUtils.createRow(body, ["Pierce armor", civUnit.unit.pa, `+${civUnit.upgrades.pa}`, formatUpgradeValue(civUnit.special.pa), civUnit.total.pa]);
 
     let rows = table.rows;
     for (var i = 1; i < rows.length; i++) {
@@ -191,6 +191,10 @@ function civClicked(id: number) {
     if (state.left.unit != null && state.right.unit != null) {
         showBattle(new CivUnit(state.left.unit, state.left.civ), new CivUnit(state.right.unit, state.right.civ))
     }
+ }
+
+ function formatUpgradeValue(value) {
+    return value != 0 ? `+${value}` : "-"
  }
 
  function statsHover(row: number, on: boolean) {
@@ -224,6 +228,10 @@ function civClicked(id: number) {
  }
 
  function populate(civA: number, unitA: UnitId, civB: number, unitB: UnitId) {
+    state.left.civ = null
+    state.right.civ = null
+    state.left.unit = null
+    state.right.unit = null
     state.selectedSide = Side.left
     civClicked(civA)
     unitClicked(unitA)
@@ -233,36 +241,115 @@ function civClicked(id: number) {
  }
 
  function showBattle(a: CivUnit, b: CivUnit) {
-    createBattleLog(a, b, "battleLogLeft")
-    createBattleLog(b, a, "battleLogRight")
+    let leftReport = createBattleReport(a, b)
+    let rightReport = createBattleReport(b, a)
+
+    renderBattleReport(a, b, leftReport, "battleLogLeft")
+    renderBattleReport(b, a, rightReport, "battleLogRight")
+
+    let winner: CivUnit
+    let lastLeft = leftReport.log[leftReport.log.length - 1]
+    let lastRight = rightReport.log[rightReport.log.length - 1]
+    if (lastLeft.time < lastRight.time) {
+        winner = a
+    } else if (lastLeft.time > lastRight.time) {
+        winner = b
+    } else {
+        winner = null
+    }
+
+    if (winner != null) {
+        console.log("Winner is " + winner.unit.name + " (" + (winner == a ? "left" : "right") + ")")
+    } else {
+        console.log("It's a draw")
+    }
  }
 
- function createBattleLog(attacker: CivUnit, defender: CivUnit, tableId: string) {
+ function createBattleReport(attacker: CivUnit, defender: CivUnit) {
 
     // TODO: Rof and AD might be at game speed 1, so would have to cater for 1.7
 
-    let effectiveDamage = attacker.total.atk - defender.total.ma
+    // Bonus damage is currently non-accumulative
+    let bonusDamage = 0
+    const bonuses = attacker.unit.atkBonuses
+
+    for (const bonus of bonuses) {
+        if (bonus.id == defender.unit.id || bonus.type == defender.unit.type) {
+            bonusDamage = bonus.value
+        }
+    }
+
+    let effectiveDamage = attacker.total.atk + bonusDamage - defender.total.ma
     if (effectiveDamage < 1) {
         effectiveDamage = 1
     }
     let numsHitsToKill = Math.ceil(defender.total.hp / effectiveDamage)
     let timeTakenToKill = attacker.unit.ad + (numsHitsToKill * attacker.total.rof)
 
+    let entries: BattleLogEntry[] = []
+    let totDamage = 0
+    for (let i = 0; i < numsHitsToKill; i++) {
+
+        totDamage += effectiveDamage
+
+        let entry = new BattleLogEntry(
+            i + 1,
+            attacker.unit.ad + (i*attacker.total.rof),
+            effectiveDamage,
+            totDamage,
+            defender.total.hp - totDamage
+        )
+
+        entries.push(entry)
+    }
+
+    return new BattleReport(bonusDamage, entries)
+ }
+
+ function renderBattleReport(attacker: CivUnit, defender: CivUnit, report: BattleReport, tableId: string) {
+
     let log = Utils.$(tableId) as HTMLParagraphElement
     let body = TableUtils.newBody(log);
 
-    TableUtils.createMergedRow(body, `<p>${attacker.unit.name} attacking ${defender.unit.name}:</p>`, 4);
+    let bonus = `${attacker.unit.name} deals <b>${report.bonusDamage}</b> bonus damage to ${defender.unit.name}`
+    TableUtils.createMergedRow(body, `<p style="padding-top:16px; padding-bottom:16px">${bonus}</p>`, 5);
     TableUtils.createRow(body, ["Hit", "Time", "Damage", "Total", "HP left"]);
-    let totDamage = 0
-    for (let i = 0; i < numsHitsToKill; i++) {
-        totDamage += effectiveDamage
+    for (let i = 0; i < report.log.length; i++) {
+        let entry = report.log[i]
+
         TableUtils.createRow(body, [
-            i + 1,
-            `${(attacker.unit.ad + (i*attacker.total.rof)).toFixed(2)}`,
-            effectiveDamage, 
-            totDamage, 
-            defender.total.hp - totDamage
+            entry.hit,
+            `${entry.time.toFixed(2)}`,
+            entry.damage, 
+            entry.total, 
+            entry.hpLeft
         ]);
+    }
+ }
+
+class BattleReport {
+    bonusDamage: number
+    log: BattleLogEntry[]
+
+    constructor(bonusDamage: number, log: BattleLogEntry[]) {
+        this.bonusDamage = bonusDamage
+        this.log = log
+    }
+}
+
+ class BattleLogEntry {
+    hit: number
+    time: number
+    damage: number
+    total: number
+    hpLeft: number
+
+    constructor(hit: number, time: number, damage: number, total: number, hpLeft: number) {
+        this.hit = hit
+        this.time = time
+        this.damage = damage
+        this.total = total
+        this.hpLeft = hpLeft
     }
  }
 
