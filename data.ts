@@ -49,6 +49,7 @@ enum UnitId {
     champion = "champion",
     condottiero = "condottiero",
     halbardier = "halbardier",
+    hussar = "hussar",
     eliteEagleWarrior = "eliteEagleWarrior",
     eliteHuskarl = "eliteHuskarl",
     eliteJaguarWarrior = "eliteJaguarWarrior",
@@ -95,8 +96,8 @@ class CivUnit {
         const rofTotal = unit.rof + (rofSpecial/100)
 
         // Armor modification
-        const maUpgrades = civ.totalBlacksmithMAUpgrade()
-        const paUpgrades = civ.totalBlacksmithPAUpgrade()
+        const maUpgrades = civ.totalBlacksmithMAUpgrade(unit.type)
+        const paUpgrades = civ.totalBlacksmithPAUpgrade(unit.type)
         const maSpecial = civ.totalSpecialMAUpgrade(unit.id)
         const paSpecial = civ.totalSpecialPAUpgrade(unit.id)
         const maTotal = unit.ma + maSpecial + maUpgrades
@@ -170,7 +171,18 @@ const units = {
         "https://vignette.wikia.nocookie.net/ageofempires/images/a/aa/Halberdier_aoe2DE.png/revision/latest?cb=20200403174747",
         new Cost(35, 0, 25, 0),
         60, 6, 3.05, 0.5, 0, 0,
-        [new AttackBonus(UnitId.eliteEagleWarrior, null, 1)]
+        [
+            new AttackBonus(null, UnitType.cavalry, 32),
+            new AttackBonus(UnitId.eliteEagleWarrior, null, 1)
+        ]
+    ),
+    hussar: new Unit (
+        UnitId.hussar,
+        "Hussar",
+        UnitType.cavalry,
+        "https://vignette.wikia.nocookie.net/ageofempires/images/a/a5/Hussar_aoe2DE.png/revision/latest?cb=20200403174747",
+        new Cost(80, 0, 0, 0),
+        75, 7, 1.9, 0.95, 0, 2, []
     ),
     eliteEagleWarrior: new Unit (
         UnitId.eliteEagleWarrior,
@@ -263,15 +275,23 @@ class Civ {
         return atk
     }
 
-    public totalBlacksmithMAUpgrade() {
+    public totalBlacksmithMAUpgrade(unitType: UnitType) {
         let ma = 0
-        this.infantryArmourUpgrades.forEach((upgrade) => ma += upgrade.ma)
+        if (unitType == UnitType.infantry) {
+            this.infantryArmourUpgrades.forEach((upgrade) => ma += upgrade.ma)
+        } else if (unitType == UnitType.cavalry) {
+            // TODO: cavalry upgrades
+        }
         return ma
     }
 
-    public totalBlacksmithPAUpgrade() {
+    public totalBlacksmithPAUpgrade(unitType: UnitType) {
         let pa = 0
-        this.infantryArmourUpgrades.forEach((upgrade) => pa += upgrade.pa)
+        if (unitType == UnitType.infantry) {
+            this.infantryArmourUpgrades.forEach((upgrade) => pa += upgrade.pa)
+        } else if (unitType == UnitType.cavalry) {
+            // TODO: cavalry upgrades
+        }
         return pa
     }
     
@@ -332,7 +352,7 @@ const civs = [
     ),
     new Civ(1, "Berbers",
         "https://vignette.wikia.nocookie.net/ageofempires/images/7/71/CivIcon-Berbers.png/revision/latest?cb=20191107173130",
-        [units.champion, units.condottiero],
+        [units.champion, units.condottiero, units.hussar],
         [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace],
         [upgrades.scaleMailArmor, upgrades.chainMailArmor, upgrades.plateMailArmor],
         {infantry: []}
@@ -344,16 +364,17 @@ const civs = [
         [upgrades.scaleMailArmor, upgrades.chainMailArmor, upgrades.plateMailArmor],
         {infantry: []}
     ),
+    // bulgarians
     new Civ(3, "Byzantines",
         "https://vignette.wikia.nocookie.net/ageofempires/images/2/27/CivIcon-Byzantines.png/revision/latest?cb=20191107173131",
-        [units.champion, units.condottiero, units.halbardier],
+        [units.champion, units.condottiero, units.halbardier, units.hussar],
         [upgrades.forging, upgrades.ironCasting],
         [upgrades.scaleMailArmor, upgrades.chainMailArmor, upgrades.plateMailArmor],
         {infantry: []}
     ),
     new Civ(4, "Burmese",
         "https://vignette.wikia.nocookie.net/ageofempires/images/7/79/CivIcon-Burmese.png/revision/latest?cb=20191107173131",
-        [units.champion, units.condottiero, units.halbardier],
+        [units.champion, units.condottiero, units.halbardier, units.hussar],
         [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace],
         [upgrades.scaleMailArmor, upgrades.chainMailArmor, upgrades.plateMailArmor],
         // TODO: Types for civ bonus vs unique tech
@@ -373,7 +394,7 @@ const civs = [
     ),
     new Civ(5, "Celts",
         "https://vignette.wikia.nocookie.net/ageofempires/images/5/59/CivIcon-Celts.png/revision/latest?cb=20191107173132",
-        [units.champion, units.condottiero, units.eWoadRaider, units.halbardier],
+        [units.champion, units.condottiero, units.eWoadRaider, units.halbardier, units.hussar],
         [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace],
         [upgrades.scaleMailArmor, upgrades.chainMailArmor, upgrades.plateMailArmor],
         {infantry: []}
@@ -387,14 +408,14 @@ const civs = [
     ),
     new Civ(7, "Cumans",
         "https://vignette.wikia.nocookie.net/ageofempires/images/c/cc/CivIcon-Cumans.png/revision/latest?cb=20191107173133",
-        [units.champion, units.condottiero, units.halbardier],
+        [units.champion, units.condottiero, units.halbardier, units.hussar],
         [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace],
         [upgrades.scaleMailArmor, upgrades.chainMailArmor, upgrades.plateMailArmor],
         {infantry: []}
     ),
     new Civ(8, "Ethiopians",
         "https://vignette.wikia.nocookie.net/ageofempires/images/c/cb/CivIcon-Ethiopians.png/revision/latest?cb=20191107173133",
-        [units.condottiero, units.halbardier],
+        [units.condottiero, units.halbardier, units.hussar],
         [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace],
         [upgrades.scaleMailArmor, upgrades.chainMailArmor, upgrades.plateMailArmor],
         {infantry: []}
@@ -408,14 +429,14 @@ const civs = [
     ),
     new Civ(10, "Goths",
         "https://vignette.wikia.nocookie.net/ageofempires/images/2/24/CivIcon-Goths.png/revision/latest?cb=20191107173238",
-        [units.champion, units.condottiero, units.eliteHuskarl, units.halbardier],
+        [units.champion, units.condottiero, units.eliteHuskarl, units.halbardier, units.hussar],
         [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace],
         [upgrades.scaleMailArmor, upgrades.chainMailArmor],
         {infantry: []}
     ),
     new Civ(11, "Huns",
         "https://vignette.wikia.nocookie.net/ageofempires/images/1/17/CivIcon-Huns.png/revision/latest?cb=20191107173238",
-        [units.condottiero, units.halbardier],
+        [units.condottiero, units.halbardier, units.hussar],
         [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace],
         [upgrades.scaleMailArmor, upgrades.chainMailArmor],
         {infantry: []}
@@ -429,14 +450,14 @@ const civs = [
     ),
     new Civ(13, "Indians",
         "https://vignette.wikia.nocookie.net/ageofempires/images/8/8b/CivIcon-Indians.png/revision/latest?cb=20191107173239",
-        [units.champion, units.condottiero, units.halbardier],
+        [units.champion, units.condottiero, units.halbardier, units.hussar],
         [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace],
         [upgrades.scaleMailArmor, upgrades.chainMailArmor],
         {infantry: []}
     ),
     new Civ(14, "Italians",
         "https://vignette.wikia.nocookie.net/ageofempires/images/e/e1/CivIcon-Italians.png/revision/latest?cb=20191116050557",
-        [units.champion, units.condottiero],
+        [units.champion, units.condottiero, units.hussar],
         [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace],
         [upgrades.scaleMailArmor, upgrades.chainMailArmor, upgrades.plateMailArmor],
         {
@@ -459,28 +480,28 @@ const civs = [
     ),
     new Civ(16, "Khmer",
         "https://vignette.wikia.nocookie.net/ageofempires/images/e/ec/CivIcon-Khmer.png/revision/latest?cb=20191107173240",
-        [units.condottiero, units.halbardier],
+        [units.condottiero, units.halbardier, units.hussar],
         [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace],
         [upgrades.scaleMailArmor, upgrades.chainMailArmor],
         {infantry: []}
     ),
     new Civ(17, "Koreans",
         "https://vignette.wikia.nocookie.net/ageofempires/images/7/73/CivIcon-Koreans.png/revision/latest?cb=20191107173241",
-        [units.champion, units.condottiero, units.halbardier],
+        [units.champion, units.condottiero, units.halbardier, units.hussar],
         [upgrades.forging, upgrades.ironCasting],
         [upgrades.scaleMailArmor, upgrades.chainMailArmor, upgrades.plateMailArmor],
         {infantry: []}
     ),
     new Civ(18, "Lithuanians",
         "https://vignette.wikia.nocookie.net/ageofempires/images/0/0d/CivIcon-Lithuanians.png/revision/latest?cb=20191107173241",
-        [units.champion, units.condottiero, units.halbardier],
+        [units.champion, units.condottiero, units.halbardier, units.hussar],
         [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace],
         [upgrades.scaleMailArmor, upgrades.chainMailArmor],
         {infantry: []}
     ),
     new Civ(19, "Magyars",
         "https://vignette.wikia.nocookie.net/ageofempires/images/6/68/CivIcon-Magyars.png/revision/latest?cb=20191107173242",
-        [units.champion, units.condottiero, units.halbardier],
+        [units.champion, units.condottiero, units.halbardier, units.hussar],
         [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace],
         [upgrades.scaleMailArmor, upgrades.chainMailArmor],
         {infantry: []}
@@ -512,14 +533,14 @@ const civs = [
     ),
     new Civ(23, "Mongols",
         "https://vignette.wikia.nocookie.net/ageofempires/images/1/10/CivIcon-Mongols.png/revision/latest?cb=20191107173335",
-        [units.champion, units.condottiero],
+        [units.champion, units.condottiero, units.hussar],
         [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace],
         [upgrades.scaleMailArmor, upgrades.chainMailArmor, upgrades.plateMailArmor],
         {infantry: []}
     ),
     new Civ(24, "Persians",
         "https://vignette.wikia.nocookie.net/ageofempires/images/a/ad/CivIcon-Persians.png/revision/latest?cb=20191107173335",
-        [units.condottiero, units.halbardier],
+        [units.condottiero, units.halbardier, units.hussar],
         [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace],
         [upgrades.scaleMailArmor, upgrades.chainMailArmor, upgrades.plateMailArmor],
         {infantry: []}
@@ -533,28 +554,28 @@ const civs = [
     ),
     new Civ(26, "Saracens",
         "https://vignette.wikia.nocookie.net/ageofempires/images/5/59/CivIcon-Saracens.png/revision/latest?cb=20191107173336",
-        [units.champion, units.condottiero],
+        [units.champion, units.condottiero, units.hussar],
         [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace],
         [upgrades.scaleMailArmor, upgrades.chainMailArmor, upgrades.plateMailArmor],
         {infantry: []}
     ),
     new Civ(27, "Slavs",
         "https://vignette.wikia.nocookie.net/ageofempires/images/1/12/CivIcon-Slavs.png/revision/latest?cb=20191107173337",
-        [units.champion, units.condottiero, units.halbardier],
+        [units.champion, units.condottiero, units.halbardier, units.hussar],
         [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace],
         [upgrades.scaleMailArmor, upgrades.chainMailArmor, upgrades.plateMailArmor],
         {infantry: []}
     ),
     new Civ(28, "Spanish",
         "https://vignette.wikia.nocookie.net/ageofempires/images/0/0a/CivIcon-Spanish.png/revision/latest?cb=20191107173337",
-        [units.champion, units.condottiero, units.halbardier],
+        [units.champion, units.condottiero, units.halbardier, units.hussar],
         [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace],
         [upgrades.scaleMailArmor, upgrades.chainMailArmor, upgrades.plateMailArmor],
         {infantry: []}
     ),
     new Civ(29, "Tatars",
         "https://vignette.wikia.nocookie.net/ageofempires/images/f/f2/CivIcon-Tatars.png/revision/latest?cb=20191107173338",
-        [units.condottiero, units.halbardier],
+        [units.condottiero, units.halbardier, units.hussar],
         [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace],
         [upgrades.scaleMailArmor],
         {infantry: []}
@@ -568,12 +589,11 @@ const civs = [
     ),
     new Civ(31, "Turks",
         "https://vignette.wikia.nocookie.net/ageofempires/images/1/1c/CivIcon-Turks.png/revision/latest?cb=20191107173409",
-        [units.champion, units.condottiero],
+        [units.champion, units.condottiero, units.hussar],
         [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace],
         [upgrades.scaleMailArmor, upgrades.chainMailArmor, upgrades.plateMailArmor],
         {infantry: []}
     ),
-
     new Civ(32, "Vietnamese",
         "https://vignette.wikia.nocookie.net/ageofempires/images/0/07/CivIcon-Vietnamese.png/revision/latest?cb=20191107173409",
         [units.champion, units.condottiero, units.halbardier],
