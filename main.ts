@@ -176,12 +176,13 @@ function civClicked(id: number) {
     TableUtils.createRow(body, ["HP", civUnit.unit.hp, "-", `${civUnit.special.hp != 0 ? `+${civUnit.special.hp}%` : "-"}`, civUnit.total.hp]);
     TableUtils.createRow(body, ["Attack", civUnit.unit.atk, `+${civUnit.upgrades.atk}`, `${civUnit.special.atk != 0 ? `+${civUnit.special.atk}` : "-"}`, civUnit.total.atk]);
     TableUtils.createRow(body, ["RoF", civUnit.unit.rof, "-", `${civUnit.special.rof != 0 ? `${civUnit.special.rof}%` : "-"}`, civUnit.total.rof.toFixed(2)]);
+    TableUtils.createRow(body, ["AD", civUnit.unit.ad, "-", "-", civUnit.unit.ad]);
     TableUtils.createRow(body, ["DPS", civUnit.unit.dps().toFixed(2), "-", "-", civUnit.total.dps().toFixed(2)]);
     TableUtils.createRow(body, ["Melee armor", civUnit.unit.ma, `+${civUnit.upgrades.ma}`, "-", civUnit.total.ma]);
     TableUtils.createRow(body, ["Pierce armor", civUnit.unit.pa, `+${civUnit.upgrades.pa}`, "-", civUnit.total.pa]);
 
     let rows = table.rows;
-    for (var i = 0; i < rows.length; i += 1) {
+    for (var i = 1; i < rows.length; i++) {
         let row = rows[i];
         row.addEventListener('mouseover', (e) => statsHover(row.rowIndex, true) );
         row.addEventListener('mouseout', (e) => statsHover(row.rowIndex, false) );
@@ -238,24 +239,26 @@ function civClicked(id: number) {
 
  function createBattleLog(attacker: CivUnit, defender: CivUnit, tableId: string) {
 
-    // TODO: Rof might be at game speed 1, so would have to cater for 1.7
-    // TODO: Take into account that first hit either hits immediately, or after a frame delay
+    // TODO: Rof and AD might be at game speed 1, so would have to cater for 1.7
 
     let effectiveDamage = attacker.total.atk - defender.total.ma
+    if (effectiveDamage < 1) {
+        effectiveDamage = 1
+    }
     let numsHitsToKill = Math.ceil(defender.total.hp / effectiveDamage)
-    let timeTakenToKill = numsHitsToKill * attacker.total.rof
+    let timeTakenToKill = attacker.unit.ad + (numsHitsToKill * attacker.total.rof)
 
     let log = Utils.$(tableId) as HTMLParagraphElement
     let body = TableUtils.newBody(log);
 
-    TableUtils.createMergedRow(body, `<p>${attacker.unit.name} attacks ${defender.unit.name}</p>`, 4);
+    TableUtils.createMergedRow(body, `<p>${attacker.unit.name} attacking ${defender.unit.name}:</p>`, 4);
     TableUtils.createRow(body, ["Hit", "Time", "Damage", "Total", "HP left"]);
     let totDamage = 0
     for (let i = 0; i < numsHitsToKill; i++) {
         totDamage += effectiveDamage
         TableUtils.createRow(body, [
             i + 1,
-            `${(i*attacker.total.rof).toFixed(2)}`,
+            `${(attacker.unit.ad + (i*attacker.total.rof)).toFixed(2)}`,
             effectiveDamage, 
             totDamage, 
             defender.total.hp - totDamage

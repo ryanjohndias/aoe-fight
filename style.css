@@ -151,6 +151,15 @@ table {
     width: 100%;
 }
 
-/* .statsTable tr:hover {
-    background-color: lightgray;
+/* .statsTable tr:first-child  {
+    font-weight: bold;
+} */
+
+.logTable {
+    margin-top: 16px;
+    width: 100%;
+}
+
+/* .logTable tr:nth-child(2)  {
+    font-weight: bold;
 } */

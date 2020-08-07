@@ -39,6 +39,7 @@ var UnitId;
     UnitId["condottiero"] = "condottiero";
     UnitId["halbardier"] = "halbardier";
     UnitId["eliteEagleWarrior"] = "eliteEagleWarrior";
+    UnitId["eliteHuskarl"] = "eliteHuskarl";
     UnitId["eliteTeutonicKnight"] = "eliteTeutonicKnight";
     UnitId["eWoadRaider"] = "eWoadRaider";
 })(UnitId || (UnitId = {}));
@@ -79,7 +80,7 @@ var CivUnit = /** @class */ (function () {
     return CivUnit;
 }());
 var Unit = /** @class */ (function () {
-    function Unit(id, name, type, img, cost, hp, atk, rof, ma, pa, atkBonuses) {
+    function Unit(id, name, type, img, cost, hp, atk, rof, ad, ma, pa, atkBonuses) {
         this.id = id;
         this.name = name;
         this.type = type;
@@ -88,6 +89,7 @@ var Unit = /** @class */ (function () {
         this.hp = hp;
         this.atk = atk;
         this.rof = rof;
+        this.ad = ad;
         this.ma = ma;
         this.pa = pa;
         this.atkBonuses = atkBonuses;
@@ -101,13 +103,14 @@ var Unit = /** @class */ (function () {
     return Unit;
 }());
 var units = {
-    champion: new Unit(UnitId.champion, "Champion", UnitType.infantry, "https://vignette.wikia.nocookie.net/ageofempires/images/5/54/Champion_aoe2DE.png/revision/latest?cb=20200402012808", new Cost(60, 20, 0, 0), 70, 13, 2.0, 1, 1, [new AttackBonus(UnitId.eliteEagleWarrior, 8)]),
+    champion: new Unit(UnitId.champion, "Champion", UnitType.infantry, "https://vignette.wikia.nocookie.net/ageofempires/images/5/54/Champion_aoe2DE.png/revision/latest?cb=20200402012808", new Cost(60, 20, 0, 0), 70, 13, 2.0, 0.63, 1, 1, [new AttackBonus(UnitId.eliteEagleWarrior, 8)]),
     // TODO: Pavise
-    condottiero: new Unit(UnitId.condottiero, "Condottiero", UnitType.infantry, "https://vignette.wikia.nocookie.net/ageofempires/images/1/1c/CondottieroIcon-DE.png/revision/latest?cb=20191230141010", new Cost(50, 35, 0, 0), 80, 10, 1.9, 1, 0, []),
-    halbardier: new Unit(UnitId.halbardier, "Halbardier", UnitType.infantry, "https://vignette.wikia.nocookie.net/ageofempires/images/a/aa/Halberdier_aoe2DE.png/revision/latest?cb=20200403174747", new Cost(35, 0, 25, 0), 60, 6, 3.05, 0, 0, [new AttackBonus(UnitId.eliteEagleWarrior, 1)]),
-    eliteEagleWarrior: new Unit(UnitId.eliteEagleWarrior, "Elite Eagle Warrior", UnitType.infantry, "https://vignette.wikia.nocookie.net/ageofempires/images/a/a5/Eliteeaglewarrior_aoe2DE.png/revision/latest?cb=20200331191114", new Cost(20, 50, 0, 0), 60, 9, 2, 0, 4, []),
-    eliteTeutonicKnight: new Unit(UnitId.eliteTeutonicKnight, "Elite Teutonic Knight", UnitType.infantry, "https://vignette.wikia.nocookie.net/ageofempires/images/9/95/TeutonicKnightIcon-DE.png/revision/latest?cb=20200325131355", new Cost(85, 40, 0, 0), 100, 17, 2.0, 10, 2, [new AttackBonus(UnitId.eliteEagleWarrior, 4)]),
-    eWoadRaider: new Unit(UnitId.eWoadRaider, "Elite Woad Raider", UnitType.infantry, "https://vignette.wikia.nocookie.net/ageofempires/images/5/55/WoadRaiderIcon-DE.png/revision/latest?cb=20191230150759", new Cost(65, 25, 0, 0), 80, 13, 2, 0, 1, [new AttackBonus(UnitId.eliteEagleWarrior, 3)])
+    condottiero: new Unit(UnitId.condottiero, "Condottiero", UnitType.infantry, "https://vignette.wikia.nocookie.net/ageofempires/images/1/1c/CondottieroIcon-DE.png/revision/latest?cb=20191230141010", new Cost(50, 35, 0, 0), 80, 10, 1.9, 0.75, 1, 0, []),
+    halbardier: new Unit(UnitId.halbardier, "Halbardier", UnitType.infantry, "https://vignette.wikia.nocookie.net/ageofempires/images/a/aa/Halberdier_aoe2DE.png/revision/latest?cb=20200403174747", new Cost(35, 0, 25, 0), 60, 6, 3.05, 0.5, 0, 0, [new AttackBonus(UnitId.eliteEagleWarrior, 1)]),
+    eliteEagleWarrior: new Unit(UnitId.eliteEagleWarrior, "Elite Eagle Warrior", UnitType.infantry, "https://vignette.wikia.nocookie.net/ageofempires/images/a/a5/Eliteeaglewarrior_aoe2DE.png/revision/latest?cb=20200331191114", new Cost(20, 50, 0, 0), 60, 9, 2, 0.8, 0, 4, []),
+    eliteHuskarl: new Unit(UnitId.eliteHuskarl, "Elite Huskarl", UnitType.infantry, "https://vignette.wikia.nocookie.net/ageofempires/images/7/79/HuskarlIcon-DE.png/revision/latest?cb=20191230145804", new Cost(52, 26, 0, 0), 70, 12, 2, 0.8, 0, 8, [new AttackBonus(UnitId.eliteEagleWarrior, 3)]),
+    eliteTeutonicKnight: new Unit(UnitId.eliteTeutonicKnight, "Elite Teutonic Knight", UnitType.infantry, "https://vignette.wikia.nocookie.net/ageofempires/images/9/95/TeutonicKnightIcon-DE.png/revision/latest?cb=20200325131355", new Cost(85, 40, 0, 0), 100, 17, 2.0, 0.75, 10, 2, [new AttackBonus(UnitId.eliteEagleWarrior, 4)]),
+    eWoadRaider: new Unit(UnitId.eWoadRaider, "Elite Woad Raider", UnitType.infantry, "https://vignette.wikia.nocookie.net/ageofempires/images/5/55/WoadRaiderIcon-DE.png/revision/latest?cb=20191230150759", new Cost(65, 25, 0, 0), 80, 13, 2, 0.72, 0, 1, [new AttackBonus(UnitId.eliteEagleWarrior, 3)])
 };
 var Civ = /** @class */ (function () {
     function Civ(id, name, image, units, meleeUpgrades, infantryArmourUpgrades, special) {
@@ -177,7 +180,7 @@ var civs = [
     new Civ(7, "Cumans", "https://vignette.wikia.nocookie.net/ageofempires/images/c/cc/CivIcon-Cumans.png/revision/latest?cb=20191107173133", [units.champion, units.condottiero, units.halbardier], [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace], [upgrades.scaleMailArmor, upgrades.chainMailArmor, upgrades.plateMailArmor], { infantry: [] }),
     new Civ(8, "Ethiopians", "https://vignette.wikia.nocookie.net/ageofempires/images/c/cb/CivIcon-Ethiopians.png/revision/latest?cb=20191107173133", [units.condottiero, units.halbardier], [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace], [upgrades.scaleMailArmor, upgrades.chainMailArmor, upgrades.plateMailArmor], { infantry: [] }),
     new Civ(9, "Franks", "https://vignette.wikia.nocookie.net/ageofempires/images/1/1b/CivIcon-Franks.png/revision/latest?cb=2019110717323", [units.champion, units.condottiero, units.halbardier], [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace], [upgrades.scaleMailArmor, upgrades.chainMailArmor, upgrades.plateMailArmor], { infantry: [] }),
-    new Civ(10, "Goths", "https://vignette.wikia.nocookie.net/ageofempires/images/2/24/CivIcon-Goths.png/revision/latest?cb=20191107173238", [units.champion, units.condottiero, units.halbardier], [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace], [upgrades.scaleMailArmor, upgrades.chainMailArmor], { infantry: [] }),
+    new Civ(10, "Goths", "https://vignette.wikia.nocookie.net/ageofempires/images/2/24/CivIcon-Goths.png/revision/latest?cb=20191107173238", [units.champion, units.condottiero, units.eliteHuskarl, units.halbardier], [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace], [upgrades.scaleMailArmor, upgrades.chainMailArmor], { infantry: [] }),
     new Civ(11, "Huns", "https://vignette.wikia.nocookie.net/ageofempires/images/1/17/CivIcon-Huns.png/revision/latest?cb=20191107173238", [units.condottiero, units.halbardier], [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace], [upgrades.scaleMailArmor, upgrades.chainMailArmor], { infantry: [] }),
     new Civ(12, "Incas", "https://vignette.wikia.nocookie.net/ageofempires/images/5/5e/CivIcon-Incas.png/revision/latest?cb=20191107173239", [units.champion, units.condottiero, units.eliteEagleWarrior, units.halbardier], [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace], [upgrades.scaleMailArmor, upgrades.chainMailArmor, upgrades.plateMailArmor], { infantry: [] }),
     new Civ(13, "Indians", "https://vignette.wikia.nocookie.net/ageofempires/images/8/8b/CivIcon-Indians.png/revision/latest?cb=20191107173239", [units.champion, units.condottiero, units.halbardier], [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace], [upgrades.scaleMailArmor, upgrades.chainMailArmor], { infantry: [] }),
