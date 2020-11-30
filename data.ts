@@ -54,7 +54,11 @@ enum UnitId {
     eliteHuskarl = "eliteHuskarl",
     eliteJaguarWarrior = "eliteJaguarWarrior",
     eliteTeutonicKnight = "eliteTeutonicKnight",
-    eWoadRaider = "eWoadRaider"
+    eWoadRaider = "eWoadRaider",
+    eShotel = "eShotel",
+    eKarambit = "eKarambit",
+    eDismountedKonnik = "eDismountedKonnik",
+    twoHandedSwordsman = "twoHandedSwordsman"
 }
 
 // TODO: Unit, or UnitType
@@ -232,6 +236,42 @@ const units = {
         new Cost(65, 25, 0, 0),
         80, 13, 2, 0.72, 0, 1,
         [new AttackBonus(UnitId.eliteEagleWarrior, null, 3)]
+    ),
+    eShotel: new Unit (
+        UnitId.eShotel,
+        "Elite Shotel Warrior",
+        UnitType.infantry,
+        "https://vignette.wikia.nocookie.net/ageofempires/images/0/03/Shotelwarrioricon-DE.png/revision/latest?cb=20191210075606",
+        new Cost(50, 30, 0, 0),
+        50, 18, 2, 0.75, 0, 1,
+        [new AttackBonus(UnitId.eliteEagleWarrior, null, 2)]
+    ),
+    eKarambit: new Unit (
+        UnitId.eKarambit,
+        "Elite Karambit Warrior",
+        UnitType.infantry,
+        "https://vignette.wikia.nocookie.net/ageofempires/images/7/75/Karambitwarrioricon-DE.png/revision/latest/scale-to-width-down/256?cb=20191117115320",
+        new Cost(25, 15, 0, 0),
+        40, 7, 2, 0.81, 1, 1,
+        [new AttackBonus(UnitId.eliteEagleWarrior, null, 2)]
+    ),
+    eDismountedKonnik: new Unit (
+        UnitId.eDismountedKonnik,
+        "Elite Dismounted Konnik",
+        UnitType.infantry,
+        "https://vignette.wikia.nocookie.net/ageofempires/images/b/b5/Konnikdismountedicon.png/revision/latest/scale-to-width-down/256?cb=20191110154253",
+        new Cost(60, 70, 0, 0),
+        50, 13, 2.4, 0.7, 0, 1,
+        []
+    ),
+    twoHandedSwordsman: new Unit (
+        UnitId.twoHandedSwordsman,
+        "Two-Handed Swordsman",
+        UnitType.infantry,
+        "https://vignette.wikia.nocookie.net/ageofempires/images/3/3c/Twohanded_aoe2DE.png/revision/latest/scale-to-width-down/256?cb=20200401184348",
+        new Cost(60, 20, 0, 0),
+        60, 12, 2, 0.5, 0, 1,
+        [new AttackBonus(UnitId.eliteEagleWarrior, null, 8)]
     )
 }
 
@@ -364,7 +404,14 @@ const civs = [
         [upgrades.scaleMailArmor, upgrades.chainMailArmor, upgrades.plateMailArmor],
         {infantry: []}
     ),
-    // bulgarians
+    new Civ(34, "Bulgarians",
+        "https://vignette.wikia.nocookie.net/ageofempires/images/c/ce/CivIcon-Bulgarians.png/revision/latest/scale-to-width-down/104?cb=20191107173130",
+        [units.champion, units.condottiero, units.eDismountedKonnik, units.halbardier, units.twoHandedSwordsman],
+        [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace],
+        [upgrades.scaleMailArmor, upgrades.chainMailArmor, upgrades.plateMailArmor],
+        {infantry: []}
+        // TODO Stirrups, Bagains https://ageofempires.fandom.com/wiki/Bulgarians/Tree
+    ),
     new Civ(3, "Byzantines",
         "https://vignette.wikia.nocookie.net/ageofempires/images/2/27/CivIcon-Byzantines.png/revision/latest?cb=20191107173131",
         [units.champion, units.condottiero, units.halbardier, units.hussar],
@@ -415,7 +462,7 @@ const civs = [
     ),
     new Civ(8, "Ethiopians",
         "https://vignette.wikia.nocookie.net/ageofempires/images/c/cb/CivIcon-Ethiopians.png/revision/latest?cb=20191107173133",
-        [units.condottiero, units.halbardier, units.hussar],
+        [units.condottiero, units.eShotel, units.halbardier, units.hussar, units.twoHandedSwordsman],
         [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace],
         [upgrades.scaleMailArmor, upgrades.chainMailArmor, upgrades.plateMailArmor],
         {infantry: []}
@@ -436,7 +483,7 @@ const civs = [
     ),
     new Civ(11, "Huns",
         "https://vignette.wikia.nocookie.net/ageofempires/images/1/17/CivIcon-Huns.png/revision/latest?cb=20191107173238",
-        [units.condottiero, units.halbardier, units.hussar],
+        [units.condottiero, units.halbardier, units.hussar, units.twoHandedSwordsman],
         [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace],
         [upgrades.scaleMailArmor, upgrades.chainMailArmor],
         {infantry: []}
@@ -480,7 +527,7 @@ const civs = [
     ),
     new Civ(16, "Khmer",
         "https://vignette.wikia.nocookie.net/ageofempires/images/e/ec/CivIcon-Khmer.png/revision/latest?cb=20191107173240",
-        [units.condottiero, units.halbardier, units.hussar],
+        [units.condottiero, units.halbardier, units.hussar, units.twoHandedSwordsman],
         [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace],
         [upgrades.scaleMailArmor, upgrades.chainMailArmor],
         {infantry: []}
@@ -519,14 +566,14 @@ const civs = [
     ),
     new Civ(21, "Malay",
         "https://vignette.wikia.nocookie.net/ageofempires/images/c/c3/CivIcon-Malay.png/revision/latest?cb=20191107173334",
-        [units.condottiero, units.halbardier],
+        [units.condottiero, units.eKarambit, units.halbardier, units.twoHandedSwordsman],
         [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace],
         [upgrades.scaleMailArmor, upgrades.chainMailArmor, upgrades.plateMailArmor],
         {infantry: []}
     ),
     new Civ(22, "Mayans",
         "https://vignette.wikia.nocookie.net/ageofempires/images/0/05/CivIcon-Mayans.png/revision/latest?cb=20191107173335",
-        [units.condottiero, units.eliteEagleWarrior, units.halbardier],
+        [units.condottiero, units.eliteEagleWarrior, units.halbardier, units.twoHandedSwordsman],
         [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace],
         [upgrades.scaleMailArmor, upgrades.chainMailArmor, upgrades.plateMailArmor],
         {infantry: []}
@@ -540,7 +587,7 @@ const civs = [
     ),
     new Civ(24, "Persians",
         "https://vignette.wikia.nocookie.net/ageofempires/images/a/ad/CivIcon-Persians.png/revision/latest?cb=20191107173335",
-        [units.condottiero, units.halbardier, units.hussar],
+        [units.condottiero, units.halbardier, units.hussar, units.twoHandedSwordsman],
         [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace],
         [upgrades.scaleMailArmor, upgrades.chainMailArmor, upgrades.plateMailArmor],
         {infantry: []}
@@ -575,7 +622,7 @@ const civs = [
     ),
     new Civ(29, "Tatars",
         "https://vignette.wikia.nocookie.net/ageofempires/images/f/f2/CivIcon-Tatars.png/revision/latest?cb=20191107173338",
-        [units.condottiero, units.halbardier, units.hussar],
+        [units.condottiero, units.halbardier, units.hussar, units.twoHandedSwordsman],
         [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace],
         [upgrades.scaleMailArmor],
         {infantry: []}

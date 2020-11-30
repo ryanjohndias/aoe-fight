@@ -200,6 +200,7 @@ function populate(civA, unitA, civB, unitB) {
     unitClicked(unitB);
 }
 function showBattle(a, b) {
+    Utils.$("code").textContent = Code.createCode(a.civ.id, a.unit.id, b.civ.id, b.unit.id);
     var leftReport = createBattleReport(a, b);
     var rightReport = createBattleReport(b, a);
     renderBattleReport(a, b, leftReport, "battleLogLeft");
@@ -282,6 +283,22 @@ var BattleLogEntry = /** @class */ (function () {
         this.hpLeft = hpLeft;
     }
     return BattleLogEntry;
+}());
+var Code = /** @class */ (function () {
+    function Code(code) {
+        var parts = code.split("-");
+        this.leftCivId = parseInt(parts[0]);
+        this.leftUnitId = parts[1];
+        this.rightCivId = parseInt(parts[2]);
+        this.rightUnitId = parts[3];
+    }
+    Code.createCode = function (leftCivId, leftUnitId, rightCivId, rightUnitId) {
+        return leftCivId + "-" + leftUnitId + "-" + rightCivId + "-" + rightUnitId;
+    };
+    Code.readCode = function (code) {
+        return new Code(code);
+    };
+    return Code;
 }());
 var WidgetFactory = {
     civ: function (id, name, imageUrl) {

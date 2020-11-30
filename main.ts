@@ -237,10 +237,13 @@ function civClicked(id: number) {
     unitClicked(unitA)
     state.selectedSide = Side.right
     civClicked(civB)
-    unitClicked(unitB)
+    unitClicked(unitB) 
  }
 
  function showBattle(a: CivUnit, b: CivUnit) {
+
+    Utils.$("code").textContent = Code.createCode(a.civ.id, a.unit.id, b.civ.id, b.unit.id)
+
     let leftReport = createBattleReport(a, b)
     let rightReport = createBattleReport(b, a)
 
@@ -353,6 +356,29 @@ class BattleReport {
     }
  }
 
+ class Code {
+    leftCivId: number
+    leftUnitId: string
+    rightCivId: number
+    rightUnitId: string
+
+    public static createCode(leftCivId: number, leftUnitId: string, rightCivId: number, rightUnitId: string) {
+        return `${leftCivId}-${leftUnitId}-${rightCivId}-${rightUnitId}`;
+    }
+
+    public static readCode(code: string) {
+        return new Code(code)
+    }
+
+    constructor(code: string) {
+        let parts = code.split("-")
+        this.leftCivId = parseInt(parts[0])
+        this.leftUnitId = parts[1]
+        this.rightCivId = parseInt(parts[2])
+        this.rightUnitId = parts[3]
+    }
+ }
+
  var WidgetFactory = {
     civ: function(id, name, imageUrl) {
         return `<div class="civCell" onClick="javascript:civClicked(${id})">
@@ -367,7 +393,7 @@ class BattleReport {
                </div>`;
     }
  }
- 
+
  var Utils = {
     hide: function (element) {
         element.style.display = "none";
