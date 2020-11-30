@@ -142,7 +142,7 @@ function showUnitStats(tableId, unit, civ) {
     var table = Utils.$(tableId);
     var body = TableUtils.newBody(table);
     TableUtils.createRow(body, ["Stat", "Base", "Upgrades", "Special", "Total"]);
-    TableUtils.createRow(body, ["HP", civUnit.unit.hp, "-", "" + (civUnit.special.hp != 0 ? "+" + civUnit.special.hp + "%" : "-"), civUnit.total.hp]);
+    TableUtils.createRow(body, ["HP", civUnit.unit.hp, "" + (civUnit.upgrades.hp != 0 ? "+" + civUnit.upgrades.hp : "-"), "" + (civUnit.special.hp != 0 ? "+" + civUnit.special.hp + "%" : "-"), civUnit.total.hp]);
     TableUtils.createRow(body, ["Attack", civUnit.unit.atk, "+" + civUnit.upgrades.atk, "" + (civUnit.special.atk != 0 ? "+" + civUnit.special.atk : "-"), civUnit.total.atk]);
     TableUtils.createRow(body, ["RoF", civUnit.unit.rof, "-", "" + (civUnit.special.rof != 0 ? civUnit.special.rof + "%" : "-"), civUnit.total.rof.toFixed(2)]);
     TableUtils.createRow(body, ["AD", civUnit.unit.ad, "-", "-", civUnit.unit.ad]);
@@ -159,7 +159,9 @@ function showUnitStats(tableId, unit, civ) {
         _loop_1();
     }
     if (state.left.unit != null && state.right.unit != null) {
-        showBattle(new CivUnit(state.left.unit, state.left.civ), new CivUnit(state.right.unit, state.right.civ));
+        var l = new CivUnit(state.left.unit, state.left.civ);
+        var r = new CivUnit(state.right.unit, state.right.civ);
+        showBattle(l, r);
     }
 }
 function formatUpgradeValue(value) {
