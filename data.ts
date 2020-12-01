@@ -66,7 +66,12 @@ enum UnitId {
     xolotl = "xolotl",
     knight = "knight",
     cavalier = "cavalier",
-    paladin = "paladin"
+    paladin = "paladin",
+    camel = "camel",
+    heavyCamel = "heavyCamel",
+    imperialCamel = "imperialCamel",
+    eBattleElephant = "eBattleElephant",
+    eSteppeLancer = "eSteppeLancer"
 }
 
 // TODO: Unit, or UnitType
@@ -318,6 +323,66 @@ const units = {
         160, 14, 1.9, 0.68, 2, 3,
         []
     ),
+    camel: new Unit (
+          UnitId.camel,
+          "Camel Rider",
+          UnitType.cavalry,
+          "https://vignette.wikia.nocookie.net/ageofempires/images/f/ff/Camelrider_aoe2DE.png/revision/latest/scale-to-width-down/256?cb=20200331164238",
+          new Cost(55, 60, 0, 0),
+          100, 6, 2, 0.5, 0, 0,
+          [
+            new AttackBonus(null, UnitType.cavalry, 9),
+            // new AttackBonus(null, UnitType.camel, 5)
+          ]
+      ),
+      heavyCamel: new Unit (
+            UnitId.heavyCamel,
+            "Heavy Camel Rider",
+            UnitType.cavalry,
+            "https://vignette.wikia.nocookie.net/ageofempires/images/8/89/Aoe2_heavycamelriderDE.png/revision/latest/scale-to-width-down/256?cb=20200330225627",
+            new Cost(55, 60, 0, 0),
+            120, 7, 2, 0.5, 0, 0,
+            [
+                new AttackBonus(null, UnitType.cavalry, 18),
+                // new AttackBonus(null, UnitType.camel, 9)
+                // TODO: new AttackBonus(UnitId.mameluke, null, 7)
+            ]
+        ),
+
+    imperialCamel: new Unit (
+        UnitId.imperialCamel,
+        "Imperial Camel Rider",
+        UnitType.cavalry,
+        "https://vignette.wikia.nocookie.net/ageofempires/images/5/5d/ImperialCamelRiderIcon-DE.png/revision/latest/scale-to-width-down/256?cb=20191230143407",
+        new Cost(55, 60, 0, 0),
+        140, 9, 2, 0.5, 0, 0,
+        [
+            new AttackBonus(null, UnitType.cavalry, 18),
+            // new AttackBonus(null, UnitType.camel, 9)
+            // TODO: new AttackBonus(UnitId.mameluke, null, 7)
+        ]
+    ),
+    eBattleElephant: new Unit (
+        UnitId.eBattleElephant,
+        "Elite Battle Elephant",
+        UnitType.cavalry,
+        "https://vignette.wikia.nocookie.net/ageofempires/images/b/b2/Elite_battle_elephant_aoe2DE.png/revision/latest/scale-to-width-down/256?cb=20200414003052",
+        new Cost(120, 70, 0, 0),
+        300, 14, 2, 0.49, 1, 3,
+        []
+    ),
+    eSteppeLancer: new Unit (
+            UnitId.eSteppeLancer,
+            "Elite Steppe Lancer",
+            UnitType.cavalry,
+            "https://vignette.wikia.nocookie.net/ageofempires/images/1/1c/Elitesteppelancericon.png/revision/latest/scale-to-width-down/256?cb=20191110161918",
+            new Cost(70, 45, 0, 0),
+            80, 11, 2.3, 0.68, 0, 1,
+            []
+        )
+
+    
+
 
     // xxxx: new Unit (
     //     UnitId.xxxx,
@@ -384,7 +449,7 @@ class Civ {
         let ma = 0
         if (unitType == UnitType.infantry) {
             this.infantryArmourUpgrades.forEach((upgrade) => ma += upgrade.ma)
-        } else if (unitType == UnitType.cavalry) {
+        } else if (unitType == UnitType.cavalry ) {
             this.cavUpgrades.forEach((upgrade) => ma += upgrade.ma)
         }
         return ma
@@ -458,7 +523,7 @@ const civs = [
     ),
     new Civ(1, "Berbers",
         "https://vignette.wikia.nocookie.net/ageofempires/images/7/71/CivIcon-Berbers.png/revision/latest?cb=20191107173130",
-        [units.cavalier, units.champion, units.condottiero, units.hussar],
+        [units.cavalier, units.champion, units.condottiero, units.hussar, units.heavyCamel],
         [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace],
         [upgrades.scaleMailArmor, upgrades.chainMailArmor, upgrades.plateMailArmor],
         [upgrades.bloodlines, upgrades.scaleBardingArmor, upgrades.chainBardingArmor, upgrades.plateBardingArmor],
@@ -483,7 +548,7 @@ const civs = [
     ),
     new Civ(3, "Byzantines",
         "https://vignette.wikia.nocookie.net/ageofempires/images/2/27/CivIcon-Byzantines.png/revision/latest?cb=20191107173131",
-        [units.champion, units.condottiero, units.halbardier, units.hussar, units.paladin],
+        [units.champion, units.condottiero, units.halbardier, units.hussar, units.heavyCamel, units.paladin],
         [upgrades.forging, upgrades.ironCasting],
         [upgrades.scaleMailArmor, upgrades.chainMailArmor, upgrades.plateMailArmor],
         [upgrades.scaleBardingArmor, upgrades.chainBardingArmor, upgrades.plateBardingArmor],
@@ -491,7 +556,7 @@ const civs = [
     ),
     new Civ(4, "Burmese",
         "https://vignette.wikia.nocookie.net/ageofempires/images/7/79/CivIcon-Burmese.png/revision/latest?cb=20191107173131",
-        [units.cavalier, units.champion, units.condottiero, units.halbardier, units.hussar],
+        [units.cavalier, units.champion, units.condottiero, units.eBattleElephant, units.halbardier, units.hussar],
         [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace],
         [upgrades.scaleMailArmor, upgrades.chainMailArmor, upgrades.plateMailArmor],
         [upgrades.bloodlines, upgrades.scaleBardingArmor, upgrades.chainBardingArmor, upgrades.plateBardingArmor],
@@ -520,7 +585,7 @@ const civs = [
     ),
     new Civ(6, "Chinese",
         "https://vignette.wikia.nocookie.net/ageofempires/images/c/cc/CivIcon-Chinese.png/revision/latest?cb=20191107173132",
-        [units.cavalier, units.champion, units.condottiero, units.halbardier],
+        [units.cavalier, units.champion, units.condottiero, units.halbardier, units.heavyCamel],
         [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace],
         [upgrades.scaleMailArmor, upgrades.chainMailArmor, upgrades.plateMailArmor],
         [upgrades.bloodlines, upgrades.scaleBardingArmor, upgrades.chainBardingArmor, upgrades.plateBardingArmor],
@@ -528,7 +593,7 @@ const civs = [
     ),
     new Civ(7, "Cumans",
         "https://vignette.wikia.nocookie.net/ageofempires/images/c/cc/CivIcon-Cumans.png/revision/latest?cb=20191107173133",
-        [units.champion, units.condottiero, units.halbardier, units.hussar, units.paladin],
+        [units.camel, units.champion, units.condottiero, units.eSteppeLancer, units.halbardier, units.hussar, units.paladin],
         [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace],
         [upgrades.scaleMailArmor, upgrades.chainMailArmor, upgrades.plateMailArmor],
         [upgrades.bloodlines, upgrades.scaleBardingArmor, upgrades.chainBardingArmor, upgrades.plateBardingArmor],
@@ -536,7 +601,7 @@ const civs = [
     ),
     new Civ(8, "Ethiopians",
         "https://vignette.wikia.nocookie.net/ageofempires/images/c/cb/CivIcon-Ethiopians.png/revision/latest?cb=20191107173133",
-        [units.cavalier, units.condottiero, units.eShotel, units.halbardier, units.hussar, units.twoHandedSwordsman],
+        [units.cavalier, units.condottiero, units.eShotel, units.halbardier, units.hussar, units.heavyCamel, units.twoHandedSwordsman],
         [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace],
         [upgrades.scaleMailArmor, upgrades.chainMailArmor, upgrades.plateMailArmor],
         [upgrades.scaleBardingArmor, upgrades.chainBardingArmor],
@@ -576,7 +641,7 @@ const civs = [
     ),
     new Civ(13, "Indians",
         "https://vignette.wikia.nocookie.net/ageofempires/images/8/8b/CivIcon-Indians.png/revision/latest?cb=20191107173239",
-        [units.champion, units.condottiero, units.halbardier, units.hussar, units.knight],
+        [units.champion, units.condottiero, units.halbardier, units.hussar, units.imperialCamel, units.knight],
         [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace],
         [upgrades.scaleMailArmor, upgrades.chainMailArmor],
         [upgrades.bloodlines, upgrades.scaleBardingArmor, upgrades.chainBardingArmor],
@@ -609,7 +674,7 @@ const civs = [
     ),
     new Civ(16, "Khmer",
         "https://vignette.wikia.nocookie.net/ageofempires/images/e/ec/CivIcon-Khmer.png/revision/latest?cb=20191107173240",
-        [units.cavalier, units.condottiero, units.halbardier, units.hussar, units.twoHandedSwordsman],
+        [units.cavalier, units.condottiero, units.eBattleElephant, units.halbardier, units.hussar, units.twoHandedSwordsman],
         [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace],
         [upgrades.scaleMailArmor, upgrades.chainMailArmor],
         [upgrades.bloodlines, upgrades.scaleBardingArmor, upgrades.chainBardingArmor, upgrades.plateBardingArmor],
@@ -641,7 +706,7 @@ const civs = [
     ),
     new Civ(20, "Malians",
         "https://vignette.wikia.nocookie.net/ageofempires/images/8/80/CivIcon-Malians.png/revision/latest?cb=20191107173334",
-        [units.cavalier, units.champion, units.condottiero],
+        [units.cavalier, units.champion, units.condottiero, units.heavyCamel],
         [upgrades.forging, upgrades.ironCasting],
         [upgrades.scaleMailArmor, upgrades.chainMailArmor, upgrades.plateMailArmor],
         [upgrades.bloodlines, upgrades.scaleBardingArmor, upgrades.chainBardingArmor, upgrades.plateBardingArmor],
@@ -653,7 +718,7 @@ const civs = [
     ),
     new Civ(21, "Malay",
         "https://vignette.wikia.nocookie.net/ageofempires/images/c/c3/CivIcon-Malay.png/revision/latest?cb=20191107173334",
-        [units.cavalier, units.condottiero, units.eKarambit, units.halbardier, units.twoHandedSwordsman],
+        [units.cavalier, units.condottiero, units.eBattleElephant, units.eKarambit, units.halbardier, units.twoHandedSwordsman],
         [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace],
         [upgrades.scaleMailArmor, upgrades.chainMailArmor, upgrades.plateMailArmor],
         [upgrades.scaleBardingArmor],
@@ -669,7 +734,7 @@ const civs = [
     ),
     new Civ(23, "Mongols",
         "https://vignette.wikia.nocookie.net/ageofempires/images/1/10/CivIcon-Mongols.png/revision/latest?cb=20191107173335",
-        [units.cavalier, units.champion, units.condottiero, units.hussar],
+        [units.cavalier, units.champion, units.condottiero, units.eSteppeLancer, units.hussar, units.heavyCamel],
         [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace],
         [upgrades.scaleMailArmor, upgrades.chainMailArmor, upgrades.plateMailArmor],
         [upgrades.bloodlines, upgrades.scaleBardingArmor, upgrades.chainBardingArmor],
@@ -677,7 +742,7 @@ const civs = [
     ),
     new Civ(24, "Persians",
         "https://vignette.wikia.nocookie.net/ageofempires/images/a/ad/CivIcon-Persians.png/revision/latest?cb=20191107173335",
-        [units.condottiero, units.halbardier, units.hussar, units.paladin, units.twoHandedSwordsman],
+        [units.condottiero, units.halbardier, units.hussar, units.heavyCamel, units.paladin, units.twoHandedSwordsman],
         [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace],
         [upgrades.scaleMailArmor, upgrades.chainMailArmor, upgrades.plateMailArmor],
         [upgrades.bloodlines, upgrades.scaleBardingArmor, upgrades.chainBardingArmor, upgrades.plateBardingArmor],
@@ -693,7 +758,7 @@ const civs = [
     ),
     new Civ(26, "Saracens",
         "https://vignette.wikia.nocookie.net/ageofempires/images/5/59/CivIcon-Saracens.png/revision/latest?cb=20191107173336",
-        [units.champion, units.condottiero, units.hussar, units.knight],
+        [units.champion, units.condottiero, units.hussar, units.heavyCamel, units.knight],
         [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace],
         [upgrades.scaleMailArmor, upgrades.chainMailArmor, upgrades.plateMailArmor],
         [upgrades.bloodlines, upgrades.scaleBardingArmor, upgrades.chainBardingArmor, upgrades.plateBardingArmor],
@@ -717,7 +782,7 @@ const civs = [
     ),
     new Civ(29, "Tatars",
         "https://vignette.wikia.nocookie.net/ageofempires/images/f/f2/CivIcon-Tatars.png/revision/latest?cb=20191107173338",
-        [units.cavalier, units.condottiero, units.halbardier, units.hussar, units.twoHandedSwordsman],
+        [units.cavalier, units.condottiero, units.eSteppeLancer, units.halbardier, units.hussar, units.heavyCamel, units.twoHandedSwordsman],
         [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace],
         [upgrades.scaleMailArmor],
         [upgrades.bloodlines, upgrades.scaleBardingArmor, upgrades.chainBardingArmor, upgrades.plateBardingArmor],
@@ -733,7 +798,7 @@ const civs = [
     ),
     new Civ(31, "Turks",
         "https://vignette.wikia.nocookie.net/ageofempires/images/1/1c/CivIcon-Turks.png/revision/latest?cb=20191107173409",
-        [units.cavalier, units.champion, units.condottiero, units.hussar],
+        [units.cavalier, units.champion, units.condottiero, units.hussar, units.heavyCamel],
         [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace],
         [upgrades.scaleMailArmor, upgrades.chainMailArmor, upgrades.plateMailArmor],
         [upgrades.bloodlines, upgrades.scaleBardingArmor, upgrades.chainBardingArmor, upgrades.plateBardingArmor],
@@ -741,7 +806,7 @@ const civs = [
     ),
     new Civ(32, "Vietnamese",
         "https://vignette.wikia.nocookie.net/ageofempires/images/0/07/CivIcon-Vietnamese.png/revision/latest?cb=20191107173409",
-        [units.cavalier, units.champion, units.condottiero, units.halbardier],
+        [units.cavalier, units.champion, units.condottiero, units.eBattleElephant, units.halbardier],
         [upgrades.forging, upgrades.ironCasting],
         [upgrades.scaleMailArmor, upgrades.chainMailArmor, upgrades.plateMailArmor],
         [upgrades.bloodlines, upgrades.scaleBardingArmor, upgrades.chainBardingArmor, upgrades.plateBardingArmor],
