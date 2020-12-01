@@ -154,12 +154,18 @@ function civClicked(id: number) {
 
  function unitClicked(id: UnitId) {
     const unit = units[id] as Unit
-    const unitDescription = `${unit.name}
+    let unitDescription = `${unit.name}
     <br/>
     <img src="https://vignette.wikia.nocookie.net/ageofempires/images/5/5f/Aoe2de_food.png/revision/latest/scale-to-width-down/16?cb=20200417075725"></img>
-    ${unit.cost.food} 
-    <img src="https://vignette.wikia.nocookie.net/ageofempires/images/4/49/Aoe2de_gold.png/revision/latest/scale-to-width-down/16?cb=20200417080000"></img>
-    ${unit.cost.gold}`
+    ${unit.cost.food}`
+    if (unit.cost.gold > 0) {
+        unitDescription += ` <img src="https://vignette.wikia.nocookie.net/ageofempires/images/4/49/Aoe2de_gold.png/revision/latest/scale-to-width-down/16?cb=20200417080000"></img>
+        ${unit.cost.gold}`
+    }
+    if (unit.cost.wood > 0) {
+        unitDescription += ` <img src="https://vignette.wikia.nocookie.net/ageofempires/images/8/84/Aoe2de_wood.png/revision/latest/scale-to-width-down/16?cb=20200417075938"></img>
+        ${unit.cost.wood}`
+    }
 
     var targetTable: string
     var civ: Civ
@@ -304,22 +310,42 @@ function civClicked(id: number) {
         winner = null
     }
 
-    let winnerTime = winningReport.log[leftReport.log.length - 1]
-    let winnerHealthRemaining = winner.total.hp
-
-    // Find the winner's HP remaing when the fight ended
-    for (const log of losingReport.log) {
-        if (log.time > winnerTime.time) {
-            break
-        }
-        winnerHealthRemaining = log.hpLeft
-    }
-
+    // Result text
     if (winner != null) {
-        Utils.$("resultText").innerHTML = `${winner.civ.adjective} ${winner.unit.name} defeats ${loser.civ.adjective} ${loser.unit.name} in ${winningReport.log.length} hits with ${winnerHealthRemaining} health remaining`
+
+        let winnerTime = winningReport.log[winningReport.log.length - 1]
+        let winnerHealthRemaining = winner.total.hp
+
+        // Find the winner's HP remaing when the fight ended
+        for (const log of losingReport.log) {
+            if (log.time > winnerTime.time) {
+                break
+            }
+            winnerHealthRemaining = log.hpLeft
+        }
+
+        let healthPerc = ((winnerHealthRemaining / winner.total.hp) * 100).toFixed(2)
+        Utils.$("resultText").innerHTML = `${winner.civ.adjective} ${winner.unit.name} defeats ${loser.civ.adjective} ${loser.unit.name} in ${winningReport.log.length} hits with ${winnerHealthRemaining} (${healthPerc}%) hit points remaining`
     } else {
         Utils.$("resultText").innerHTML = "It's a draw"
     }
+
+    // Summary text
+    let l = Utils.$("leftSummaryText")
+    l.innerHTML = `${a.unit.name} deals ${leftReport.effectiveDamagerPerHit} damage to ${b.unit.name} per hit:`
+    l.innerHTML += `<br/>&nbsp;+ ${a.total.atk} standard damage`
+    if (leftReport.bonusDamage > 0) {
+        l.innerHTML += `<br/>&nbsp;+ ${leftReport.bonusDamage} bonus damage`
+    }
+    l.innerHTML += `<br/>&nbsp;- ${b.total.ma} melee armour`
+
+    let r = Utils.$("rightSummaryText")
+    r.innerHTML = `${b.unit.name} deals ${rightReport.effectiveDamagerPerHit} damage to ${a.unit.name} per hit:`
+    r.innerHTML += `<br/>&nbsp;+ ${b.total.atk} standard damage`
+    if (rightReport.bonusDamage > 0) {
+        r.innerHTML += `<br/>&nbsp;+ ${rightReport.bonusDamage} bonus damage`
+    }
+    r.innerHTML += `<br/>&nbsp;- ${a.total.ma} melee armour`
  }
 
  function createBattleReport(attacker: CivUnit, defender: CivUnit) {
@@ -360,7 +386,7 @@ function civClicked(id: number) {
         entries.push(entry)
     }
 
-    return new BattleReport(bonusDamage, entries)
+    return new BattleReport(effectiveDamage, bonusDamage, entries)
  }
 
  function renderBattleReport(attacker: CivUnit, defender: CivUnit, report: BattleReport, tableId: string) {
@@ -385,10 +411,12 @@ function civClicked(id: number) {
  }
 
 class BattleReport {
+    effectiveDamagerPerHit: number
     bonusDamage: number
     log: BattleLogEntry[]
 
-    constructor(bonusDamage: number, log: BattleLogEntry[]) {
+    constructor(effectiveDamagerPerHit: number, bonusDamage: number, log: BattleLogEntry[]) {
+        this.effectiveDamagerPerHit = effectiveDamagerPerHit
         this.bonusDamage = bonusDamage
         this.log = log
     }

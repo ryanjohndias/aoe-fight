@@ -126,7 +126,13 @@ function civClicked(id) {
 }
 function unitClicked(id) {
     var unit = units[id];
-    var unitDescription = unit.name + "\n    <br/>\n    <img src=\"https://vignette.wikia.nocookie.net/ageofempires/images/5/5f/Aoe2de_food.png/revision/latest/scale-to-width-down/16?cb=20200417075725\"></img>\n    " + unit.cost.food + " \n    <img src=\"https://vignette.wikia.nocookie.net/ageofempires/images/4/49/Aoe2de_gold.png/revision/latest/scale-to-width-down/16?cb=20200417080000\"></img>\n    " + unit.cost.gold;
+    var unitDescription = unit.name + "\n    <br/>\n    <img src=\"https://vignette.wikia.nocookie.net/ageofempires/images/5/5f/Aoe2de_food.png/revision/latest/scale-to-width-down/16?cb=20200417075725\"></img>\n    " + unit.cost.food;
+    if (unit.cost.gold > 0) {
+        unitDescription += " <img src=\"https://vignette.wikia.nocookie.net/ageofempires/images/4/49/Aoe2de_gold.png/revision/latest/scale-to-width-down/16?cb=20200417080000\"></img>\n        " + unit.cost.gold;
+    }
+    if (unit.cost.wood > 0) {
+        unitDescription += " <img src=\"https://vignette.wikia.nocookie.net/ageofempires/images/8/84/Aoe2de_wood.png/revision/latest/scale-to-width-down/16?cb=20200417075938\"></img>\n        " + unit.cost.wood;
+    }
     var targetTable;
     var civ;
     if (state.selectedSide == Side.left) {
@@ -247,22 +253,39 @@ function showBattle(a, b) {
     else {
         winner = null;
     }
-    var winnerTime = winningReport.log[leftReport.log.length - 1];
-    var winnerHealthRemaining = winner.total.hp;
-    // Find the winner's HP remaing when the fight ended
-    for (var _i = 0, _a = losingReport.log; _i < _a.length; _i++) {
-        var log = _a[_i];
-        if (log.time > winnerTime.time) {
-            break;
-        }
-        winnerHealthRemaining = log.hpLeft;
-    }
+    // Result text
     if (winner != null) {
-        Utils.$("resultText").innerHTML = winner.civ.adjective + " " + winner.unit.name + " defeats " + loser.civ.adjective + " " + loser.unit.name + " in " + winningReport.log.length + " hits with " + winnerHealthRemaining + " health remaining";
+        var winnerTime = winningReport.log[winningReport.log.length - 1];
+        var winnerHealthRemaining = winner.total.hp;
+        // Find the winner's HP remaing when the fight ended
+        for (var _i = 0, _a = losingReport.log; _i < _a.length; _i++) {
+            var log = _a[_i];
+            if (log.time > winnerTime.time) {
+                break;
+            }
+            winnerHealthRemaining = log.hpLeft;
+        }
+        var healthPerc = ((winnerHealthRemaining / winner.total.hp) * 100).toFixed(2);
+        Utils.$("resultText").innerHTML = winner.civ.adjective + " " + winner.unit.name + " defeats " + loser.civ.adjective + " " + loser.unit.name + " in " + winningReport.log.length + " hits with " + winnerHealthRemaining + " (" + healthPerc + "%) hit points remaining";
     }
     else {
         Utils.$("resultText").innerHTML = "It's a draw";
     }
+    // Summary text
+    var l = Utils.$("leftSummaryText");
+    l.innerHTML = a.unit.name + " deals " + leftReport.effectiveDamagerPerHit + " damage to " + b.unit.name + " per hit:";
+    l.innerHTML += "<br/>&nbsp;+ " + a.total.atk + " standard damage";
+    if (leftReport.bonusDamage > 0) {
+        l.innerHTML += "<br/>&nbsp;+ " + leftReport.bonusDamage + " bonus damage";
+    }
+    l.innerHTML += "<br/>&nbsp;- " + b.total.ma + " melee armour";
+    var r = Utils.$("rightSummaryText");
+    r.innerHTML = b.unit.name + " deals " + rightReport.effectiveDamagerPerHit + " damage to " + a.unit.name + " per hit:";
+    r.innerHTML += "<br/>&nbsp;+ " + b.total.atk + " standard damage";
+    if (rightReport.bonusDamage > 0) {
+        r.innerHTML += "<br/>&nbsp;+ " + rightReport.bonusDamage + " bonus damage";
+    }
+    r.innerHTML += "<br/>&nbsp;- " + a.total.ma + " melee armour";
 }
 function createBattleReport(attacker, defender) {
     // TODO: Rof and AD might be at game speed 1, so would have to cater for 1.7
@@ -288,7 +311,7 @@ function createBattleReport(attacker, defender) {
         var entry = new BattleLogEntry(i + 1, attacker.unit.ad + (i * attacker.total.rof), effectiveDamage, totDamage, defender.total.hp - totDamage);
         entries.push(entry);
     }
-    return new BattleReport(bonusDamage, entries);
+    return new BattleReport(effectiveDamage, bonusDamage, entries);
 }
 function renderBattleReport(attacker, defender, report, tableId) {
     var log = Utils.$(tableId);
@@ -308,7 +331,8 @@ function renderBattleReport(attacker, defender, report, tableId) {
     }
 }
 var BattleReport = /** @class */ (function () {
-    function BattleReport(bonusDamage, log) {
+    function BattleReport(effectiveDamagerPerHit, bonusDamage, log) {
+        this.effectiveDamagerPerHit = effectiveDamagerPerHit;
         this.bonusDamage = bonusDamage;
         this.log = log;
     }
