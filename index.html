@@ -12,35 +12,40 @@
                 <ul>
                     <li id="button_random">Random Comparison</li>
                     <li id="button_share">Copy link</li>
-                    <!-- <li id="debug_0">Aztec Condotierro vs British Champion</li>
-                    <li id="debug_1">Burmese Halbardier vs Celts Elite Woad Raider</li>
-                    <li id="debug_2">Italian Condotierro vs Viking Champion</li> -->
                 </ul>
             </div>
 
-            <div class="content leftContent bordered">
-                <div style="overflow: auto;">
-                    <img id="leftCivImage" style="float:left" class="mainImage"></img>
-                    <div style="float:left; text-align: center; width:130px">
-                        <p id="leftCivName"></p>
-                        <p id="leftUnitName"></p>
+            <div style="overflow: auto;">
+                <div class="content leftContent bordered">
+                    <div style="overflow: auto;">
+                        <img id="leftCivImage" style="float:left" class="mainImage"></img>
+                        <div style="float:left; text-align: center; width:130px">
+                            <p id="leftCivName"></p>
+                            <p id="leftUnitName"></p>
+                        </div>
+                        <img id="leftUnitImage" style="float:right" class="mainImage"></img>
                     </div>
-                    <img id="leftUnitImage" style="float:right" class="mainImage"></img>
+                    <table id="leftStats" class="statsTable"></table>
                 </div>
-                <table id="leftStats" class="statsTable"></table>
-            </div>
-            <div class="content rightContent bordered">
-                <div style="overflow: auto;">
-                    <img id="rightCivImage" style="float:left" class="mainImage"></img>
-                    <div style="float:left; text-align: center; width:130px">
-                        <p id="rightCivName"></p>
-                        <p id="rightUnitName"></p>
+                <div class="content rightContent bordered">
+                    <div style="overflow: auto;">
+                        <img id="rightCivImage" style="float:left" class="mainImage"></img>
+                        <div style="float:left; text-align: center; width:130px">
+                            <p id="rightCivName"></p>
+                            <p id="rightUnitName"></p>
+                        </div>
+                        <img id="rightUnitImage" style="float:right" class="mainImage"></img>
                     </div>
-                    <img id="rightUnitImage" style="float:right" class="mainImage"></img>
+                    <table id="rightStats" class="statsTable"></table>
                 </div>
-                <table id="rightStats" class="statsTable"></table>
             </div>
 
+            <h2>Result</h2>
+            <div id="resultContainer" class="bordered">
+                <p id="resultText">test</p>
+            </div>
+
+            <h2>Summary</h2>
 
             <div id="battleReport" class="bordered">
                 <p id="battleSummary">test</p>

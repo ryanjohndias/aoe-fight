@@ -227,22 +227,41 @@ function showBattle(a, b) {
     renderBattleReport(a, b, leftReport, "battleLogLeft");
     renderBattleReport(b, a, rightReport, "battleLogRight");
     var winner;
+    var loser;
+    var winningReport;
+    var losingReport;
     var lastLeft = leftReport.log[leftReport.log.length - 1];
     var lastRight = rightReport.log[rightReport.log.length - 1];
     if (lastLeft.time < lastRight.time) {
         winner = a;
+        loser = b;
+        winningReport = leftReport;
+        losingReport = rightReport;
     }
     else if (lastLeft.time > lastRight.time) {
         winner = b;
+        loser = a;
+        winningReport = rightReport;
+        losingReport = leftReport;
     }
     else {
         winner = null;
     }
+    var winnerTime = winningReport.log[leftReport.log.length - 1];
+    var winnerHealthRemaining = winner.total.hp;
+    // Find the winner's HP remaing when the fight ended
+    for (var _i = 0, _a = losingReport.log; _i < _a.length; _i++) {
+        var log = _a[_i];
+        if (log.time > winnerTime.time) {
+            break;
+        }
+        winnerHealthRemaining = log.hpLeft;
+    }
     if (winner != null) {
-        console.log("Winner is " + winner.unit.name + " (" + (winner == a ? "left" : "right") + ")");
+        Utils.$("resultText").innerHTML = winner.civ.adjective + " " + winner.unit.name + " defeats " + loser.civ.adjective + " " + loser.unit.name + " in " + winningReport.log.length + " hits with " + winnerHealthRemaining + " health remaining";
     }
     else {
-        console.log("It's a draw");
+        Utils.$("resultText").innerHTML = "It's a draw";
     }
 }
 function createBattleReport(attacker, defender) {
