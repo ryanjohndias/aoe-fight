@@ -42,10 +42,18 @@ function initialise() {
     modalOverlay = Utils.$("modalOverlay");
     modalContent = Utils.$("modalContent");
     Utils.$("modalClose").onclick = hideOverlay;
-    Utils.$("debug_0").onclick = function () { return populateWithOption(0); };
-    Utils.$("debug_1").onclick = function () { return populateWithOption(1); };
-    Utils.$("debug_2").onclick = function () { return populateWithOption(2); };
-    Utils.$("debug_random").onclick = function () { return populateWithOption(null); };
+    Utils.$("button_random").onclick = function () { return populateWithOption(null); };
+    Utils.$("button_share").onclick = function () { return copyLink(); };
+    if (window.location.hash != null) {
+        var code = window.location.hash.replace("#", "");
+        if (code.length == 8) {
+            loadCode(code);
+        }
+    }
+}
+function loadCode(codeString) {
+    var code = Code.readCode(codeString);
+    populate(code.leftCivId, getUnit(code.leftUnitId).id, code.rightCivId, getUnit(code.rightUnitId).id);
 }
 function showOverlay() {
     modalOverlay.classList.remove("modalHidden");
@@ -189,6 +197,17 @@ function populateWithOption(option) {
             break;
     }
 }
+function copyLink() {
+    if (state.left.civ == null ||
+        state.left.unit == null ||
+        state.right.civ == null ||
+        state.right.unit == null) {
+        return;
+    }
+    var code = Code.createCode(state.left.civ.id, state.left.unit.numericId, state.right.civ.id, state.right.unit.numericId);
+    var link = window.location.origin + "/#" + code;
+    Utils.copyToClipboard(link);
+}
 function populate(civA, unitA, civB, unitB) {
     state.left.civ = null;
     state.right.civ = null;
@@ -202,7 +221,6 @@ function populate(civA, unitA, civB, unitB) {
     unitClicked(unitB);
 }
 function showBattle(a, b) {
-    Utils.$("code").textContent = Code.createCode(a.civ.id, a.unit.id, b.civ.id, b.unit.id);
     var leftReport = createBattleReport(a, b);
     var rightReport = createBattleReport(b, a);
     renderBattleReport(a, b, leftReport, "battleLogLeft");
@@ -288,14 +306,13 @@ var BattleLogEntry = /** @class */ (function () {
 }());
 var Code = /** @class */ (function () {
     function Code(code) {
-        var parts = code.split("-");
-        this.leftCivId = parseInt(parts[0]);
-        this.leftUnitId = parts[1];
-        this.rightCivId = parseInt(parts[2]);
-        this.rightUnitId = parts[3];
+        this.leftCivId = parseInt(code[0] + code[1]);
+        this.leftUnitId = parseInt(code[2] + code[3]);
+        this.rightCivId = parseInt(code[4] + code[5]);
+        this.rightUnitId = parseInt(code[6] + code[7]);
     }
     Code.createCode = function (leftCivId, leftUnitId, rightCivId, rightUnitId) {
-        return leftCivId + "-" + leftUnitId + "-" + rightCivId + "-" + rightUnitId;
+        return "" + leftCivId + leftUnitId + rightCivId + rightUnitId;
     };
     Code.readCode = function (code) {
         return new Code(code);
@@ -331,6 +348,17 @@ var Utils = {
     },
     $: function (element) {
         return document.getElementById(element);
+    },
+    copyToClipboard: function (str) {
+        var el = document.createElement('textarea');
+        el.value = str;
+        el.setAttribute('readonly', '');
+        el.style.position = 'absolute';
+        el.style.left = '-9999px';
+        document.body.appendChild(el);
+        el.select();
+        document.execCommand('copy');
+        document.body.removeChild(el);
     }
 };
 var TableUtils = {

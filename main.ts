@@ -51,10 +51,20 @@ function initialise() {
     modalContent = Utils.$("modalContent") as HTMLDivElement
 
     Utils.$("modalClose").onclick = hideOverlay
-    Utils.$("debug_0").onclick = () => populateWithOption(0)
-    Utils.$("debug_1").onclick = () => populateWithOption(1)
-    Utils.$("debug_2").onclick = () => populateWithOption(2)
-    Utils.$("debug_random").onclick = () => populateWithOption(null)
+    Utils.$("button_random").onclick = () => populateWithOption(null)
+    Utils.$("button_share").onclick = () => copyLink()
+
+    if (window.location.hash != null) {
+        const code = window.location.hash.replace("#", "");
+        if (code.length == 8) {
+            loadCode(code)
+        }
+    }
+}
+
+function loadCode(codeString: string) {
+    let code = Code.readCode(codeString)
+    populate(code.leftCivId, getUnit(code.leftUnitId).id, code.rightCivId, getUnit(code.rightUnitId).id)
 }
 
 function showOverlay() {
@@ -229,6 +239,24 @@ function civClicked(id: number) {
     }
  }
 
+ function copyLink() {
+
+    if (state.left.civ == null ||
+        state.left.unit == null ||
+        state.right.civ == null ||
+        state.right.unit == null) {
+        return
+    }
+
+    let code = Code.createCode(state.left.civ.id,
+        state.left.unit.numericId,
+        state.right.civ.id,
+        state.right.unit.numericId)
+
+    let link = `${window.location.origin}/#${code}`;
+    Utils.copyToClipboard(link)
+ }
+
  function populate(civA: number, unitA: UnitId, civB: number, unitB: UnitId) {
     state.left.civ = null
     state.right.civ = null
@@ -243,8 +271,6 @@ function civClicked(id: number) {
  }
 
  function showBattle(a: CivUnit, b: CivUnit) {
-
-    Utils.$("code").textContent = Code.createCode(a.civ.id, a.unit.id, b.civ.id, b.unit.id)
 
     let leftReport = createBattleReport(a, b)
     let rightReport = createBattleReport(b, a)
@@ -360,12 +386,12 @@ class BattleReport {
 
  class Code {
     leftCivId: number
-    leftUnitId: string
+    leftUnitId: number
     rightCivId: number
-    rightUnitId: string
+    rightUnitId: number
 
-    public static createCode(leftCivId: number, leftUnitId: string, rightCivId: number, rightUnitId: string) {
-        return `${leftCivId}-${leftUnitId}-${rightCivId}-${rightUnitId}`;
+    public static createCode(leftCivId: number, leftUnitId: number, rightCivId: number, rightUnitId: number) {
+        return `${leftCivId}${leftUnitId}${rightCivId}${rightUnitId}`;
     }
 
     public static readCode(code: string) {
@@ -373,11 +399,10 @@ class BattleReport {
     }
 
     constructor(code: string) {
-        let parts = code.split("-")
-        this.leftCivId = parseInt(parts[0])
-        this.leftUnitId = parts[1]
-        this.rightCivId = parseInt(parts[2])
-        this.rightUnitId = parts[3]
+        this.leftCivId = parseInt(code[0] + code[1])
+        this.leftUnitId = parseInt(code[2] + code[3])
+        this.rightCivId = parseInt(code[4] + code[5])
+        this.rightUnitId = parseInt(code[6] + code[7])
     }
  }
 
@@ -417,6 +442,17 @@ class BattleReport {
     },
     $: function (element: string) {
         return document.getElementById(element)
+    },
+    copyToClipboard: function(str) {
+        const el = document.createElement('textarea');
+        el.value = str;
+        el.setAttribute('readonly', '');
+        el.style.position = 'absolute';
+        el.style.left = '-9999px';
+        document.body.appendChild(el);
+        el.select();
+        document.execCommand('copy');
+        document.body.removeChild(el);
     }
 }
 
