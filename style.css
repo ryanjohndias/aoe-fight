@@ -13,14 +13,17 @@ table {
     margin-right: auto;
 }
 
-.content {
-    width: 49%;
+.bordered {
     border-radius: 10px;
     border: 1px solid lightgray;
     padding: 10px;
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;  
+}
+
+.content {
+    width: 49%;
 }
 
 .leftContent {

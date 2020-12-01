@@ -126,20 +126,21 @@ function civClicked(id) {
 }
 function unitClicked(id) {
     var unit = units[id];
+    var unitDescription = unit.name + "\n    <br/>\n    <img src=\"https://vignette.wikia.nocookie.net/ageofempires/images/5/5f/Aoe2de_food.png/revision/latest/scale-to-width-down/16?cb=20200417075725\"></img>\n    " + unit.cost.food + " \n    <img src=\"https://vignette.wikia.nocookie.net/ageofempires/images/4/49/Aoe2de_gold.png/revision/latest/scale-to-width-down/16?cb=20200417080000\"></img>\n    " + unit.cost.gold;
     var targetTable;
     var civ;
     if (state.selectedSide == Side.left) {
         state.left.unit = unit;
         leftUnitImage.src = unit.img;
         targetTable = "leftStats";
-        Utils.$("leftUnitName").textContent = unit.name;
+        Utils.$("leftUnitName").innerHTML = unitDescription;
         civ = state.left.civ;
     }
     else {
         state.right.unit = unit;
         rightUnitImage.src = unit.img;
         targetTable = "rightStats";
-        Utils.$("rightUnitName").textContent = unit.name;
+        Utils.$("rightUnitName").innerHTML = unitDescription;
         civ = state.right.civ;
     }
     hideOverlay();

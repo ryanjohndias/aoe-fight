@@ -18,8 +18,7 @@
                 </ul>
             </div>
 
-            <div class="content leftContent">
-
+            <div class="content leftContent bordered">
                 <div style="overflow: auto;">
                     <img id="leftCivImage" style="float:left" class="mainImage"></img>
                     <div style="float:left; text-align: center; width:130px">
@@ -28,16 +27,9 @@
                     </div>
                     <img id="leftUnitImage" style="float:right" class="mainImage"></img>
                 </div>
-
-                <table id="leftStats" class="statsTable">
-
-                </table>
-                <table id="battleLogLeft" class="logTable">
-
-                </table>
+                <table id="leftStats" class="statsTable"></table>
             </div>
-            <div class="content rightContent">
-
+            <div class="content rightContent bordered">
                 <div style="overflow: auto;">
                     <img id="rightCivImage" style="float:left" class="mainImage"></img>
                     <div style="float:left; text-align: center; width:130px">
@@ -46,16 +38,21 @@
                     </div>
                     <img id="rightUnitImage" style="float:right" class="mainImage"></img>
                 </div>
-
-                <table id="rightStats" class="statsTable">
-                    
-                </table>
-                <table id="battleLogRight" class="logTable">
-
-                </table>
+                <table id="rightStats" class="statsTable"></table>
             </div>
-            <div id="battleReport">
-                <p id="battleSummary"></p>
+
+
+            <div id="battleReport" class="bordered">
+                <p id="battleSummary">test</p>
+            </div>
+
+            <h2>Hit Log</h2>
+
+            <div class="content leftContent bordered">
+                <table id="battleLogLeft" class="logTable"></table>
+            </div>
+            <div class="content rightContent bordered">
+                <table id="battleLogRight" class="logTable"></table>
             </div>
         </div>
 
