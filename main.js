@@ -12,6 +12,7 @@ var leftStatsTable;
 var rightStatsTable;
 var modalOverlay;
 var modalContent;
+var service = new Service();
 var Side;
 (function (Side) {
     Side[Side["left"] = 0] = "left";
@@ -42,7 +43,7 @@ function initialise() {
     modalOverlay = Utils.$("modalOverlay");
     modalContent = Utils.$("modalContent");
     Utils.$("modalClose").onclick = hideOverlay;
-    Utils.$("button_random").onclick = function () { return populateWithOption(null); };
+    Utils.$("button_random").onclick = function () { return randomMatchup(); };
     Utils.$("button_share").onclick = function () { return copyLink(); };
     if (window.location.hash != null) {
         var code = window.location.hash.replace("#", "");
@@ -102,16 +103,8 @@ function rightUnitImageClicked() {
     });
     showOverlay();
 }
-function getCiv(id) {
-    for (var i = 0; i < civs.length; i++) {
-        var civ = civs[i];
-        if (civ.id == id) {
-            return civ;
-        }
-    }
-}
 function civClicked(id) {
-    var civ = getCiv(id);
+    var civ = service.getCiv(id);
     if (state.selectedSide == Side.left) {
         state.left.civ = civ;
         leftCivImage.src = civ.image;
@@ -186,23 +179,10 @@ function statsHover(row, on) {
     leftStatsTable.rows[row].style.backgroundColor = on ? "#D3D3D3" : "#FFFFFF";
     rightStatsTable.rows[row].style.backgroundColor = on ? "#D3D3D3" : "#FFFFFF";
 }
-function populateWithOption(option) {
-    switch (option) {
-        case 0:
-            populate(0, UnitId.condottiero, 2, UnitId.champion);
-            break;
-        case 1:
-            populate(4, UnitId.halbardier, 5, UnitId.eWoadRaider);
-            break;
-        case 2:
-            populate(14, UnitId.condottiero, 33, UnitId.champion);
-            break;
-        case null:
-            var civ1 = civs[Math.floor(Math.random() * civs.length)];
-            var civ2 = civs[Math.floor(Math.random() * civs.length)];
-            populate(civ1.id, civ1.units[Math.floor(Math.random() * civ1.units.length)].id, civ2.id, civ2.units[Math.floor(Math.random() * civ2.units.length)].id);
-            break;
-    }
+function randomMatchup() {
+    var civ1 = civs[Math.floor(Math.random() * civs.length)];
+    var civ2 = civs[Math.floor(Math.random() * civs.length)];
+    populate(civ1.id, civ1.units[Math.floor(Math.random() * civ1.units.length)].id, civ2.id, civ2.units[Math.floor(Math.random() * civ2.units.length)].id);
 }
 function copyLink() {
     if (state.left.civ == null ||
@@ -291,12 +271,10 @@ function createBattleReport(attacker, defender) {
     // TODO: Rof and AD might be at game speed 1, so would have to cater for 1.7
     // Bonus damage is currently non-accumulative
     var bonusDamage = 0;
-    var bonuses = attacker.unit.atkBonuses;
-    // TODO: Need to compare all bonuses vs all defender classes
-    for (var _i = 0, bonuses_1 = bonuses; _i < bonuses_1.length; _i++) {
-        var bonus = bonuses_1[_i];
-        for (var _a = 0, _b = defender.unit.armourClasses; _a < _b.length; _a++) {
-            var armourClass = _b[_a];
+    for (var _i = 0, _a = attacker.unit.atkBonuses; _i < _a.length; _i++) {
+        var bonus = _a[_i];
+        for (var _b = 0, _c = defender.unit.armourClasses; _b < _c.length; _b++) {
+            var armourClass = _c[_b];
             if (bonus.armourClass == armourClass) {
                 bonusDamage += bonus.value;
             }

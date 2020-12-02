@@ -15,6 +15,8 @@ var rightStatsTable: HTMLTableElement
 var modalOverlay: HTMLDivElement
 var modalContent: HTMLDivElement
 
+var service = new Service()
+
 enum Side {
     left,
     right
@@ -51,7 +53,7 @@ function initialise() {
     modalContent = Utils.$("modalContent") as HTMLDivElement
 
     Utils.$("modalClose").onclick = hideOverlay
-    Utils.$("button_random").onclick = () => populateWithOption(null)
+    Utils.$("button_random").onclick = () => randomMatchup()
     Utils.$("button_share").onclick = () => copyLink()
 
     if (window.location.hash != null) {
@@ -127,17 +129,8 @@ function rightUnitImageClicked() {
     showOverlay();
 }
 
-function getCiv(id: number) {
-    for (let i = 0; i < civs.length; i++) {
-        const civ = civs[i]
-        if (civ.id == id) {
-            return civ
-        }
-    }
-}
-
 function civClicked(id: number) {
-    const civ = getCiv(id)
+    const civ = service.getCiv(id)
 
     if (state.selectedSide == Side.left) {
         state.left.civ = civ
@@ -226,29 +219,15 @@ function civClicked(id: number) {
     rightStatsTable.rows[row].style.backgroundColor = on ? "#D3D3D3" : "#FFFFFF";
  }
 
- function populateWithOption(option: number) {
-
-    switch (option) {
-        case 0:
-            populate(0, UnitId.condottiero, 2, UnitId.champion)
-            break
-        case 1:
-            populate(4, UnitId.halbardier, 5, UnitId.eWoadRaider)
-            break
-        case 2:
-            populate(14, UnitId.condottiero, 33, UnitId.champion)
-            break
-        case null:
-            let civ1 = civs[Math.floor(Math.random() * civs.length)]
-            let civ2 = civs[Math.floor(Math.random() * civs.length)]
-            populate(
-                civ1.id,
-                civ1.units[Math.floor(Math.random() * civ1.units.length)].id,
-                civ2.id,
-                civ2.units[Math.floor(Math.random() * civ2.units.length)].id
-            )
-            break
-    }
+ function randomMatchup() {
+    let civ1 = civs[Math.floor(Math.random() * civs.length)]
+    let civ2 = civs[Math.floor(Math.random() * civs.length)]
+    populate(
+        civ1.id,
+        civ1.units[Math.floor(Math.random() * civ1.units.length)].id,
+        civ2.id,
+        civ2.units[Math.floor(Math.random() * civ2.units.length)].id
+    )
  }
 
  function copyLink() {
@@ -354,10 +333,8 @@ function civClicked(id: number) {
 
     // Bonus damage is currently non-accumulative
     let bonusDamage = 0
-    const bonuses = attacker.unit.atkBonuses
 
-    // TODO: Need to compare all bonuses vs all defender classes
-    for (const bonus of bonuses) {
+    for (const bonus of attacker.unit.atkBonuses) {
         for (const armourClass of defender.unit.armourClasses) {
             if (bonus.armourClass == armourClass) {
                 bonusDamage += bonus.value

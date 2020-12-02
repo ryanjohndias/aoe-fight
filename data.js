@@ -81,6 +81,8 @@ var UnitId;
     UnitId["eWarElephant"] = "eWarElephant";
     UnitId["eCataphract"] = "eCataphract";
     UnitId["eBerserk"] = "eBerserk";
+    UnitId["eMagyarHuszar"] = "eMagyarHuszar";
+    UnitId["eKamayuk"] = "eKamayuk";
 })(UnitId || (UnitId = {}));
 var AttackBonus = /** @class */ (function () {
     function AttackBonus(armourClass, value) {
@@ -298,6 +300,19 @@ var units = {
     ], [
         ArmourClass.infantry,
         ArmourClass.uniqueUnit
+    ]),
+    eMagyarHuszar: new Unit(UnitId.eMagyarHuszar, 40, "Elite Magyar Huszar", UnitType.cavalry, "https://vignette.wikia.nocookie.net/ageofempires/images/5/5b/MagyarHuszarIcon-DE.png/revision/latest/scale-to-width-down/256?cb=20191230140432", new Cost(80, 10, 0, 0), 85, 10, 1.8, 0.68, 0, 2, [], [
+        ArmourClass.cavalry,
+        ArmourClass.uniqueUnit
+    ]),
+    eKamayuk: new Unit(UnitId.eKamayuk, 41, "Elite Kamayuk", UnitType.infantry, "https://vignette.wikia.nocookie.net/ageofempires/images/8/85/KamayukIcon-DE.png/revision/latest/scale-to-width-down/256?cb=20191230141856", new Cost(60, 30, 0, 0), 80, 8, 2.0, 0.5, 1, 0, [
+        new AttackBonus(ArmourClass.warElephant, 20),
+        new AttackBonus(ArmourClass.cavalry, 12),
+        new AttackBonus(ArmourClass.camel, 10),
+        new AttackBonus(ArmourClass.mameluke, 1)
+    ], [
+        ArmourClass.infantry,
+        ArmourClass.uniqueUnit
     ])
 };
 var Civ = /** @class */ (function () {
@@ -429,7 +444,7 @@ var civs = [
     new Civ(20, "Franks", "Frank", "https://vignette.wikia.nocookie.net/ageofempires/images/1/1b/CivIcon-Franks.png/revision/latest?cb=2019110717323", [units.champion, units.condottiero, units.halbardier, units.paladin], [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace], [upgrades.scaleMailArmor, upgrades.chainMailArmor, upgrades.plateMailArmor], [upgrades.scaleBardingArmor, upgrades.chainBardingArmor, upgrades.plateBardingArmor], { infantry: [] }),
     new Civ(21, "Goths", "Goth", "https://vignette.wikia.nocookie.net/ageofempires/images/2/24/CivIcon-Goths.png/revision/latest?cb=20191107173238", [units.cavalier, units.champion, units.condottiero, units.eliteHuskarl, units.halbardier, units.hussar], [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace], [upgrades.scaleMailArmor, upgrades.chainMailArmor], [upgrades.bloodlines, upgrades.scaleBardingArmor, upgrades.chainBardingArmor], { infantry: [] }),
     new Civ(22, "Huns", "Hun", "https://vignette.wikia.nocookie.net/ageofempires/images/1/17/CivIcon-Huns.png/revision/latest?cb=20191107173238", [units.condottiero, units.halbardier, units.hussar, units.paladin, units.twoHandedSwordsman], [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace], [upgrades.scaleMailArmor, upgrades.chainMailArmor], [upgrades.bloodlines, upgrades.scaleBardingArmor, upgrades.chainBardingArmor, upgrades.plateBardingArmor], { infantry: [] }),
-    new Civ(23, "Incas", "Incan", "https://vignette.wikia.nocookie.net/ageofempires/images/5/5e/CivIcon-Incas.png/revision/latest?cb=20191107173239", [units.champion, units.condottiero, units.eliteEagleWarrior, units.halbardier, units.xolotl], [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace], [upgrades.scaleMailArmor, upgrades.chainMailArmor, upgrades.plateMailArmor], [], { infantry: [] }),
+    new Civ(23, "Incas", "Incan", "https://vignette.wikia.nocookie.net/ageofempires/images/5/5e/CivIcon-Incas.png/revision/latest?cb=20191107173239", [units.champion, units.condottiero, units.eliteEagleWarrior, units.eKamayuk, units.halbardier, units.xolotl], [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace], [upgrades.scaleMailArmor, upgrades.chainMailArmor, upgrades.plateMailArmor], [], { infantry: [] }),
     new Civ(24, "Indians", "Indian", "https://vignette.wikia.nocookie.net/ageofempires/images/8/8b/CivIcon-Indians.png/revision/latest?cb=20191107173239", [units.champion, units.condottiero, units.halbardier, units.hussar, units.imperialCamel, units.knight], [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace], [upgrades.scaleMailArmor, upgrades.chainMailArmor], [upgrades.bloodlines, upgrades.scaleBardingArmor, upgrades.chainBardingArmor], { infantry: [] }),
     new Civ(25, "Italians", "Italian", "https://vignette.wikia.nocookie.net/ageofempires/images/e/e1/CivIcon-Italians.png/revision/latest?cb=20191116050557", [units.cavalier, units.champion, units.condottiero, units.hussar], [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace], [upgrades.scaleMailArmor, upgrades.chainMailArmor, upgrades.plateMailArmor], [upgrades.bloodlines, upgrades.scaleBardingArmor, upgrades.chainBardingArmor, upgrades.plateBardingArmor], {
         infantry: [],
@@ -445,7 +460,7 @@ var civs = [
     new Civ(27, "Khmer", "Khmer", "https://vignette.wikia.nocookie.net/ageofempires/images/e/ec/CivIcon-Khmer.png/revision/latest?cb=20191107173240", [units.cavalier, units.condottiero, units.eBattleElephant, units.halbardier, units.hussar, units.twoHandedSwordsman], [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace], [upgrades.scaleMailArmor, upgrades.chainMailArmor], [upgrades.bloodlines, upgrades.scaleBardingArmor, upgrades.chainBardingArmor, upgrades.plateBardingArmor], { infantry: [] }),
     new Civ(28, "Koreans", "Korean", "https://vignette.wikia.nocookie.net/ageofempires/images/7/73/CivIcon-Koreans.png/revision/latest?cb=20191107173241", [units.cavalier, units.champion, units.condottiero, units.halbardier, units.hussar], [upgrades.forging, upgrades.ironCasting], [upgrades.scaleMailArmor, upgrades.chainMailArmor, upgrades.plateMailArmor], [upgrades.scaleBardingArmor, upgrades.chainBardingArmor], { infantry: [] }),
     new Civ(29, "Lithuanians", "Lithuanian", "https://vignette.wikia.nocookie.net/ageofempires/images/0/0d/CivIcon-Lithuanians.png/revision/latest?cb=20191107173241", [units.champion, units.condottiero, units.eLeitis, units.halbardier, units.hussar, units.paladin], [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace], [upgrades.scaleMailArmor, upgrades.chainMailArmor], [upgrades.bloodlines, upgrades.scaleBardingArmor, upgrades.chainBardingArmor, upgrades.plateBardingArmor], { infantry: [] }),
-    new Civ(30, "Magyars", "Magyar", "https://vignette.wikia.nocookie.net/ageofempires/images/6/68/CivIcon-Magyars.png/revision/latest?cb=20191107173242", [units.champion, units.condottiero, units.halbardier, units.hussar, units.paladin], [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace], [upgrades.scaleMailArmor, upgrades.chainMailArmor], [upgrades.bloodlines, upgrades.scaleBardingArmor, upgrades.chainBardingArmor, upgrades.plateBardingArmor], { infantry: [] }),
+    new Civ(30, "Magyars", "Magyar", "https://vignette.wikia.nocookie.net/ageofempires/images/6/68/CivIcon-Magyars.png/revision/latest?cb=20191107173242", [units.champion, units.condottiero, units.eMagyarHuszar, units.halbardier, units.hussar, units.paladin], [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace], [upgrades.scaleMailArmor, upgrades.chainMailArmor], [upgrades.bloodlines, upgrades.scaleBardingArmor, upgrades.chainBardingArmor, upgrades.plateBardingArmor], { infantry: [] }),
     new Civ(31, "Malians", "Malian", "https://vignette.wikia.nocookie.net/ageofempires/images/8/80/CivIcon-Malians.png/revision/latest?cb=20191107173334", [units.cavalier, units.champion, units.condottiero, units.heavyCamel], [upgrades.forging, upgrades.ironCasting], [upgrades.scaleMailArmor, upgrades.chainMailArmor, upgrades.plateMailArmor], [upgrades.bloodlines, upgrades.scaleBardingArmor, upgrades.chainBardingArmor, upgrades.plateBardingArmor], {
         infantry: [
             { name: "Civ bonus", atk: 0, rof: 0, hp: 0, ma: 0, pa: 3 }
@@ -469,4 +484,18 @@ var civs = [
         ]
     })
 ];
+var Service = /** @class */ (function () {
+    function Service() {
+    }
+    Service.prototype.getCiv = function (id) {
+        for (var _i = 0, civs_1 = civs; _i < civs_1.length; _i++) {
+            var civ = civs_1[_i];
+            if (civ.id == id) {
+                return civ;
+            }
+        }
+        return null;
+    };
+    return Service;
+}());
 //# sourceMappingURL=data.js.map
