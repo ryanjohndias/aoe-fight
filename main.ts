@@ -356,9 +356,12 @@ function civClicked(id: number) {
     let bonusDamage = 0
     const bonuses = attacker.unit.atkBonuses
 
+    // TODO: Need to compare all bonuses vs all defender classes
     for (const bonus of bonuses) {
-        if (bonus.id == defender.unit.id || bonus.type == defender.unit.type) {
-            bonusDamage = bonus.value
+        for (const armourClass of defender.unit.armourClasses) {
+            if (bonus.armourClass == armourClass) {
+                bonusDamage += bonus.value
+            }
         }
     }
 

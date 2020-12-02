@@ -292,10 +292,14 @@ function createBattleReport(attacker, defender) {
     // Bonus damage is currently non-accumulative
     var bonusDamage = 0;
     var bonuses = attacker.unit.atkBonuses;
+    // TODO: Need to compare all bonuses vs all defender classes
     for (var _i = 0, bonuses_1 = bonuses; _i < bonuses_1.length; _i++) {
         var bonus = bonuses_1[_i];
-        if (bonus.id == defender.unit.id || bonus.type == defender.unit.type) {
-            bonusDamage = bonus.value;
+        for (var _a = 0, _b = defender.unit.armourClasses; _a < _b.length; _a++) {
+            var armourClass = _b[_a];
+            if (bonus.armourClass == armourClass) {
+                bonusDamage += bonus.value;
+            }
         }
     }
     var effectiveDamage = attacker.total.atk + bonusDamage - defender.total.ma;
