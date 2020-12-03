@@ -13,24 +13,15 @@ var rightStatsTable;
 var modalOverlay;
 var modalContent;
 var service;
+var state;
 var Side;
 (function (Side) {
     Side[Side["left"] = 0] = "left";
     Side[Side["right"] = 1] = "right";
 })(Side || (Side = {}));
-var state = {
-    left: {
-        civ: null,
-        unit: null
-    },
-    right: {
-        civ: null,
-        unit: null
-    },
-    selectedSide: null
-};
 function initialise() {
     this.service = new Service();
+    this.state = new AppState();
     initElements();
     initEventListeners();
     handleHashIfNeeded();
@@ -91,23 +82,23 @@ function rightCivImageClicked() {
     showOverlay();
 }
 function leftUnitImageClicked() {
-    if (state.left.civ == null) {
+    if (state.leftCiv == null) {
         return;
     }
     state.selectedSide = Side.left;
     modalContent.innerHTML = "";
-    state.left.civ.units.forEach(function (unit) {
+    state.leftCiv.units.forEach(function (unit) {
         modalContent.innerHTML += WidgetFactory.unit(unit);
     });
     showOverlay();
 }
 function rightUnitImageClicked() {
-    if (state.right.civ == null) {
+    if (state.rightCiv == null) {
         return;
     }
     state.selectedSide = Side.right;
     modalContent.innerHTML = "";
-    state.right.civ.units.forEach(function (unit) {
+    state.rightCiv.units.forEach(function (unit) {
         modalContent.innerHTML += WidgetFactory.unit(unit);
     });
     showOverlay();
@@ -115,12 +106,12 @@ function rightUnitImageClicked() {
 function civClicked(id) {
     var civ = service.getCiv(id);
     if (state.selectedSide == Side.left) {
-        state.left.civ = civ;
+        state.leftCiv = civ;
         leftCivImage.src = civ.image;
         Utils.$("leftCivName").textContent = civ.name;
     }
     else {
-        state.right.civ = civ;
+        state.rightCiv = civ;
         rightCivImage.src = civ.image;
         Utils.$("rightCivName").textContent = civ.name;
     }
@@ -128,28 +119,22 @@ function civClicked(id) {
 }
 function unitClicked(id) {
     var unit = service.getUnit(id);
-    var unitDescription = unit.name + "\n    <br/>\n    <img src=\"https://vignette.wikia.nocookie.net/ageofempires/images/5/5f/Aoe2de_food.png/revision/latest/scale-to-width-down/16?cb=20200417075725\"></img>\n    " + unit.cost.food;
-    if (unit.cost.gold > 0) {
-        unitDescription += " <img src=\"https://vignette.wikia.nocookie.net/ageofempires/images/4/49/Aoe2de_gold.png/revision/latest/scale-to-width-down/16?cb=20200417080000\"></img>\n        " + unit.cost.gold;
-    }
-    if (unit.cost.wood > 0) {
-        unitDescription += " <img src=\"https://vignette.wikia.nocookie.net/ageofempires/images/8/84/Aoe2de_wood.png/revision/latest/scale-to-width-down/16?cb=20200417075938\"></img>\n        " + unit.cost.wood;
-    }
+    var unitDescriptionHtml = Widgets.unitDescriptionHtml(unit);
     var targetTable;
     var civ;
     if (state.selectedSide == Side.left) {
-        state.left.unit = unit;
+        state.leftUnit = unit;
         leftUnitImage.src = unit.img;
         targetTable = "leftStats";
-        Utils.$("leftUnitName").innerHTML = unitDescription;
-        civ = state.left.civ;
+        Utils.$("leftUnitName").innerHTML = unitDescriptionHtml;
+        civ = state.leftCiv;
     }
     else {
-        state.right.unit = unit;
+        state.rightUnit = unit;
         rightUnitImage.src = unit.img;
         targetTable = "rightStats";
-        Utils.$("rightUnitName").innerHTML = unitDescription;
-        civ = state.right.civ;
+        Utils.$("rightUnitName").innerHTML = unitDescriptionHtml;
+        civ = state.rightCiv;
     }
     hideOverlay();
     showUnitStats(targetTable, unit, civ);
@@ -175,9 +160,9 @@ function showUnitStats(tableId, unit, civ) {
     for (var i = 1; i < rows.length; i++) {
         _loop_1();
     }
-    if (state.left.unit != null && state.right.unit != null) {
-        var l = new CivUnit(state.left.unit, state.left.civ);
-        var r = new CivUnit(state.right.unit, state.right.civ);
+    if (state.canShowBattle()) {
+        var l = new CivUnit(state.leftUnit, state.leftCiv);
+        var r = new CivUnit(state.rightUnit, state.rightCiv);
         showBattle(l, r);
     }
 }
@@ -194,21 +179,18 @@ function randomMatchup() {
     populate(civ1.id, civ1.units[Math.floor(Math.random() * civ1.units.length)].id, civ2.id, civ2.units[Math.floor(Math.random() * civ2.units.length)].id);
 }
 function copyLink() {
-    if (state.left.civ == null ||
-        state.left.unit == null ||
-        state.right.civ == null ||
-        state.right.unit == null) {
+    if (state.canCopyLink()) {
         return;
     }
-    var code = Code.createCode(state.left.civ.id, state.left.unit.numericId, state.right.civ.id, state.right.unit.numericId);
+    var code = Code.createCode(state.leftCiv.id, state.leftUnit.numericId, state.rightCiv.id, state.rightUnit.numericId);
     var link = window.location.origin + "/#" + code;
     Utils.copyToClipboard(link);
 }
 function populate(civA, unitA, civB, unitB) {
-    state.left.civ = null;
-    state.right.civ = null;
-    state.left.unit = null;
-    state.right.unit = null;
+    state.leftCiv = null;
+    state.rightCiv = null;
+    state.leftUnit = null;
+    state.rightUnit = null;
     state.selectedSide = Side.left;
     civClicked(civA);
     unitClicked(unitA);
@@ -349,6 +331,21 @@ var Code = (function () {
     };
     return Code;
 }());
+var Widgets = (function () {
+    function Widgets() {
+    }
+    Widgets.unitDescriptionHtml = function (unit) {
+        var html = unit.name + "<br/><img src=\"" + Cost.imageUrlFood + "\"></img>&nbsp;" + unit.cost.food;
+        if (unit.cost.gold > 0) {
+            html += " <img src=\"" + Cost.imageUrlGold + "\"></img>&nbsp;" + unit.cost.gold;
+        }
+        if (unit.cost.wood > 0) {
+            html += " <img src=\"" + Cost.imageUrlWood + "\"></img>&nbsp;" + unit.cost.wood;
+        }
+        return html;
+    };
+    return Widgets;
+}());
 var WidgetFactory = {
     civ: function (id, name, imageUrl) {
         return "<div class=\"civCell\" onClick=\"javascript:civClicked(" + id + ")\">\n                   <img src=\"" + imageUrl + "\"></img>\n                   <p>" + name + "</p>\n               </div>";
@@ -417,6 +414,20 @@ var TableUtils = {
         return body;
     }
 };
+var AppState = (function () {
+    function AppState() {
+    }
+    AppState.prototype.canShowBattle = function () {
+        return state.leftUnit != null && state.rightUnit != null;
+    };
+    AppState.prototype.canCopyLink = function () {
+        return state.leftCiv == null ||
+            state.leftUnit == null ||
+            state.rightCiv == null ||
+            state.rightUnit == null;
+    };
+    return AppState;
+}());
 var Civ = (function () {
     function Civ(id, name, adjective, image, units, meleeUpgrades, infantryArmourUpgrades, cavUpgrades, special) {
         this.id = id;
@@ -611,6 +622,9 @@ var Cost = (function () {
         this.wood = w;
         this.stone = s;
     }
+    Cost.imageUrlFood = "https://vignette.wikia.nocookie.net/ageofempires/images/5/5f/Aoe2de_food.png/revision/latest/scale-to-width-down/16?cb=20200417075725";
+    Cost.imageUrlWood = "https://vignette.wikia.nocookie.net/ageofempires/images/8/84/Aoe2de_wood.png/revision/latest/scale-to-width-down/16?cb=20200417075938";
+    Cost.imageUrlGold = "https://vignette.wikia.nocookie.net/ageofempires/images/4/49/Aoe2de_gold.png/revision/latest/scale-to-width-down/16?cb=20200417080000";
     return Cost;
 }());
 var UnitType;

@@ -15,27 +15,17 @@ var modalOverlay: HTMLDivElement
 var modalContent: HTMLDivElement
 
 var service: Service
+var state: AppState
 
 enum Side {
     left,
     right
 }
 
-var state = {
-    left: {
-        civ: null,
-        unit: null
-    }, 
-    right: {
-        civ: null,
-        unit: null
-    },
-    selectedSide: null
-}
-
 function initialise() {
 
     this.service = new Service()
+    this.state = new AppState()
 
     initElements()
     initEventListeners()
@@ -111,14 +101,14 @@ function rightCivImageClicked() {
 }
 
 function leftUnitImageClicked() {
-    if (state.left.civ == null) {
+    if (state.leftCiv == null) {
         return;
     }
 
     state.selectedSide = Side.left;
 
     modalContent.innerHTML = "";
-    state.left.civ.units.forEach(function(unit) {
+    state.leftCiv.units.forEach(function(unit) {
         modalContent.innerHTML += WidgetFactory.unit(unit);
     });
 
@@ -126,14 +116,14 @@ function leftUnitImageClicked() {
 }
 
 function rightUnitImageClicked() {
-    if (state.right.civ == null) {
+    if (state.rightCiv == null) {
         return;
     }
 
     state.selectedSide = Side.right;
 
     modalContent.innerHTML = "";
-    state.right.civ.units.forEach(function(unit) {
+    state.rightCiv.units.forEach(function(unit) {
         modalContent.innerHTML += WidgetFactory.unit(unit);
     });
 
@@ -144,11 +134,11 @@ function civClicked(id: number) {
     const civ = service.getCiv(id)
 
     if (state.selectedSide == Side.left) {
-        state.left.civ = civ
+        state.leftCiv = civ
         leftCivImage.src = civ.image
         Utils.$("leftCivName").textContent = civ.name
     } else {
-        state.right.civ = civ
+        state.rightCiv = civ
         rightCivImage.src = civ.image
         Utils.$("rightCivName").textContent = civ.name
     }
@@ -158,34 +148,22 @@ function civClicked(id: number) {
 
  function unitClicked(id: UnitId) {
     const unit = service.getUnit(id)
-
-    let unitDescription = `${unit.name}
-    <br/>
-    <img src="https://vignette.wikia.nocookie.net/ageofempires/images/5/5f/Aoe2de_food.png/revision/latest/scale-to-width-down/16?cb=20200417075725"></img>
-    ${unit.cost.food}`
-    if (unit.cost.gold > 0) {
-        unitDescription += ` <img src="https://vignette.wikia.nocookie.net/ageofempires/images/4/49/Aoe2de_gold.png/revision/latest/scale-to-width-down/16?cb=20200417080000"></img>
-        ${unit.cost.gold}`
-    }
-    if (unit.cost.wood > 0) {
-        unitDescription += ` <img src="https://vignette.wikia.nocookie.net/ageofempires/images/8/84/Aoe2de_wood.png/revision/latest/scale-to-width-down/16?cb=20200417075938"></img>
-        ${unit.cost.wood}`
-    }
+    const unitDescriptionHtml = Widgets.unitDescriptionHtml(unit)
 
     var targetTable: string
     var civ: Civ
     if (state.selectedSide == Side.left) {
-        state.left.unit = unit
+        state.leftUnit = unit
         leftUnitImage.src = unit.img
         targetTable = "leftStats"
-        Utils.$("leftUnitName").innerHTML = unitDescription
-        civ = state.left.civ
+        Utils.$("leftUnitName").innerHTML = unitDescriptionHtml
+        civ = state.leftCiv
     } else {
-        state.right.unit = unit
+        state.rightUnit = unit
         rightUnitImage.src = unit.img
         targetTable = "rightStats"
-        Utils.$("rightUnitName").innerHTML = unitDescription
-        civ = state.right.civ
+        Utils.$("rightUnitName").innerHTML = unitDescriptionHtml
+        civ = state.rightCiv
     }
 
     hideOverlay()
@@ -196,8 +174,8 @@ function civClicked(id: number) {
  function showUnitStats(tableId: string, unit: Unit, civ: Civ) {
 
     const civUnit = new CivUnit(unit, civ)
-    var table = Utils.$(tableId) as HTMLTableElement;
-    var body = TableUtils.newBody(table);
+    var table = Utils.$(tableId) as HTMLTableElement
+    var body = TableUtils.newBody(table)
 
     TableUtils.createRow(body, ["Stat", "Base", "Upgrades", "Special", "Total"]);
     TableUtils.createRow(body, ["HP", civUnit.unit.hp, `${civUnit.upgrades.hp != 0 ? `+${civUnit.upgrades.hp}` : "-"}`, `${civUnit.special.hp != 0 ? `+${civUnit.special.hp}%` : "-"}`, civUnit.total.hp]);
@@ -215,9 +193,9 @@ function civClicked(id: number) {
         row.addEventListener('mouseout', (e) => statsHover(row.rowIndex, false) );
     }
 
-    if (state.left.unit != null && state.right.unit != null) {
-        const l = new CivUnit(state.left.unit, state.left.civ)
-        const r = new CivUnit(state.right.unit, state.right.civ)
+    if (state.canShowBattle()) {
+        const l = new CivUnit(state.leftUnit, state.leftCiv)
+        const r = new CivUnit(state.rightUnit, state.rightCiv)
         showBattle(l, r)
     }
  }
@@ -244,27 +222,24 @@ function civClicked(id: number) {
 
  function copyLink() {
 
-    if (state.left.civ == null ||
-        state.left.unit == null ||
-        state.right.civ == null ||
-        state.right.unit == null) {
+    if (state.canCopyLink()) {
         return
     }
 
-    let code = Code.createCode(state.left.civ.id,
-        state.left.unit.numericId,
-        state.right.civ.id,
-        state.right.unit.numericId)
+    let code = Code.createCode(state.leftCiv.id,
+        state.leftUnit.numericId,
+        state.rightCiv.id,
+        state.rightUnit.numericId)
 
     let link = `${window.location.origin}/#${code}`;
     Utils.copyToClipboard(link)
  }
 
  function populate(civA: number, unitA: UnitId, civB: number, unitB: UnitId) {
-    state.left.civ = null
-    state.right.civ = null
-    state.left.unit = null
-    state.right.unit = null
+    state.leftCiv = null
+    state.rightCiv = null
+    state.leftUnit = null
+    state.rightUnit = null
     state.selectedSide = Side.left
     civClicked(civA)
     unitClicked(unitA)
@@ -451,6 +426,24 @@ class BattleReport {
         this.rightUnitId = parseInt(code[6] + code[7])
     }
  }
+
+class Widgets {
+
+    public static unitDescriptionHtml(unit: Unit) {
+        
+        let html = `${unit.name}<br/><img src="${Cost.imageUrlFood}"></img>&nbsp;${unit.cost.food}`
+
+        if (unit.cost.gold > 0) {
+            html += ` <img src="${Cost.imageUrlGold}"></img>&nbsp;${unit.cost.gold}`
+        }
+        if (unit.cost.wood > 0) {
+            html += ` <img src="${Cost.imageUrlWood}"></img>&nbsp;${unit.cost.wood}`
+        }
+
+        return html
+    }
+
+}
 
  var WidgetFactory = {
     civ: function(id, name, imageUrl) {
