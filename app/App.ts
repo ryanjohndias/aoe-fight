@@ -63,7 +63,7 @@ function handleHashIfNeeded() {
 }
 
 function loadCode(codeString: string) {
-    let code = Code.readCode(codeString)
+    let code = ShareCode.readCode(codeString)
     populate(code.leftCivId,
         service.getUnitByNumericId(code.leftUnitId).id,
         code.rightCivId,
@@ -222,17 +222,16 @@ function civClicked(id: number) {
 
  function copyLink() {
 
-    if (state.canCopyLink()) {
+    if (!state.canCopyLink()) {
         return
     }
 
-    let code = Code.createCode(state.leftCiv.id,
+    let code = new ShareCode(state.leftCiv.id,
         state.leftUnit.numericId,
         state.rightCiv.id,
         state.rightUnit.numericId)
 
-    let link = `${window.location.origin}/#${code}`;
-    Utils.copyToClipboard(link)
+    Utils.copyToClipboard(code.generateLink())
  }
 
  function populate(civA: number, unitA: UnitId, civB: number, unitB: UnitId) {
@@ -402,28 +401,6 @@ class BattleReport {
         this.damage = damage
         this.total = total
         this.hpLeft = hpLeft
-    }
- }
-
- class Code {
-    leftCivId: number
-    leftUnitId: number
-    rightCivId: number
-    rightUnitId: number
-
-    public static createCode(leftCivId: number, leftUnitId: number, rightCivId: number, rightUnitId: number) {
-        return `${leftCivId}${leftUnitId}${rightCivId}${rightUnitId}`;
-    }
-
-    public static readCode(code: string) {
-        return new Code(code)
-    }
-
-    constructor(code: string) {
-        this.leftCivId = parseInt(code[0] + code[1])
-        this.leftUnitId = parseInt(code[2] + code[3])
-        this.rightCivId = parseInt(code[4] + code[5])
-        this.rightUnitId = parseInt(code[6] + code[7])
     }
  }
 

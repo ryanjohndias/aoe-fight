@@ -54,7 +54,7 @@ function handleHashIfNeeded() {
     }
 }
 function loadCode(codeString) {
-    var code = Code.readCode(codeString);
+    var code = ShareCode.readCode(codeString);
     populate(code.leftCivId, service.getUnitByNumericId(code.leftUnitId).id, code.rightCivId, service.getUnitByNumericId(code.rightUnitId).id);
 }
 function showOverlay() {
@@ -179,12 +179,11 @@ function randomMatchup() {
     populate(civ1.id, civ1.units[Math.floor(Math.random() * civ1.units.length)].id, civ2.id, civ2.units[Math.floor(Math.random() * civ2.units.length)].id);
 }
 function copyLink() {
-    if (state.canCopyLink()) {
+    if (!state.canCopyLink()) {
         return;
     }
-    var code = Code.createCode(state.leftCiv.id, state.leftUnit.numericId, state.rightCiv.id, state.rightUnit.numericId);
-    var link = window.location.origin + "/#" + code;
-    Utils.copyToClipboard(link);
+    var code = new ShareCode(state.leftCiv.id, state.leftUnit.numericId, state.rightCiv.id, state.rightUnit.numericId);
+    Utils.copyToClipboard(code.generateLink());
 }
 function populate(civA, unitA, civB, unitB) {
     state.leftCiv = null;
@@ -316,21 +315,6 @@ var BattleLogEntry = (function () {
     }
     return BattleLogEntry;
 }());
-var Code = (function () {
-    function Code(code) {
-        this.leftCivId = parseInt(code[0] + code[1]);
-        this.leftUnitId = parseInt(code[2] + code[3]);
-        this.rightCivId = parseInt(code[4] + code[5]);
-        this.rightUnitId = parseInt(code[6] + code[7]);
-    }
-    Code.createCode = function (leftCivId, leftUnitId, rightCivId, rightUnitId) {
-        return "" + leftCivId + leftUnitId + rightCivId + rightUnitId;
-    };
-    Code.readCode = function (code) {
-        return new Code(code);
-    };
-    return Code;
-}());
 var Widgets = (function () {
     function Widgets() {
     }
@@ -418,13 +402,13 @@ var AppState = (function () {
     function AppState() {
     }
     AppState.prototype.canShowBattle = function () {
-        return state.leftUnit != null && state.rightUnit != null;
+        return this.leftUnit != null && this.rightUnit != null;
     };
     AppState.prototype.canCopyLink = function () {
-        return state.leftCiv == null ||
-            state.leftUnit == null ||
-            state.rightCiv == null ||
-            state.rightUnit == null;
+        return this.leftCiv != null &&
+            this.leftUnit != null &&
+            this.rightCiv != null &&
+            this.rightUnit != null;
     };
     return AppState;
 }());
@@ -720,6 +704,25 @@ var Service = (function () {
         return this.civData.civs[Math.floor(Math.random() * this.civData.civs.length)];
     };
     return Service;
+}());
+var ShareCode = (function () {
+    function ShareCode(leftCivId, leftUnitId, rightCivId, rightUnitId) {
+        this.leftCivId = leftCivId;
+        this.leftUnitId = leftUnitId;
+        this.rightCivId = rightCivId;
+        this.rightUnitId = rightUnitId;
+    }
+    ShareCode.readCode = function (code) {
+        var parse = function (code, index) { return parseInt(code.substr(index, 2)); };
+        return new ShareCode(parse(code, 0), parse(code, 2), parse(code, 4), parse(code, 6));
+    };
+    ShareCode.prototype.getCode = function () {
+        return "" + this.leftCivId + this.leftUnitId + this.rightCivId + this.rightUnitId;
+    };
+    ShareCode.prototype.generateLink = function () {
+        return window.location.origin + "/#" + this.getCode();
+    };
+    return ShareCode;
 }());
 var Unit = (function () {
     function Unit(id, numericId, name, type, img, cost, hp, atk, rof, ad, ma, pa, atkBonuses, armourClasses) {

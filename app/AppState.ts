@@ -6,13 +6,13 @@ class AppState {
     selectedSide: Side
 
     public canShowBattle() {
-        return state.leftUnit != null && state.rightUnit != null
+        return this.leftUnit != null && this.rightUnit != null
     }
 
     public canCopyLink() {
-        return state.leftCiv == null ||
-            state.leftUnit == null ||
-            state.rightCiv == null ||
-            state.rightUnit == null
+        return this.leftCiv != null &&
+            this.leftUnit != null &&
+            this.rightCiv != null &&
+            this.rightUnit != null
     }
 }
