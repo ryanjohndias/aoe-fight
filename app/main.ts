@@ -86,7 +86,7 @@ function hideOverlay() {
 
 function leftCivImageClicked() {
     modalContent.innerHTML = "";
-    civs.forEach(function(civ) {
+    service.getCivs().forEach(function(civ) {
         modalContent.innerHTML += WidgetFactory.civ(civ.id, civ.name, civ.image);
     });
     state.selectedSide = Side.left;
@@ -95,7 +95,7 @@ function leftCivImageClicked() {
 
 function rightCivImageClicked() {
     modalContent.innerHTML = "";
-    civs.forEach(function(civ) {
+    service.getCivs().forEach(function(civ) {
         modalContent.innerHTML += WidgetFactory.civ(civ.id, civ.name, civ.image);
     });
     state.selectedSide = Side.right;
@@ -149,7 +149,8 @@ function civClicked(id: number) {
  }
 
  function unitClicked(id: UnitId) {
-    const unit = units[id] as Unit
+    const unit = service.getUnit(id)
+
     let unitDescription = `${unit.name}
     <br/>
     <img src="https://vignette.wikia.nocookie.net/ageofempires/images/5/5f/Aoe2de_food.png/revision/latest/scale-to-width-down/16?cb=20200417075725"></img>
@@ -223,8 +224,8 @@ function civClicked(id: number) {
  }
 
  function randomMatchup() {
-    let civ1 = civs[Math.floor(Math.random() * civs.length)]
-    let civ2 = civs[Math.floor(Math.random() * civs.length)]
+    let civ1 = service.getRandomCiv()
+    let civ2 = service.getRandomCiv()
     populate(
         civ1.id,
         civ1.units[Math.floor(Math.random() * civ1.units.length)].id,
