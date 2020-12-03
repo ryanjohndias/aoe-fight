@@ -11,11 +11,10 @@ var leftUnitImage: HTMLImageElement
 var rightUnitImage: HTMLImageElement
 var leftStatsTable: HTMLTableElement
 var rightStatsTable: HTMLTableElement
-
 var modalOverlay: HTMLDivElement
 var modalContent: HTMLDivElement
 
-var service = new Service()
+var service: Service
 
 enum Side {
     left,
@@ -36,26 +35,35 @@ var state = {
 
 function initialise() {
 
+    this.service = new Service()
+
+    initElements()
+    initEventListeners()
+    handleHashIfNeeded()
+}
+
+function initElements() {
     leftCivImage = Utils.$("leftCivImage") as HTMLImageElement
     rightCivImage = Utils.$("rightCivImage") as HTMLImageElement
-    leftCivImage.onclick = leftCivImageClicked
-    rightCivImage.onclick = rightCivImageClicked
-
     leftUnitImage = Utils.$("leftUnitImage") as HTMLImageElement
     rightUnitImage = Utils.$("rightUnitImage") as HTMLImageElement
-    leftUnitImage.addEventListener("click", leftUnitImageClicked);
-    rightUnitImage.addEventListener("click", rightUnitImageClicked);
-
     leftStatsTable = Utils.$("leftStats") as HTMLTableElement
     rightStatsTable = Utils.$("rightStats") as HTMLTableElement
-
     modalOverlay = Utils.$("modalOverlay") as HTMLDivElement
     modalContent = Utils.$("modalContent") as HTMLDivElement
+}
 
+function initEventListeners() {
+    leftCivImage.onclick = leftCivImageClicked
+    rightCivImage.onclick = rightCivImageClicked
+    leftUnitImage.addEventListener("click", leftUnitImageClicked);
+    rightUnitImage.addEventListener("click", rightUnitImageClicked);
     Utils.$("modalClose").onclick = hideOverlay
     Utils.$("button_random").onclick = () => randomMatchup()
     Utils.$("button_share").onclick = () => copyLink()
+}
 
+function handleHashIfNeeded() {
     if (window.location.hash != null) {
         const code = window.location.hash.replace("#", "");
         if (code.length == 8) {

@@ -2,7 +2,7 @@ class CivData {
 
     readonly civs: Civ[]
 
-    constructor(units: { [key: string]: Unit; }) {
+    constructor(units: { [key: string]: Unit; }, upgrades: { [key: string]: Upgrade; }) {
         this.civs = [
             new Civ(10, "Aztecs", "Aztec",
                 "https://vignette.wikia.nocookie.net/ageofempires/images/0/0c/CivIcon-Aztecs.png/revision/latest?cb=20191107173129",
