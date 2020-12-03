@@ -147,16 +147,6 @@ var Unit = /** @class */ (function () {
     };
     return Unit;
 }());
-function getUnit(numericId) {
-    for (var _i = 0, _a = Object.keys(units); _i < _a.length; _i++) {
-        var unitId = _a[_i];
-        var unit = units[unitId];
-        if (unit.numericId == numericId) {
-            return unit;
-        }
-    }
-    return null;
-}
 var units = {
     champion: new Unit(UnitId.champion, 10, "Champion", UnitType.infantry, "https://vignette.wikia.nocookie.net/ageofempires/images/5/54/Champion_aoe2DE.png/revision/latest?cb=20200402012808", new Cost(60, 20, 0, 0), 70, 13, 2.0, 0.63, 1, 1, [new AttackBonus(ArmourClass.eagleWarrior, 8)], [ArmourClass.infantry]),
     condottiero: new Unit(UnitId.condottiero, 11, "Condottiero", UnitType.infantry, "https://vignette.wikia.nocookie.net/ageofempires/images/1/1c/CondottieroIcon-DE.png/revision/latest?cb=20191230141010", new Cost(50, 35, 0, 0), 80, 10, 1.9, 0.75, 1, 0, [], [
@@ -492,6 +482,16 @@ var Service = /** @class */ (function () {
             var civ = civs_1[_i];
             if (civ.id == id) {
                 return civ;
+            }
+        }
+        return null;
+    };
+    Service.prototype.getUnitByNumericId = function (id) {
+        for (var _i = 0, _a = Object.keys(units); _i < _a.length; _i++) {
+            var unitId = _a[_i];
+            var unit = units[unitId];
+            if (unit.numericId == id) {
+                return unit;
             }
         }
         return null;

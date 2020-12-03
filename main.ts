@@ -66,7 +66,10 @@ function initialise() {
 
 function loadCode(codeString: string) {
     let code = Code.readCode(codeString)
-    populate(code.leftCivId, getUnit(code.leftUnitId).id, code.rightCivId, getUnit(code.rightUnitId).id)
+    populate(code.leftCivId,
+        service.getUnitByNumericId(code.leftUnitId).id,
+        code.rightCivId,
+        service.getUnitByNumericId(code.rightUnitId).id)
 }
 
 function showOverlay() {

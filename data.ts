@@ -16,12 +16,13 @@ enum ArmourClass {
 }
 
 class UpgradeableStats {
-    name: string
-    hp: number
-    atk: number
-    rof: number
-    ma: number
-    pa: number
+    readonly name: string
+    readonly hp: number
+    readonly atk: number
+    readonly rof: number
+    readonly ma: number
+    readonly pa: number
+
     constructor(hp: number, atk: number, rof: number, ma: number, pa: number) {
         this.hp = hp
         this.atk = atk
@@ -49,10 +50,11 @@ const upgrades = {
 }
 
 class Cost {
-    food: number
-    gold: number
-    wood: number
-    stone: number
+    readonly food: number
+    readonly gold: number
+    readonly wood: number
+    readonly stone: number
+
     constructor(f: number, g: number, w: number, s: number) {
         this.food = f;
         this.gold = g;
@@ -94,12 +96,12 @@ enum UnitId {
     eBerserk = "eBerserk",
     eMagyarHuszar = "eMagyarHuszar",
     eKamayuk = "eKamayuk"
-
 }
 
 class AttackBonus {
-    armourClass: ArmourClass
-    value: number
+    readonly armourClass: ArmourClass
+    readonly value: number
+
     constructor(armourClass: ArmourClass, value: number) {
         this.armourClass = armourClass
         this.value = value
@@ -107,11 +109,11 @@ class AttackBonus {
 }
 
 class CivUnit {
-    unit: Unit
-    civ: Civ
-    upgrades: UpgradeableStats // blacksmith / uni
-    special: UpgradeableStats // civ bonuses or special techs
-    total: UpgradeableStats // base + upgrades + special
+    readonly unit: Unit
+    readonly civ: Civ
+    readonly upgrades: UpgradeableStats // blacksmith / uni
+    readonly special: UpgradeableStats // civ bonuses or special techs
+    readonly total: UpgradeableStats // base + upgrades + special
     constructor (unit: Unit, civ: Civ) {
         this.unit = unit
         this.civ = civ
@@ -148,20 +150,20 @@ class CivUnit {
 }
 
 class Unit {
-    id: UnitId
-    numericId: number
-    name: string
-    type: UnitType
-    img: string
-    cost: Cost
-    hp: number
-    atk: number
-    rof: number
-    ad: number
-    ma: number
-    pa: number
-    atkBonuses: AttackBonus[]
-    armourClasses: ArmourClass[]
+    readonly id: UnitId
+    readonly numericId: number
+    readonly name: string
+    readonly type: UnitType
+    readonly img: string
+    readonly cost: Cost
+    readonly hp: number
+    readonly atk: number
+    readonly rof: number
+    readonly ad: number
+    readonly ma: number
+    readonly pa: number
+    readonly atkBonuses: AttackBonus[]
+    readonly armourClasses: ArmourClass[]
     constructor(id: UnitId, numericId: number, name: string, type: UnitType, img: string, cost: Cost, hp: number,
         atk: number, rof: number, ad: number, ma: number, pa: number, atkBonuses: AttackBonus[], armourClasses: ArmourClass[]) {
         this.id = id
@@ -188,19 +190,7 @@ class Unit {
     }
 }
 
-
-
-function getUnit(numericId: number) {
-    for (const unitId of Object.keys(units)) {
-        const unit = units[unitId]
-        if (unit.numericId == numericId) {
-            return unit
-        }
-    }
-    return null
-}
-
-const units = {
+const units: { [key: string]: Unit; } = {
     champion: new Unit (
         UnitId.champion, 10,
         "Champion",
@@ -646,15 +636,15 @@ const units = {
 }
 
 class Civ {
-    id: number
-    name: string
-    adjective: string
-    image: string
-    units: Unit[]
-    meleeUpgrades: UpgradeableStats[]
-    infantryArmourUpgrades: UpgradeableStats[]
-    cavUpgrades: UpgradeableStats[]
-    special: any
+    readonly id: number
+    readonly name: string
+    readonly adjective: string
+    readonly image: string
+    readonly units: Unit[]
+    readonly meleeUpgrades: UpgradeableStats[]
+    readonly infantryArmourUpgrades: UpgradeableStats[]
+    readonly cavUpgrades: UpgradeableStats[]
+    readonly special: any
 
     constructor(id: number, name: string, adjective: string, image: string, units: Unit[],
         meleeUpgrades: UpgradeableStats[], infantryArmourUpgrades: UpgradeableStats[], cavUpgrades: UpgradeableStats[], special: any) {
@@ -1084,6 +1074,16 @@ class Service {
         for (const civ of civs) {
             if (civ.id == id) {
                 return civ
+            }
+        }
+        return null
+    }
+
+    public getUnitByNumericId(id: number) {
+        for (const unitId of Object.keys(units)) {
+            const unit = units[unitId]
+            if (unit.numericId == id) {
+                return unit
             }
         }
         return null
