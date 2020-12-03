@@ -15,8 +15,8 @@ enum ArmourClass {
     spearman
 }
 
-class UpgradeableStats {
-    readonly name: string
+class Upgrade {
+    readonly name: string // Currently unused
     readonly hp: number
     readonly atk: number
     readonly rof: number
@@ -35,18 +35,17 @@ class UpgradeableStats {
         return this.atk / this.rof
     }
 }
-
-const upgrades = {
-    forging:            new UpgradeableStats(0, 1, 0, 0, 0),
-    ironCasting:        new UpgradeableStats(0, 1, 0, 0, 0),
-    blastFurnace:       new UpgradeableStats(0, 2, 0, 0, 0),
-    scaleMailArmor:     new UpgradeableStats(0, 0, 0, 1, 1),
-    chainMailArmor:     new UpgradeableStats(0, 0, 0, 1, 1),
-    plateMailArmor:     new UpgradeableStats(0, 0, 0, 1, 2),
-    scaleBardingArmor:  new UpgradeableStats(0, 0, 0, 1, 1),
-    chainBardingArmor:  new UpgradeableStats(0, 0, 0, 1, 1),
-    plateBardingArmor:  new UpgradeableStats(0, 0, 0, 1, 2),
-    bloodlines:         new UpgradeableStats(20, 0, 0, 0, 0)
+const upgrades: { [key: string]: Upgrade; } = {
+    forging:            new Upgrade(0, 1, 0, 0, 0),
+    ironCasting:        new Upgrade(0, 1, 0, 0, 0),
+    blastFurnace:       new Upgrade(0, 2, 0, 0, 0),
+    scaleMailArmor:     new Upgrade(0, 0, 0, 1, 1),
+    chainMailArmor:     new Upgrade(0, 0, 0, 1, 1),
+    plateMailArmor:     new Upgrade(0, 0, 0, 1, 2),
+    scaleBardingArmor:  new Upgrade(0, 0, 0, 1, 1),
+    chainBardingArmor:  new Upgrade(0, 0, 0, 1, 1),
+    plateBardingArmor:  new Upgrade(0, 0, 0, 1, 2),
+    bloodlines:         new Upgrade(20, 0, 0, 0, 0)
 }
 
 class Cost {
@@ -111,9 +110,9 @@ class AttackBonus {
 class CivUnit {
     readonly unit: Unit
     readonly civ: Civ
-    readonly upgrades: UpgradeableStats // blacksmith / uni
-    readonly special: UpgradeableStats // civ bonuses or special techs
-    readonly total: UpgradeableStats // base + upgrades + special
+    readonly upgrades: Upgrade // blacksmith / uni
+    readonly special: Upgrade // civ bonuses or special techs
+    readonly total: Upgrade // base + upgrades + special
     constructor (unit: Unit, civ: Civ) {
         this.unit = unit
         this.civ = civ
@@ -143,9 +142,9 @@ class CivUnit {
         const maTotal = unit.ma + maSpecial + maUpgrades
         const paTotal = unit.pa + paSpecial + paUpgrades
 
-        this.upgrades = new UpgradeableStats(hpUpgrades, atkUpgrades, 0, maUpgrades, paUpgrades)
-        this.special = new UpgradeableStats(hpSpecial, atkSpecial, rofSpecial, maSpecial, paSpecial)
-        this.total = new UpgradeableStats(hpTotal, atkTotal, rofTotal, maTotal, paTotal)
+        this.upgrades = new Upgrade(hpUpgrades, atkUpgrades, 0, maUpgrades, paUpgrades)
+        this.special = new Upgrade(hpSpecial, atkSpecial, rofSpecial, maSpecial, paSpecial)
+        this.total = new Upgrade(hpTotal, atkTotal, rofTotal, maTotal, paTotal)
     }
 }
 
@@ -641,13 +640,13 @@ class Civ {
     readonly adjective: string
     readonly image: string
     readonly units: Unit[]
-    readonly meleeUpgrades: UpgradeableStats[]
-    readonly infantryArmourUpgrades: UpgradeableStats[]
-    readonly cavUpgrades: UpgradeableStats[]
+    readonly meleeUpgrades: Upgrade[]
+    readonly infantryArmourUpgrades: Upgrade[]
+    readonly cavUpgrades: Upgrade[]
     readonly special: any
 
     constructor(id: number, name: string, adjective: string, image: string, units: Unit[],
-        meleeUpgrades: UpgradeableStats[], infantryArmourUpgrades: UpgradeableStats[], cavUpgrades: UpgradeableStats[], special: any) {
+        meleeUpgrades: Upgrade[], infantryArmourUpgrades: Upgrade[], cavUpgrades: Upgrade[], special: any) {
             this.id = id
             this.name = name
             this.adjective = adjective

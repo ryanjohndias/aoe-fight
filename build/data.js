@@ -15,30 +15,30 @@ var ArmourClass;
     ArmourClass[ArmourClass["condottiero"] = 7] = "condottiero";
     ArmourClass[ArmourClass["spearman"] = 8] = "spearman";
 })(ArmourClass || (ArmourClass = {}));
-var UpgradeableStats = /** @class */ (function () {
-    function UpgradeableStats(hp, atk, rof, ma, pa) {
+var Upgrade = /** @class */ (function () {
+    function Upgrade(hp, atk, rof, ma, pa) {
         this.hp = hp;
         this.atk = atk;
         this.rof = rof;
         this.ma = ma;
         this.pa = pa;
     }
-    UpgradeableStats.prototype.dps = function () {
+    Upgrade.prototype.dps = function () {
         return this.atk / this.rof;
     };
-    return UpgradeableStats;
+    return Upgrade;
 }());
 var upgrades = {
-    forging: new UpgradeableStats(0, 1, 0, 0, 0),
-    ironCasting: new UpgradeableStats(0, 1, 0, 0, 0),
-    blastFurnace: new UpgradeableStats(0, 2, 0, 0, 0),
-    scaleMailArmor: new UpgradeableStats(0, 0, 0, 1, 1),
-    chainMailArmor: new UpgradeableStats(0, 0, 0, 1, 1),
-    plateMailArmor: new UpgradeableStats(0, 0, 0, 1, 2),
-    scaleBardingArmor: new UpgradeableStats(0, 0, 0, 1, 1),
-    chainBardingArmor: new UpgradeableStats(0, 0, 0, 1, 1),
-    plateBardingArmor: new UpgradeableStats(0, 0, 0, 1, 2),
-    bloodlines: new UpgradeableStats(20, 0, 0, 0, 0)
+    forging: new Upgrade(0, 1, 0, 0, 0),
+    ironCasting: new Upgrade(0, 1, 0, 0, 0),
+    blastFurnace: new Upgrade(0, 2, 0, 0, 0),
+    scaleMailArmor: new Upgrade(0, 0, 0, 1, 1),
+    chainMailArmor: new Upgrade(0, 0, 0, 1, 1),
+    plateMailArmor: new Upgrade(0, 0, 0, 1, 2),
+    scaleBardingArmor: new Upgrade(0, 0, 0, 1, 1),
+    chainBardingArmor: new Upgrade(0, 0, 0, 1, 1),
+    plateBardingArmor: new Upgrade(0, 0, 0, 1, 2),
+    bloodlines: new Upgrade(20, 0, 0, 0, 0)
 };
 var Cost = /** @class */ (function () {
     function Cost(f, g, w, s) {
@@ -116,9 +116,9 @@ var CivUnit = /** @class */ (function () {
         var paSpecial = civ.totalSpecialPAUpgrade(unit.id);
         var maTotal = unit.ma + maSpecial + maUpgrades;
         var paTotal = unit.pa + paSpecial + paUpgrades;
-        this.upgrades = new UpgradeableStats(hpUpgrades, atkUpgrades, 0, maUpgrades, paUpgrades);
-        this.special = new UpgradeableStats(hpSpecial, atkSpecial, rofSpecial, maSpecial, paSpecial);
-        this.total = new UpgradeableStats(hpTotal, atkTotal, rofTotal, maTotal, paTotal);
+        this.upgrades = new Upgrade(hpUpgrades, atkUpgrades, 0, maUpgrades, paUpgrades);
+        this.special = new Upgrade(hpSpecial, atkSpecial, rofSpecial, maSpecial, paSpecial);
+        this.total = new Upgrade(hpTotal, atkTotal, rofTotal, maTotal, paTotal);
     }
     return CivUnit;
 }());
