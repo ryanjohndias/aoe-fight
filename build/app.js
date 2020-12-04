@@ -1,17 +1,10 @@
 window.onload = initialise;
 window.onclick = function (event) {
-    if (event.target == modalOverlay) {
-        hideOverlay();
+    if (event.target == view.modalOverlay) {
+        view.hideOverlay();
     }
 };
-var leftCivImage;
-var rightCivImage;
-var leftUnitImage;
-var rightUnitImage;
-var leftStatsTable;
-var rightStatsTable;
-var modalOverlay;
-var modalContent;
+var view;
 var service;
 var state;
 var Side;
@@ -20,123 +13,84 @@ var Side;
     Side[Side["right"] = 1] = "right";
 })(Side || (Side = {}));
 function initialise() {
+    this.view = new View();
     this.service = new Service();
     this.state = new AppState();
-    initElements();
     initEventListeners();
     handleHashIfNeeded();
 }
-function initElements() {
-    leftCivImage = Utils.$("leftCivImage");
-    rightCivImage = Utils.$("rightCivImage");
-    leftUnitImage = Utils.$("leftUnitImage");
-    rightUnitImage = Utils.$("rightUnitImage");
-    leftStatsTable = Utils.$("leftStats");
-    rightStatsTable = Utils.$("rightStats");
-    modalOverlay = Utils.$("modalOverlay");
-    modalContent = Utils.$("modalContent");
-}
 function initEventListeners() {
-    leftCivImage.onclick = leftCivImageClicked;
-    rightCivImage.onclick = rightCivImageClicked;
-    leftUnitImage.addEventListener("click", leftUnitImageClicked);
-    rightUnitImage.addEventListener("click", rightUnitImageClicked);
-    Utils.$("modalClose").onclick = hideOverlay;
-    Utils.$("button_random").onclick = function () { return randomMatchup(); };
-    Utils.$("button_share").onclick = function () { return copyLink(); };
+    view.leftCivImage.onclick = leftCivImageClicked;
+    view.rightCivImage.onclick = rightCivImageClicked;
+    view.leftUnitImage.onclick = leftUnitImageClicked;
+    view.rightUnitImage.onclick = rightUnitImageClicked;
+    Utils.$("modalClose").onclick = view.hideOverlay;
+    Utils.$("button_random").onclick = randomMatchup;
+    Utils.$("button_share").onclick = copyLink;
 }
 function handleHashIfNeeded() {
     if (window.location.hash != null) {
         var code = window.location.hash.replace("#", "");
-        if (code.length == 8) {
-            loadCode(code);
-        }
+        loadCode(code);
     }
 }
 function loadCode(codeString) {
+    if (codeString.length != 8) {
+        return;
+    }
     var code = ShareCode.readCode(codeString);
     populate(code.leftCivId, service.getUnitByNumericId(code.leftUnitId).id, code.rightCivId, service.getUnitByNumericId(code.rightUnitId).id);
 }
-function showOverlay() {
-    modalOverlay.classList.remove("modalHidden");
-    modalOverlay.classList.add("modalVisible");
-}
-function hideOverlay() {
-    modalOverlay.classList.remove("modalVisible");
-    modalOverlay.classList.add("modalHidden");
-}
 function leftCivImageClicked() {
-    modalContent.innerHTML = "";
-    service.getCivs().forEach(function (civ) {
-        modalContent.innerHTML += WidgetFactory.civ(civ.id, civ.name, civ.image);
-    });
+    view.showCivs(service.getCivs());
     state.selectedSide = Side.left;
-    showOverlay();
 }
 function rightCivImageClicked() {
-    modalContent.innerHTML = "";
-    service.getCivs().forEach(function (civ) {
-        modalContent.innerHTML += WidgetFactory.civ(civ.id, civ.name, civ.image);
-    });
+    view.showCivs(service.getCivs());
     state.selectedSide = Side.right;
-    showOverlay();
 }
 function leftUnitImageClicked() {
-    if (state.leftCiv == null) {
-        return;
-    }
+    view.showUnits(state.leftCiv);
     state.selectedSide = Side.left;
-    modalContent.innerHTML = "";
-    state.leftCiv.units.forEach(function (unit) {
-        modalContent.innerHTML += WidgetFactory.unit(unit);
-    });
-    showOverlay();
 }
 function rightUnitImageClicked() {
-    if (state.rightCiv == null) {
-        return;
-    }
+    view.showUnits(state.rightCiv);
     state.selectedSide = Side.right;
-    modalContent.innerHTML = "";
-    state.rightCiv.units.forEach(function (unit) {
-        modalContent.innerHTML += WidgetFactory.unit(unit);
-    });
-    showOverlay();
 }
 function civClicked(id) {
     var civ = service.getCiv(id);
     if (state.selectedSide == Side.left) {
         state.leftCiv = civ;
-        leftCivImage.src = civ.image;
+        view.leftCivImage.src = civ.image;
         Utils.$("leftCivName").textContent = civ.name;
     }
     else {
         state.rightCiv = civ;
-        rightCivImage.src = civ.image;
+        view.rightCivImage.src = civ.image;
         Utils.$("rightCivName").textContent = civ.name;
     }
-    hideOverlay();
+    view.hideOverlay();
 }
 function unitClicked(id) {
     var unit = service.getUnit(id);
-    var unitDescriptionHtml = Widgets.unitDescriptionHtml(unit);
+    var unitDescriptionHtml = Factory.unitDescriptionHtml(unit.name, unit.cost.food, unit.cost.wood, unit.cost.gold);
     var targetTable;
     var civ;
     if (state.selectedSide == Side.left) {
         state.leftUnit = unit;
-        leftUnitImage.src = unit.img;
+        view.leftUnitImage.src = unit.img;
         targetTable = "leftStats";
         Utils.$("leftUnitName").innerHTML = unitDescriptionHtml;
         civ = state.leftCiv;
     }
     else {
         state.rightUnit = unit;
-        rightUnitImage.src = unit.img;
+        view.rightUnitImage.src = unit.img;
         targetTable = "rightStats";
         Utils.$("rightUnitName").innerHTML = unitDescriptionHtml;
         civ = state.rightCiv;
     }
-    hideOverlay();
+    view.hideOverlay();
     showUnitStats(targetTable, unit, civ);
 }
 function showUnitStats(tableId, unit, civ) {
@@ -170,8 +124,8 @@ function formatUpgradeValue(value) {
     return value != 0 ? "+" + value : "-";
 }
 function statsHover(row, on) {
-    leftStatsTable.rows[row].style.backgroundColor = on ? "#D3D3D3" : "#FFFFFF";
-    rightStatsTable.rows[row].style.backgroundColor = on ? "#D3D3D3" : "#FFFFFF";
+    view.leftStatsTable.rows[row].style.backgroundColor = on ? "#D3D3D3" : "#FFFFFF";
+    view.rightStatsTable.rows[row].style.backgroundColor = on ? "#D3D3D3" : "#FFFFFF";
 }
 function randomMatchup() {
     var civ1 = service.getRandomCiv();
@@ -315,89 +269,6 @@ var BattleLogEntry = (function () {
     }
     return BattleLogEntry;
 }());
-var Widgets = (function () {
-    function Widgets() {
-    }
-    Widgets.unitDescriptionHtml = function (unit) {
-        var html = unit.name + "<br/><img src=\"" + Cost.imageUrlFood + "\"></img>&nbsp;" + unit.cost.food;
-        if (unit.cost.gold > 0) {
-            html += " <img src=\"" + Cost.imageUrlGold + "\"></img>&nbsp;" + unit.cost.gold;
-        }
-        if (unit.cost.wood > 0) {
-            html += " <img src=\"" + Cost.imageUrlWood + "\"></img>&nbsp;" + unit.cost.wood;
-        }
-        return html;
-    };
-    return Widgets;
-}());
-var WidgetFactory = {
-    civ: function (id, name, imageUrl) {
-        return "<div class=\"civCell\" onClick=\"javascript:civClicked(" + id + ")\">\n                   <img src=\"" + imageUrl + "\"></img>\n                   <p>" + name + "</p>\n               </div>";
-    },
-    unit: function (unit) {
-        return "<div class=\"civCell\" onClick=\"javascript:unitClicked('" + unit.id + "')\">\n                   <img src=\"" + unit.img + "\"></img>\n                   <p>" + unit.name + "</p>\n               </div>";
-    }
-};
-var Utils = {
-    hide: function (element) {
-        element.style.display = "none";
-    },
-    show: function (element) {
-        element.style.display = "block";
-    },
-    removeOptions: function (select) {
-        var i, L = select.options.length - 1;
-        for (i = L; i >= 0; i--) {
-            select.remove(i);
-        }
-    },
-    createOption: function (value, text) {
-        var option = document.createElement("option");
-        option.value = value;
-        option.text = text;
-        return option;
-    },
-    $: function (element) {
-        return document.getElementById(element);
-    },
-    copyToClipboard: function (str) {
-        var el = document.createElement('textarea');
-        el.value = str;
-        el.setAttribute('readonly', '');
-        el.style.position = 'absolute';
-        el.style.left = '-9999px';
-        document.body.appendChild(el);
-        el.select();
-        document.execCommand('copy');
-        document.body.removeChild(el);
-    }
-};
-var TableUtils = {
-    removeBody: function (table) {
-        var body = table.querySelector('tbody');
-        if (body != null) {
-            body.parentNode.removeChild(body);
-        }
-    },
-    createRow: function (body, values) {
-        var row = body.insertRow();
-        values.forEach(function (value) {
-            var cell = row.insertCell();
-            cell.innerHTML = value;
-        });
-    },
-    createMergedRow: function (body, value, span) {
-        var row = body.insertRow();
-        var cell = row.insertCell();
-        cell.colSpan = span;
-        cell.innerHTML = value;
-    },
-    newBody: function (table) {
-        TableUtils.removeBody(table);
-        var body = table.createTBody();
-        return body;
-    }
-};
 var AppState = (function () {
     function AppState() {
     }
@@ -724,6 +595,35 @@ var ShareCode = (function () {
     };
     return ShareCode;
 }());
+var TableUtils = (function () {
+    function TableUtils() {
+    }
+    TableUtils.removeBody = function (table) {
+        var body = table.querySelector('tbody');
+        if (body != null) {
+            body.parentNode.removeChild(body);
+        }
+    };
+    TableUtils.createRow = function (body, values) {
+        var row = body.insertRow();
+        values.forEach(function (value) {
+            var cell = row.insertCell();
+            cell.innerHTML = value;
+        });
+    };
+    TableUtils.createMergedRow = function (body, value, span) {
+        var row = body.insertRow();
+        var cell = row.insertCell();
+        cell.colSpan = span;
+        cell.innerHTML = value;
+    };
+    TableUtils.newBody = function (table) {
+        TableUtils.removeBody(table);
+        var body = table.createTBody();
+        return body;
+    };
+    return TableUtils;
+}());
 var Unit = (function () {
     function Unit(id, numericId, name, type, img, cost, hp, atk, rof, ad, ma, pa, atkBonuses, armourClasses) {
         this.id = id;
@@ -935,5 +835,89 @@ var UpgradeData = (function () {
         };
     }
     return UpgradeData;
+}());
+var Utils = (function () {
+    function Utils() {
+    }
+    Utils.$ = function (element) {
+        return document.getElementById(element);
+    };
+    Utils.copyToClipboard = function (text) {
+        var el = document.createElement('textarea');
+        el.value = text;
+        el.setAttribute('readonly', '');
+        el.style.position = 'absolute';
+        el.style.left = '-9999px';
+        document.body.appendChild(el);
+        el.select();
+        document.execCommand('copy');
+        document.body.removeChild(el);
+    };
+    return Utils;
+}());
+var View = (function () {
+    function View() {
+        this.leftCivImage = this.initElement("leftCivImage");
+        this.rightCivImage = this.initElement("rightCivImage");
+        this.leftUnitImage = this.initElement("leftUnitImage");
+        this.rightUnitImage = this.initElement("rightUnitImage");
+        this.leftStatsTable = this.initElement("leftStats");
+        this.rightStatsTable = this.initElement("rightStats");
+        this.modalOverlay = this.initElement("modalOverlay");
+        this.modalContent = this.initElement("modalContent");
+        this.factory = new Factory();
+    }
+    View.prototype.initElement = function (element) {
+        return document.getElementById(element);
+    };
+    View.prototype.showOverlay = function () {
+        this.modalOverlay.classList.remove("modalHidden");
+        this.modalOverlay.classList.add("modalVisible");
+    };
+    View.prototype.hideOverlay = function () {
+        this.modalOverlay.classList.remove("modalVisible");
+        this.modalOverlay.classList.add("modalHidden");
+    };
+    View.prototype.showCivs = function (civs) {
+        this.modalContent.innerHTML = "";
+        for (var _i = 0, civs_1 = civs; _i < civs_1.length; _i++) {
+            var civ = civs_1[_i];
+            this.modalContent.innerHTML += this.factory.civWidgetHtml(civ.id, civ.name, civ.image);
+        }
+        this.showOverlay();
+    };
+    View.prototype.showUnits = function (civ) {
+        if (civ == null) {
+            return;
+        }
+        this.modalContent.innerHTML = "";
+        for (var _i = 0, _a = civ.units; _i < _a.length; _i++) {
+            var unit = _a[_i];
+            this.modalContent.innerHTML += this.factory.unitWidgetHtml(unit.id, unit.name, unit.img);
+        }
+        this.showOverlay();
+    };
+    return View;
+}());
+var Factory = (function () {
+    function Factory() {
+    }
+    Factory.prototype.civWidgetHtml = function (id, name, imageUrl) {
+        return "<div class=\"civCell\" onClick=\"javascript:civClicked(" + id + ")\">\n                   <img src=\"" + imageUrl + "\"></img>\n                   <p>" + name + "</p>\n               </div>";
+    };
+    Factory.prototype.unitWidgetHtml = function (id, name, imageUrl) {
+        return "<div class=\"civCell\" onClick=\"javascript:unitClicked('" + id + "')\">\n                   <img src=\"" + imageUrl + "\"></img>\n                   <p>" + name + "</p>\n               </div>";
+    };
+    Factory.unitDescriptionHtml = function (name, f, w, g) {
+        var html = name + "<br/><img src=\"" + Cost.imageUrlFood + "\"></img>&nbsp;" + f;
+        if (g > 0) {
+            html += " <img src=\"" + Cost.imageUrlGold + "\"></img>&nbsp;" + g;
+        }
+        if (w > 0) {
+            html += " <img src=\"" + Cost.imageUrlWood + "\"></img>&nbsp;" + w;
+        }
+        return html;
+    };
+    return Factory;
 }());
 //# sourceMappingURL=app.js.map

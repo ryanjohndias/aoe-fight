@@ -1,19 +1,11 @@
-window.onload = initialise;
+window.onload = initialise
 window.onclick = function(event: MouseEvent) {
-    if (event.target == modalOverlay) {
-        hideOverlay()
+    if (event.target == view.modalOverlay) {
+        view.hideOverlay()
     }
 }
 
-var leftCivImage: HTMLImageElement
-var rightCivImage: HTMLImageElement
-var leftUnitImage: HTMLImageElement
-var rightUnitImage: HTMLImageElement
-var leftStatsTable: HTMLTableElement
-var rightStatsTable: HTMLTableElement
-var modalOverlay: HTMLDivElement
-var modalContent: HTMLDivElement
-
+var view: View
 var service: Service
 var state: AppState
 
@@ -24,45 +16,36 @@ enum Side {
 
 function initialise() {
 
+    this.view = new View()
     this.service = new Service()
     this.state = new AppState()
 
-    initElements()
     initEventListeners()
     handleHashIfNeeded()
 }
 
-function initElements() {
-    leftCivImage = Utils.$("leftCivImage") as HTMLImageElement
-    rightCivImage = Utils.$("rightCivImage") as HTMLImageElement
-    leftUnitImage = Utils.$("leftUnitImage") as HTMLImageElement
-    rightUnitImage = Utils.$("rightUnitImage") as HTMLImageElement
-    leftStatsTable = Utils.$("leftStats") as HTMLTableElement
-    rightStatsTable = Utils.$("rightStats") as HTMLTableElement
-    modalOverlay = Utils.$("modalOverlay") as HTMLDivElement
-    modalContent = Utils.$("modalContent") as HTMLDivElement
-}
-
 function initEventListeners() {
-    leftCivImage.onclick = leftCivImageClicked
-    rightCivImage.onclick = rightCivImageClicked
-    leftUnitImage.addEventListener("click", leftUnitImageClicked);
-    rightUnitImage.addEventListener("click", rightUnitImageClicked);
-    Utils.$("modalClose").onclick = hideOverlay
-    Utils.$("button_random").onclick = () => randomMatchup()
-    Utils.$("button_share").onclick = () => copyLink()
+    view.leftCivImage.onclick = leftCivImageClicked
+    view.rightCivImage.onclick = rightCivImageClicked
+    view.leftUnitImage.onclick = leftUnitImageClicked
+    view.rightUnitImage.onclick = rightUnitImageClicked
+    Utils.$("modalClose").onclick = view.hideOverlay
+    Utils.$("button_random").onclick = randomMatchup
+    Utils.$("button_share").onclick = copyLink
 }
 
 function handleHashIfNeeded() {
     if (window.location.hash != null) {
-        const code = window.location.hash.replace("#", "");
-        if (code.length == 8) {
-            loadCode(code)
-        }
+        const code = window.location.hash.replace("#", "")
+        loadCode(code)
     }
 }
 
 function loadCode(codeString: string) {
+    if (codeString.length != 8) {
+        return 
+    }
+
     let code = ShareCode.readCode(codeString)
     populate(code.leftCivId,
         service.getUnitByNumericId(code.leftUnitId).id,
@@ -70,64 +53,24 @@ function loadCode(codeString: string) {
         service.getUnitByNumericId(code.rightUnitId).id)
 }
 
-function showOverlay() {
-    modalOverlay.classList.remove("modalHidden");
-    modalOverlay.classList.add("modalVisible");
-}
-
-function hideOverlay() {
-    // Utils.hide(modalOverlay);
-
-    modalOverlay.classList.remove("modalVisible");
-    modalOverlay.classList.add("modalHidden");
-}
-
 function leftCivImageClicked() {
-    modalContent.innerHTML = "";
-    service.getCivs().forEach(function(civ) {
-        modalContent.innerHTML += WidgetFactory.civ(civ.id, civ.name, civ.image);
-    });
-    state.selectedSide = Side.left;
-    showOverlay();
+    view.showCivs(service.getCivs())
+    state.selectedSide = Side.left
 }
 
 function rightCivImageClicked() {
-    modalContent.innerHTML = "";
-    service.getCivs().forEach(function(civ) {
-        modalContent.innerHTML += WidgetFactory.civ(civ.id, civ.name, civ.image);
-    });
-    state.selectedSide = Side.right;
-    showOverlay();
+    view.showCivs(service.getCivs())
+    state.selectedSide = Side.right
 }
 
 function leftUnitImageClicked() {
-    if (state.leftCiv == null) {
-        return;
-    }
-
-    state.selectedSide = Side.left;
-
-    modalContent.innerHTML = "";
-    state.leftCiv.units.forEach(function(unit) {
-        modalContent.innerHTML += WidgetFactory.unit(unit);
-    });
-
-    showOverlay();
+    view.showUnits(state.leftCiv)
+    state.selectedSide = Side.left
 }
 
 function rightUnitImageClicked() {
-    if (state.rightCiv == null) {
-        return;
-    }
-
-    state.selectedSide = Side.right;
-
-    modalContent.innerHTML = "";
-    state.rightCiv.units.forEach(function(unit) {
-        modalContent.innerHTML += WidgetFactory.unit(unit);
-    });
-
-    showOverlay();
+    view.showUnits(state.rightCiv)
+    state.selectedSide = Side.right
 }
 
 function civClicked(id: number) {
@@ -135,38 +78,38 @@ function civClicked(id: number) {
 
     if (state.selectedSide == Side.left) {
         state.leftCiv = civ
-        leftCivImage.src = civ.image
+        view.leftCivImage.src = civ.image
         Utils.$("leftCivName").textContent = civ.name
     } else {
         state.rightCiv = civ
-        rightCivImage.src = civ.image
+        view.rightCivImage.src = civ.image
         Utils.$("rightCivName").textContent = civ.name
     }
 
-    hideOverlay()
+    view.hideOverlay()
  }
 
  function unitClicked(id: UnitId) {
     const unit = service.getUnit(id)
-    const unitDescriptionHtml = Widgets.unitDescriptionHtml(unit)
+    const unitDescriptionHtml = Factory.unitDescriptionHtml(unit.name, unit.cost.food, unit.cost.wood, unit.cost.gold)
 
     var targetTable: string
     var civ: Civ
     if (state.selectedSide == Side.left) {
         state.leftUnit = unit
-        leftUnitImage.src = unit.img
+        view.leftUnitImage.src = unit.img
         targetTable = "leftStats"
         Utils.$("leftUnitName").innerHTML = unitDescriptionHtml
         civ = state.leftCiv
     } else {
         state.rightUnit = unit
-        rightUnitImage.src = unit.img
+        view.rightUnitImage.src = unit.img
         targetTable = "rightStats"
         Utils.$("rightUnitName").innerHTML = unitDescriptionHtml
         civ = state.rightCiv
     }
 
-    hideOverlay()
+    view.hideOverlay()
 
     showUnitStats(targetTable, unit, civ)
 }
@@ -205,8 +148,8 @@ function civClicked(id: number) {
  }
 
  function statsHover(row: number, on: boolean) {
-    leftStatsTable.rows[row].style.backgroundColor = on ? "#D3D3D3" : "#FFFFFF";
-    rightStatsTable.rows[row].style.backgroundColor = on ? "#D3D3D3" : "#FFFFFF";
+    view.leftStatsTable.rows[row].style.backgroundColor = on ? "#D3D3D3" : "#FFFFFF";
+    view.rightStatsTable.rows[row].style.backgroundColor = on ? "#D3D3D3" : "#FFFFFF";
  }
 
  function randomMatchup() {
@@ -357,8 +300,8 @@ function civClicked(id: number) {
 
  function renderBattleReport(attacker: CivUnit, defender: CivUnit, report: BattleReport, tableId: string) {
 
-    let log = Utils.$(tableId) as HTMLParagraphElement
-    let body = TableUtils.newBody(log);
+    let log = Utils.$(tableId) as HTMLTableElement
+    let body = TableUtils.newBody(log)
 
     let bonus = `${attacker.unit.name} deals <b>${report.bonusDamage}</b> bonus damage to ${defender.unit.name}`
     TableUtils.createMergedRow(body, `<p style="padding-top:16px; padding-bottom:16px">${bonus}</p>`, 5);
@@ -403,98 +346,3 @@ class BattleReport {
         this.hpLeft = hpLeft
     }
  }
-
-class Widgets {
-
-    public static unitDescriptionHtml(unit: Unit) {
-        
-        let html = `${unit.name}<br/><img src="${Cost.imageUrlFood}"></img>&nbsp;${unit.cost.food}`
-
-        if (unit.cost.gold > 0) {
-            html += ` <img src="${Cost.imageUrlGold}"></img>&nbsp;${unit.cost.gold}`
-        }
-        if (unit.cost.wood > 0) {
-            html += ` <img src="${Cost.imageUrlWood}"></img>&nbsp;${unit.cost.wood}`
-        }
-
-        return html
-    }
-
-}
-
- var WidgetFactory = {
-    civ: function(id, name, imageUrl) {
-        return `<div class="civCell" onClick="javascript:civClicked(${id})">
-                   <img src="${imageUrl}"></img>
-                   <p>${name}</p>
-               </div>`;
-    },
-    unit: function(unit: Unit) {
-        return `<div class="civCell" onClick="javascript:unitClicked('${unit.id}')">
-                   <img src="${unit.img}"></img>
-                   <p>${unit.name}</p>
-               </div>`;
-    }
- }
-
- var Utils = {
-    hide: function (element) {
-        element.style.display = "none";
-    },
-    show: function (element) {
-        element.style.display = "block";
-    },
-    removeOptions: function (select) {
-        var i, L = select.options.length - 1;
-        for(i = L; i >= 0; i--) {
-            select.remove(i);
-        }
-    },
-    createOption: function (value, text) {
-        var option = document.createElement("option");
-        option.value = value;
-        option.text = text;
-        return option;
-    },
-    $: function (element: string) {
-        return document.getElementById(element)
-    },
-    copyToClipboard: function(str) {
-        const el = document.createElement('textarea');
-        el.value = str;
-        el.setAttribute('readonly', '');
-        el.style.position = 'absolute';
-        el.style.left = '-9999px';
-        document.body.appendChild(el);
-        el.select();
-        document.execCommand('copy');
-        document.body.removeChild(el);
-    }
-}
-
-var TableUtils = {
-    removeBody: function(table) {
-        var body = table.querySelector('tbody');
-        if (body != null) {
-            body.parentNode.removeChild(body);
-        }
-    },
-    createRow: function(body, values) {
-        var row = body.insertRow() as HTMLTableRowElement;
-        values.forEach(function(value) {
-            var cell = row.insertCell();
-            cell.innerHTML = value;
-        });
-    },
-    createMergedRow: function(body, value, span) {
-        var row = body.insertRow();
-        var cell = row.insertCell();
-        cell.colSpan = span;
-        cell.innerHTML = value;
-    },
-    newBody: function(table) {
-        TableUtils.removeBody(table);
-        var body = table.createTBody();
-        return body;
-    }
-}
