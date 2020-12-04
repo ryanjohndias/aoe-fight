@@ -49,3 +49,8 @@ enum UnitId {
     eMagyarHuszar = "eMagyarHuszar",
     eKamayuk = "eKamayuk"
 }
+
+enum Side {
+    left,
+    right
+}

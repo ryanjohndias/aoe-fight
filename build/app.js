@@ -7,11 +7,6 @@ window.onclick = function (event) {
 var view;
 var service;
 var state;
-var Side;
-(function (Side) {
-    Side[Side["left"] = 0] = "left";
-    Side[Side["right"] = 1] = "right";
-})(Side || (Side = {}));
 function initialise() {
     this.view = new View();
     this.service = new Service();
@@ -20,8 +15,8 @@ function initialise() {
     handleHashIfNeeded();
 }
 function initEventListeners() {
-    view.leftCivImage.onclick = leftCivImageClicked;
-    view.rightCivImage.onclick = rightCivImageClicked;
+    view.leftCivImage.onclick = function () { return showCivSelection(Side.left); };
+    view.rightCivImage.onclick = function () { return showCivSelection(Side.right); };
     view.leftUnitImage.onclick = leftUnitImageClicked;
     view.rightUnitImage.onclick = rightUnitImageClicked;
     Utils.$("modalClose").onclick = view.hideOverlay;
@@ -35,19 +30,15 @@ function handleHashIfNeeded() {
     }
 }
 function loadCode(codeString) {
-    if (codeString.length != 8) {
+    if (!ShareCode.isValidCode(codeString)) {
         return;
     }
     var code = ShareCode.readCode(codeString);
     populate(code.leftCivId, service.getUnitByNumericId(code.leftUnitId).id, code.rightCivId, service.getUnitByNumericId(code.rightUnitId).id);
 }
-function leftCivImageClicked() {
+function showCivSelection(side) {
     view.showCivs(service.getCivs());
-    state.selectedSide = Side.left;
-}
-function rightCivImageClicked() {
-    view.showCivs(service.getCivs());
-    state.selectedSide = Side.right;
+    state.selectedSide = side;
 }
 function leftUnitImageClicked() {
     view.showUnits(state.leftCiv);
@@ -98,13 +89,13 @@ function showUnitStats(tableId, unit, civ) {
     var table = Utils.$(tableId);
     var body = TableUtils.newBody(table);
     TableUtils.createRow(body, ["Stat", "Base", "Upgrades", "Special", "Total"]);
-    TableUtils.createRow(body, ["HP", civUnit.unit.hp, "" + (civUnit.upgrades.hp != 0 ? "+" + civUnit.upgrades.hp : "-"), "" + (civUnit.special.hp != 0 ? "+" + civUnit.special.hp + "%" : "-"), civUnit.total.hp]);
-    TableUtils.createRow(body, ["Attack", civUnit.unit.atk, "+" + civUnit.upgrades.atk, "" + (civUnit.special.atk != 0 ? "+" + civUnit.special.atk : "-"), civUnit.total.atk]);
+    TableUtils.createRow(body, ["HP", civUnit.unit.hp, Formatter.amountUpgrade(civUnit.upgrades.hp), Formatter.percUpgrade(civUnit.special.hp), civUnit.total.hp]);
+    TableUtils.createRow(body, ["Attack", civUnit.unit.atk, "+" + civUnit.upgrades.atk, Formatter.amountUpgrade(civUnit.special.atk), civUnit.total.atk]);
     TableUtils.createRow(body, ["RoF", civUnit.unit.rof, "-", "" + (civUnit.special.rof != 0 ? civUnit.special.rof + "%" : "-"), civUnit.total.rof.toFixed(2)]);
     TableUtils.createRow(body, ["AD", civUnit.unit.ad, "-", "-", civUnit.unit.ad]);
     TableUtils.createRow(body, ["DPS", civUnit.unit.dps().toFixed(2), "-", "-", civUnit.total.dps().toFixed(2)]);
-    TableUtils.createRow(body, ["Melee armor", civUnit.unit.ma, "+" + civUnit.upgrades.ma, formatUpgradeValue(civUnit.special.ma), civUnit.total.ma]);
-    TableUtils.createRow(body, ["Pierce armor", civUnit.unit.pa, "+" + civUnit.upgrades.pa, formatUpgradeValue(civUnit.special.pa), civUnit.total.pa]);
+    TableUtils.createRow(body, ["Melee armor", civUnit.unit.ma, "+" + civUnit.upgrades.ma, Formatter.amountUpgrade(civUnit.special.ma), civUnit.total.ma]);
+    TableUtils.createRow(body, ["Pierce armor", civUnit.unit.pa, "+" + civUnit.upgrades.pa, Formatter.amountUpgrade(civUnit.special.pa), civUnit.total.pa]);
     var rows = table.rows;
     var _loop_1 = function () {
         var row = rows[i];
@@ -119,9 +110,6 @@ function showUnitStats(tableId, unit, civ) {
         var r = new CivUnit(state.rightUnit, state.rightCiv);
         showBattle(l, r);
     }
-}
-function formatUpgradeValue(value) {
-    return value != 0 ? "+" + value : "-";
 }
 function statsHover(row, on) {
     view.leftStatsTable.rows[row].style.backgroundColor = on ? "#D3D3D3" : "#FFFFFF";
@@ -386,7 +374,7 @@ var CivData = (function () {
             }),
             new Civ(11, "Berbers", "Berber", "https://vignette.wikia.nocookie.net/ageofempires/images/7/71/CivIcon-Berbers.png/revision/latest?cb=20191107173130", [units.cavalier, units.champion, units.condottiero, units.hussar, units.heavyCamel], [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace], [upgrades.scaleMailArmor, upgrades.chainMailArmor, upgrades.plateMailArmor], [upgrades.bloodlines, upgrades.scaleBardingArmor, upgrades.chainBardingArmor, upgrades.plateBardingArmor], { infantry: [] }),
             new Civ(12, "Britons", "British", "https://vignette.wikia.nocookie.net/ageofempires/images/a/ae/CivIcon-Britons.png/revision/latest?cb=20191107173130", [units.cavalier, units.champion, units.condottiero, units.halbardier], [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace], [upgrades.scaleMailArmor, upgrades.chainMailArmor, upgrades.plateMailArmor], [upgrades.scaleBardingArmor, upgrades.chainBardingArmor, upgrades.plateBardingArmor], { infantry: [] }),
-            new Civ(13, "Bulgarians", "Bulgarian", "https://vignette.wikia.nocookie.net/ageofempires/images/c/ce/CivIcon-Bulgarians.png/revision/latest/scale-to-width-down/104?cb=20191107173130", [units.cavalier, units.condottiero, units.eDismountedKonnik, units.halbardier, units.eKonnik, units.twoHandedSwordsman], [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace], [upgrades.scaleMailArmor, upgrades.chainMailArmor, upgrades.plateMailArmor], [upgrades.scaleBardingArmor, upgrades.chainBardingArmor, upgrades.plateBardingArmor], { infantry: [upgrades.bloodlines] }),
+            new Civ(13, "Bulgarians", "Bulgarian", "https://vignette.wikia.nocookie.net/ageofempires/images/c/ce/CivIcon-Bulgarians.png/revision/latest/scale-to-width-down/104?cb=20191107173130", [units.cavalier, units.condottiero, units.eDismountedKonnik, units.halbardier, units.eKonnik, units.twoHandedSwordsman], [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace], [upgrades.scaleMailArmor, upgrades.chainMailArmor, upgrades.plateMailArmor], [upgrades.bloodlines, upgrades.scaleBardingArmor, upgrades.chainBardingArmor, upgrades.plateBardingArmor], { infantry: [] }),
             new Civ(14, "Byzantines", "Byzantine", "https://vignette.wikia.nocookie.net/ageofempires/images/2/27/CivIcon-Byzantines.png/revision/latest?cb=20191107173131", [units.champion, units.condottiero, units.eCataphract, units.halbardier, units.hussar, units.heavyCamel, units.paladin], [upgrades.forging, upgrades.ironCasting], [upgrades.scaleMailArmor, upgrades.chainMailArmor, upgrades.plateMailArmor], [upgrades.scaleBardingArmor, upgrades.chainBardingArmor, upgrades.plateBardingArmor], { infantry: [] }),
             new Civ(15, "Burmese", "Burmese", "https://vignette.wikia.nocookie.net/ageofempires/images/7/79/CivIcon-Burmese.png/revision/latest?cb=20191107173131", [units.cavalier, units.champion, units.condottiero, units.eBattleElephant, units.halbardier, units.hussar], [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace], [upgrades.scaleMailArmor, upgrades.chainMailArmor, upgrades.plateMailArmor], [upgrades.bloodlines, upgrades.scaleBardingArmor, upgrades.chainBardingArmor, upgrades.plateBardingArmor], {
                 infantry: [
@@ -534,6 +522,22 @@ var UnitId;
     UnitId["eMagyarHuszar"] = "eMagyarHuszar";
     UnitId["eKamayuk"] = "eKamayuk";
 })(UnitId || (UnitId = {}));
+var Side;
+(function (Side) {
+    Side[Side["left"] = 0] = "left";
+    Side[Side["right"] = 1] = "right";
+})(Side || (Side = {}));
+var Formatter = (function () {
+    function Formatter() {
+    }
+    Formatter.amountUpgrade = function (value) {
+        return value != 0 ? "+" + value : "-";
+    };
+    Formatter.percUpgrade = function (value) {
+        return value != 0 ? "+" + value + "%" : "-";
+    };
+    return Formatter;
+}());
 var AttackBonus = (function () {
     function AttackBonus(armourClass, value) {
         this.armourClass = armourClass;
@@ -586,6 +590,9 @@ var ShareCode = (function () {
     ShareCode.readCode = function (code) {
         var parse = function (code, index) { return parseInt(code.substr(index, 2)); };
         return new ShareCode(parse(code, 0), parse(code, 2), parse(code, 4), parse(code, 6));
+    };
+    ShareCode.isValidCode = function (code) {
+        return code.length == 8;
     };
     ShareCode.prototype.getCode = function () {
         return "" + this.leftCivId + this.leftUnitId + this.rightCivId + this.rightUnitId;

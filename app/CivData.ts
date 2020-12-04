@@ -37,8 +37,8 @@ class CivData {
                 [units.cavalier, units.condottiero, units.eDismountedKonnik, units.halbardier, units.eKonnik, units.twoHandedSwordsman],
                 [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace],
                 [upgrades.scaleMailArmor, upgrades.chainMailArmor, upgrades.plateMailArmor],
-                [upgrades.scaleBardingArmor, upgrades.chainBardingArmor, upgrades.plateBardingArmor],
-                {infantry: [upgrades.bloodlines]}
+                [upgrades.bloodlines, upgrades.scaleBardingArmor, upgrades.chainBardingArmor, upgrades.plateBardingArmor],
+                {infantry: []}
                 // TODO Stirrups, Bagains https://ageofempires.fandom.com/wiki/Bulgarians/Tree
             ),
             new Civ(14, "Byzantines", "Byzantine",

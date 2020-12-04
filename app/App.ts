@@ -9,24 +9,17 @@ var view: View
 var service: Service
 var state: AppState
 
-enum Side {
-    left,
-    right
-}
-
 function initialise() {
-
     this.view = new View()
     this.service = new Service()
     this.state = new AppState()
-
     initEventListeners()
     handleHashIfNeeded()
 }
 
 function initEventListeners() {
-    view.leftCivImage.onclick = leftCivImageClicked
-    view.rightCivImage.onclick = rightCivImageClicked
+    view.leftCivImage.onclick = () => showCivSelection(Side.left)
+    view.rightCivImage.onclick = () => showCivSelection(Side.right)
     view.leftUnitImage.onclick = leftUnitImageClicked
     view.rightUnitImage.onclick = rightUnitImageClicked
     Utils.$("modalClose").onclick = view.hideOverlay
@@ -42,7 +35,7 @@ function handleHashIfNeeded() {
 }
 
 function loadCode(codeString: string) {
-    if (codeString.length != 8) {
+    if (!ShareCode.isValidCode(codeString)) {
         return 
     }
 
@@ -53,14 +46,9 @@ function loadCode(codeString: string) {
         service.getUnitByNumericId(code.rightUnitId).id)
 }
 
-function leftCivImageClicked() {
+function showCivSelection(side: Side) {
     view.showCivs(service.getCivs())
-    state.selectedSide = Side.left
-}
-
-function rightCivImageClicked() {
-    view.showCivs(service.getCivs())
-    state.selectedSide = Side.right
+    state.selectedSide = side
 }
 
 function leftUnitImageClicked() {
@@ -121,13 +109,13 @@ function civClicked(id: number) {
     var body = TableUtils.newBody(table)
 
     TableUtils.createRow(body, ["Stat", "Base", "Upgrades", "Special", "Total"]);
-    TableUtils.createRow(body, ["HP", civUnit.unit.hp, `${civUnit.upgrades.hp != 0 ? `+${civUnit.upgrades.hp}` : "-"}`, `${civUnit.special.hp != 0 ? `+${civUnit.special.hp}%` : "-"}`, civUnit.total.hp]);
-    TableUtils.createRow(body, ["Attack", civUnit.unit.atk, `+${civUnit.upgrades.atk}`, `${civUnit.special.atk != 0 ? `+${civUnit.special.atk}` : "-"}`, civUnit.total.atk]);
-    TableUtils.createRow(body, ["RoF", civUnit.unit.rof, "-", `${civUnit.special.rof != 0 ? `${civUnit.special.rof}%` : "-"}`, civUnit.total.rof.toFixed(2)]);
-    TableUtils.createRow(body, ["AD", civUnit.unit.ad, "-", "-", civUnit.unit.ad]);
-    TableUtils.createRow(body, ["DPS", civUnit.unit.dps().toFixed(2), "-", "-", civUnit.total.dps().toFixed(2)]);
-    TableUtils.createRow(body, ["Melee armor", civUnit.unit.ma, `+${civUnit.upgrades.ma}`, formatUpgradeValue(civUnit.special.ma), civUnit.total.ma]);
-    TableUtils.createRow(body, ["Pierce armor", civUnit.unit.pa, `+${civUnit.upgrades.pa}`, formatUpgradeValue(civUnit.special.pa), civUnit.total.pa]);
+    TableUtils.createRow(body, ["HP",           civUnit.unit.hp, Formatter.amountUpgrade(civUnit.upgrades.hp), Formatter.percUpgrade(civUnit.special.hp), civUnit.total.hp]);
+    TableUtils.createRow(body, ["Attack",       civUnit.unit.atk, `+${civUnit.upgrades.atk}`, Formatter.amountUpgrade(civUnit.special.atk), civUnit.total.atk]);
+    TableUtils.createRow(body, ["RoF",          civUnit.unit.rof, "-", `${civUnit.special.rof != 0 ? `${civUnit.special.rof}%` : "-"}`, civUnit.total.rof.toFixed(2)]);
+    TableUtils.createRow(body, ["AD",           civUnit.unit.ad, "-", "-", civUnit.unit.ad]);
+    TableUtils.createRow(body, ["DPS",          civUnit.unit.dps().toFixed(2), "-", "-", civUnit.total.dps().toFixed(2)]);
+    TableUtils.createRow(body, ["Melee armor",  civUnit.unit.ma, `+${civUnit.upgrades.ma}`, Formatter.amountUpgrade(civUnit.special.ma), civUnit.total.ma]);
+    TableUtils.createRow(body, ["Pierce armor", civUnit.unit.pa, `+${civUnit.upgrades.pa}`, Formatter.amountUpgrade(civUnit.special.pa), civUnit.total.pa]);
 
     let rows = table.rows;
     for (var i = 1; i < rows.length; i++) {
@@ -141,10 +129,6 @@ function civClicked(id: number) {
         const r = new CivUnit(state.rightUnit, state.rightCiv)
         showBattle(l, r)
     }
- }
-
- function formatUpgradeValue(value) {
-    return value != 0 ? `+${value}` : "-"
  }
 
  function statsHover(row: number, on: boolean) {
