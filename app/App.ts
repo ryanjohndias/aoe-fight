@@ -15,6 +15,8 @@ function initialise() {
     this.state = new AppState()
     initEventListeners()
     handleHashIfNeeded()
+
+    this.view.renderGraph()
 }
 
 function initEventListeners() {

@@ -13,6 +13,7 @@ function initialise() {
     this.state = new AppState();
     initEventListeners();
     handleHashIfNeeded();
+    this.view.renderGraph();
 }
 function initEventListeners() {
     view.leftCivImage.onclick = function () { return showCivSelection(Side.left); };
@@ -903,6 +904,101 @@ var View = (function () {
             this.modalContent.innerHTML += this.factory.unitWidgetHtml(unit.id, unit.name, unit.img);
         }
         this.showOverlay();
+    };
+    View.prototype.renderGraph = function (histogram) {
+        var dataA = [200, 400, 600, 800, 1000, 1200, 1400, 1600, 1800, 2000, 2200, 2400, 2600, 2800, 3000, 3200];
+        var dataB = [200, 400, 600, 800, 1000, 1200, 1400, 1600, 1800, 2000, 2200, 2400, 2600, 2800, 3000, 3200];
+        var labels = [200, 400, 600, 800, 1000, 1200, 1400, 1600, 1800, 2000, 2200, 2400, 2600, 2800, 3000, 3200];
+        var config = {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'a',
+                        backgroundColor: "blue",
+                        borderColor: "blue",
+                        data: dataA,
+                        fill: false
+                    },
+                    {
+                        label: 'b',
+                        backgroundColor: "red",
+                        borderColor: "red",
+                        data: dataB,
+                        fill: false
+                    }
+                ]
+            },
+            options: {
+                responsive: false,
+                tooltips: {
+                    mode: 'index',
+                    intersect: false,
+                    displayColors: false,
+                    callbacks: {
+                        title: function (tooltipItem, data) {
+                            var index = tooltipItem[0].index;
+                            var dataset = data.datasets[0];
+                            var players = dataset.data[index];
+                            return "xx";
+                        },
+                        label: function (tooltipItem, data) {
+                            var index = tooltipItem.index;
+                            return ["ttrr"];
+                        }
+                    }
+                },
+                hover: {
+                    mode: 'nearest',
+                    intersect: true
+                },
+                legend: {
+                    display: false
+                },
+                scales: {
+                    xAxes: [{
+                            display: true,
+                            scaleLabel: {
+                                display: true,
+                                labelString: "yy"
+                            },
+                            gridLines: {
+                                display: false,
+                                zeroLineColor: "black",
+                            },
+                            ticks: {
+                                maxRotation: 0,
+                                minRotation: 0,
+                            }
+                        }],
+                    yAxes: [{
+                            display: true,
+                            scaleLabel: {
+                                display: true,
+                                labelString: "nah"
+                            },
+                            gridLines: {
+                                color: "black",
+                                zeroLineColor: "black"
+                            },
+                            ticks: {}
+                        }]
+                }
+            }
+        };
+        Chart.defaults.global.defaultFontColor = "black";
+        Chart.defaults.global.defaultFontFamily = "Roboto Condensed";
+        var chartElement = document.getElementById('chartCanvas');
+        var ctx = chartElement.getContext('2d');
+        if (window.myLine == null) {
+            window.myLine = new Chart(ctx, config);
+        }
+        else {
+            window.myLine.config = config;
+            window.myLine.options = config.options;
+            window.myLine.update();
+        }
     };
     return View;
 }());

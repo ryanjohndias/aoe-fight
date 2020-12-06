@@ -56,6 +56,113 @@ class View {
         }
         this.showOverlay()
     }
+
+    public renderGraph(histogram) {
+
+    
+        let dataA = [200, 400, 600, 800, 1000, 1200, 1400, 1600, 1800, 2000, 2200, 2400, 2600, 2800, 3000, 3200];
+        let dataB = [200, 400, 600, 800, 1000, 1200, 1400, 1600, 1800, 2000, 2200, 2400, 2600, 2800, 3000, 3200];
+        
+        let labels = [200, 400, 600, 800, 1000, 1200, 1400, 1600, 1800, 2000, 2200, 2400, 2600, 2800, 3000, 3200];
+    
+          var config = {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'a',
+                        backgroundColor: "blue",
+                        borderColor: "blue",
+                        data: dataA,
+                        fill: false
+                    },
+                    {
+                        label: 'b',
+                        backgroundColor: "red",
+                        borderColor: "red",
+                        data: dataB,
+                        fill: false
+                    }
+                ]
+            },
+            options: {
+                responsive: false,
+                tooltips: {
+                    mode: 'index',
+                    intersect: false,
+                    displayColors: false,
+                    callbacks: {
+                        title: function(tooltipItem, data) {
+                            const index = tooltipItem[0].index;
+                            const dataset = data.datasets[0];
+                            const players = dataset.data[index];
+                            return "xx"
+                        },
+                        label: function(tooltipItem, data) {
+                            const index = tooltipItem.index;
+                            return ["ttrr"];
+                        }
+                    }
+                },
+                hover: {
+                    mode: 'nearest',
+                    intersect: true
+                },
+                legend: {
+                    display: false
+                },
+                scales: {
+                    xAxes: [{
+                        display: true,
+                        scaleLabel: {
+                            display: true,
+                            labelString: "yy"
+                        },
+                        gridLines: {
+                            display: false,
+                            zeroLineColor: "black",
+                        },
+                        ticks: {
+                            maxRotation: 0,
+                            minRotation: 0,
+                            // callback: function(value, index, values) {
+                            // 	return '$' + value;
+                            // }
+                        }
+                    }],
+                    yAxes: [{
+                        display: true,
+                        scaleLabel: {
+                            display: true,
+                            labelString: "nah"
+                        },
+                        gridLines: {
+                            color: "black",
+                            zeroLineColor: "black"
+                        },
+                        ticks: {
+                            // suggestedMin: 985,
+                            // suggestedMax: 990
+                        }
+                    }]
+                }
+            }
+        };
+    
+        Chart.defaults.global.defaultFontColor = "black";
+        Chart.defaults.global.defaultFontFamily = "Roboto Condensed";
+    
+        let chartElement = document.getElementById('chartCanvas') as HTMLCanvasElement
+        var ctx = chartElement.getContext('2d');
+        if (window.myLine == null) {
+            window.myLine = new Chart(ctx, config);
+        } else {
+            window.myLine.config = config;
+            window.myLine.options = config.options;
+            window.myLine.update();
+        }
+    }
 }
 
 class Factory {
