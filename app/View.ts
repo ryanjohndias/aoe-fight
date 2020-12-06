@@ -57,99 +57,199 @@ class View {
         this.showOverlay()
     }
 
-    public renderGraph(histogram) {
+    public renderGraph(left: BattleReport, right: BattleReport) {
 
-    
-        let dataA = [200, 400, 600, 800, 1000, 1200, 1400, 1600, 1800, 2000, 2200, 2400, 2600, 2800, 3000, 3200];
-        let dataB = [200, 400, 600, 800, 1000, 1200, 1400, 1600, 1800, 2000, 2200, 2400, 2600, 2800, 3000, 3200];
+        // TODO: Have a custom view model object to pass in here (to not expose BattleReport to the view; also so that the view doesn't do too much work)
+
+        let leftData = left.log.map(function(item) {
+            return {
+                x: item.time,
+                y: item.hpLeft
+            }
+        })
+
+        let rightData = right.log.map(function(item) {
+            return {
+                x: item.time,
+                y: item.hpLeft
+            }
+        })
+
+        console.log(leftData)
+
+        // let dataA = [200, 400, 600, 800, 1000, 1200, 1400, 1600, 1800, 2000, 2200, 2400, 2600, 2800, 3000, 3200];
+        // let dataB = [200, 400, 600, 800, 1000, 1200, 1400, 1600, 1800, 2000, 2200, 2400, 2600, 2800, 3000, 3200];
         
-        let labels = [200, 400, 600, 800, 1000, 1200, 1400, 1600, 1800, 2000, 2200, 2400, 2600, 2800, 3000, 3200];
+        // let labels = [200, 400, 600, 800, 1000, 1200, 1400, 1600, 1800, 2000, 2200, 2400, 2600, 2800, 3000, 3200];
     
-          var config = {
+        //   var config = {
+        //     type: 'line',
+        //     data: {
+        //         labels: labels,
+        //         datasets: [
+        //             {
+        //                 label: 'a',
+        //                 backgroundColor: "blue",
+        //                 borderColor: "blue",
+        //                 data: dataA,
+        //                 fill: false
+        //             },
+        //             {
+        //                 label: 'b',
+        //                 backgroundColor: "red",
+        //                 borderColor: "red",
+        //                 data: dataB,
+        //                 fill: false
+        //             }
+        //         ]
+        //     },
+        //     options: {
+        //         responsive: false,
+        //         tooltips: {
+        //             mode: 'index',
+        //             intersect: false,
+        //             displayColors: false,
+        //             callbacks: {
+        //                 title: function(tooltipItem, data) {
+        //                     const index = tooltipItem[0].index;
+        //                     const dataset = data.datasets[0];
+        //                     const players = dataset.data[index];
+        //                     return "xx"
+        //                 },
+        //                 label: function(tooltipItem, data) {
+        //                     const index = tooltipItem.index;
+        //                     return ["ttrr"];
+        //                 }
+        //             }
+        //         },
+        //         hover: {
+        //             mode: 'nearest',
+        //             intersect: true
+        //         },
+        //         legend: {
+        //             display: false
+        //         },
+        //         scales: {
+        //             xAxes: [{
+        //                 display: true,
+        //                 scaleLabel: {
+        //                     display: true,
+        //                     labelString: "yy"
+        //                 },
+        //                 gridLines: {
+        //                     display: false,
+        //                     zeroLineColor: "black",
+        //                 },
+        //                 ticks: {
+        //                     maxRotation: 0,
+        //                     minRotation: 0,
+        //                     // callback: function(value, index, values) {
+        //                     // 	return '$' + value;
+        //                     // }
+        //                 }
+        //             }],
+        //             yAxes: [{
+        //                 display: true,
+        //                 scaleLabel: {
+        //                     display: true,
+        //                     labelString: "nah"
+        //                 },
+        //                 gridLines: {
+        //                     color: "black",
+        //                     zeroLineColor: "black"
+        //                 },
+        //                 ticks: {
+        //                     // suggestedMin: 985,
+        //                     // suggestedMax: 990
+        //                 }
+        //             }]
+        //         }
+        //     }
+        // };
+    
+        let config = {
             type: 'line',
             data: {
-                labels: labels,
-                datasets: [
-                    {
-                        label: 'a',
-                        backgroundColor: "blue",
-                        borderColor: "blue",
-                        data: dataA,
-                        fill: false
-                    },
-                    {
-                        label: 'b',
-                        backgroundColor: "red",
-                        borderColor: "red",
-                        data: dataB,
-                        fill: false
-                    }
-                ]
+              datasets: [{
+                label: 'Engine Speed',
+                backgroundColor: '#ff0000',
+                borderColor: '#ff0000',
+                fill: false,
+                data: leftData,
+                // data: [{
+                //   x: 0.37,
+                //   y: 2640
+                // }, {
+                //   x: 0.85,
+                //   y: 2560
+                // }, {
+                //   x: 1.33,
+                //   y: 2560
+                // }, {
+                //   x: 1.78,
+                //   y: 2560
+                // }, {
+                //   x: 2.23,
+                //   y: 2680
+                // }, {
+                //   x: 2.7,
+                //   y: 2920
+                // }, {
+                //   x: 3.16,
+                //   y: 3200
+                // }, {
+                //   x: 3.63,
+                //   y: 3520
+                // }]
+              },
+              {
+                label: 'Mass Air Flow - Sensor',
+                backgroundColor: '#00FFFF',
+                borderColor: '#00FFFF',
+                fill: false,
+                data: rightData,
+                // data: [{
+                //   x: 0.02,
+                //   y: 19.58
+                // }, {
+                //   x: 0.45,
+                //   y: 16.28
+                // }, {
+                //   x: 0.92,
+                //   y: 8.56
+                // }, {
+                //   x: 1.39,
+                //   y: 8.47
+                // }, {
+                //   x: 1.86,
+                //   y: 23.36
+                // }, {
+                //   x: 2.33,
+                //   y: 45.78
+                // }, {
+                //   x: 2.78,
+                //   y: 56.03
+                // }, {
+                //   x: 3.23,
+                //   y: 62.36
+                // }]
+              }],
+          
             },
             options: {
-                responsive: false,
-                tooltips: {
-                    mode: 'index',
-                    intersect: false,
-                    displayColors: false,
-                    callbacks: {
-                        title: function(tooltipItem, data) {
-                            const index = tooltipItem[0].index;
-                            const dataset = data.datasets[0];
-                            const players = dataset.data[index];
-                            return "xx"
-                        },
-                        label: function(tooltipItem, data) {
-                            const index = tooltipItem.index;
-                            return ["ttrr"];
-                        }
-                    }
-                },
-                hover: {
-                    mode: 'nearest',
-                    intersect: true
-                },
-                legend: {
-                    display: false
-                },
-                scales: {
-                    xAxes: [{
-                        display: true,
-                        scaleLabel: {
-                            display: true,
-                            labelString: "yy"
-                        },
-                        gridLines: {
-                            display: false,
-                            zeroLineColor: "black",
-                        },
-                        ticks: {
-                            maxRotation: 0,
-                            minRotation: 0,
-                            // callback: function(value, index, values) {
-                            // 	return '$' + value;
-                            // }
-                        }
-                    }],
-                    yAxes: [{
-                        display: true,
-                        scaleLabel: {
-                            display: true,
-                            labelString: "nah"
-                        },
-                        gridLines: {
-                            color: "black",
-                            zeroLineColor: "black"
-                        },
-                        ticks: {
-                            // suggestedMin: 985,
-                            // suggestedMax: 990
-                        }
-                    }]
-                }
+              responsive: true,
+              title: {
+                display: false
+              },
+              scales: {
+                xAxes: [{
+                  type: 'linear',
+                  position: 'bottom'
+                }]
+              }
             }
-        };
-    
+          }
+
         Chart.defaults.global.defaultFontColor = "black";
         Chart.defaults.global.defaultFontFamily = "Roboto Condensed";
     

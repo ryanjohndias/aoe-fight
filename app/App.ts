@@ -14,9 +14,7 @@ function initialise() {
     this.service = new Service()
     this.state = new AppState()
     initEventListeners()
-    handleHashIfNeeded()
-
-    this.view.renderGraph()
+    handleHashIfNeeded()   
 }
 
 function initEventListeners() {
@@ -240,6 +238,9 @@ function civClicked(id: number) {
         r.innerHTML += `<br/>&nbsp;+ ${rightReport.bonusDamage} bonus damage`
     }
     r.innerHTML += `<br/>&nbsp;- ${a.total.ma} melee armour`
+
+    // Chart
+    this.view.renderGraph(leftReport, rightReport)
  }
 
  function createBattleReport(attacker: CivUnit, defender: CivUnit) {

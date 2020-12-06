@@ -1,0 +1,2 @@
+TODOs:
+- Architecture notes (MVC)
