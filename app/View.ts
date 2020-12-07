@@ -1,3 +1,5 @@
+// import { ChartData } from "./Views/Models/ChartData"
+
 class View {
 
     readonly leftCivImage: HTMLImageElement
@@ -57,52 +59,8 @@ class View {
         this.showOverlay()
     }
 
-    public renderGraph(left: BattleReport, right: BattleReport) {
+    public renderGraph(data: ChartData) {
 
-        // TODO: Have a custom view model object to pass in here (to not expose BattleReport to the view; also so that the view doesn't do too much work)
-
-        let leftData = left.log.map(function(item) {
-            return {
-                x: item.time,
-                y: item.hpLeft
-            }
-        })
-
-        let rightData = right.log.map(function(item) {
-            return {
-                x: item.time,
-                y: item.hpLeft
-            }
-        })
-
-        console.log(leftData)
-
-        // let dataA = [200, 400, 600, 800, 1000, 1200, 1400, 1600, 1800, 2000, 2200, 2400, 2600, 2800, 3000, 3200];
-        // let dataB = [200, 400, 600, 800, 1000, 1200, 1400, 1600, 1800, 2000, 2200, 2400, 2600, 2800, 3000, 3200];
-        
-        // let labels = [200, 400, 600, 800, 1000, 1200, 1400, 1600, 1800, 2000, 2200, 2400, 2600, 2800, 3000, 3200];
-    
-        //   var config = {
-        //     type: 'line',
-        //     data: {
-        //         labels: labels,
-        //         datasets: [
-        //             {
-        //                 label: 'a',
-        //                 backgroundColor: "blue",
-        //                 borderColor: "blue",
-        //                 data: dataA,
-        //                 fill: false
-        //             },
-        //             {
-        //                 label: 'b',
-        //                 backgroundColor: "red",
-        //                 borderColor: "red",
-        //                 data: dataB,
-        //                 fill: false
-        //             }
-        //         ]
-        //     },
         //     options: {
         //         responsive: false,
         //         tooltips: {
@@ -170,83 +128,67 @@ class View {
         let config = {
             type: 'line',
             data: {
-              datasets: [{
-                label: 'Engine Speed',
-                backgroundColor: '#ff0000',
-                borderColor: '#ff0000',
-                fill: false,
-                data: leftData,
-                // data: [{
-                //   x: 0.37,
-                //   y: 2640
-                // }, {
-                //   x: 0.85,
-                //   y: 2560
-                // }, {
-                //   x: 1.33,
-                //   y: 2560
-                // }, {
-                //   x: 1.78,
-                //   y: 2560
-                // }, {
-                //   x: 2.23,
-                //   y: 2680
-                // }, {
-                //   x: 2.7,
-                //   y: 2920
-                // }, {
-                //   x: 3.16,
-                //   y: 3200
-                // }, {
-                //   x: 3.63,
-                //   y: 3520
-                // }]
-              },
-              {
-                label: 'Mass Air Flow - Sensor',
-                backgroundColor: '#00FFFF',
-                borderColor: '#00FFFF',
-                fill: false,
-                data: rightData,
-                // data: [{
-                //   x: 0.02,
-                //   y: 19.58
-                // }, {
-                //   x: 0.45,
-                //   y: 16.28
-                // }, {
-                //   x: 0.92,
-                //   y: 8.56
-                // }, {
-                //   x: 1.39,
-                //   y: 8.47
-                // }, {
-                //   x: 1.86,
-                //   y: 23.36
-                // }, {
-                //   x: 2.33,
-                //   y: 45.78
-                // }, {
-                //   x: 2.78,
-                //   y: 56.03
-                // }, {
-                //   x: 3.23,
-                //   y: 62.36
-                // }]
-              }],
-          
+              datasets: [
+                  {
+                    label: data.leftName,
+                    backgroundColor: '#ff0000',
+                    borderColor: '#ff0000',
+                    fill: false,
+                    data: data.leftData
+                },
+                {
+                    label: data.rightName,
+                    backgroundColor: '#00FFFF',
+                    borderColor: '#00FFFF',
+                    fill: false,
+                    data: data.rightData
+                }
+            ],
             },
             options: {
               responsive: true,
               title: {
-                display: false
+                display: true,
+                text: "Hit points remaining"
               },
               scales: {
                 xAxes: [{
                   type: 'linear',
-                  position: 'bottom'
-                }]
-              }
+                  position: 'bottom',
+                  scaleLabel: {
+                    display: true,
+                        labelString: "Seconds"
+                    },
+                }],
+                yAxes: [{
+                    scaleLabel: {
+                      display: true,
+                          labelString: "Hit points"
+                      },
+                  }]
+              },
+            tooltips: {
+                // mode: 'index',
+                // intersect: false,
+                // displayColors: true,
+                callbacks: {
+                    title: function(tooltipItem, data) {
+                        const index = tooltipItem[0].index;
+                        const dataset = data.datasets[tooltipItem[0].datasetIndex];
+                        const item = dataset.data[index];
+                        return `Hit #${index + 1} at ${item.x} seconds`
+                    },
+                    label: function(tooltipItem, data) {
+                        const index = tooltipItem.index;
+                        const dataset = data.datasets[tooltipItem.datasetIndex];
+                        const item = dataset.data[index];
+
+                        // const unit = tooltipItem.datasetIndex == 0 ? this.data.left.unit.name : ""
+
+                        return [`${item.unitName} has ${item.y} hit points remaining`];
+                    }
+                }
+            }
             }
           }
 

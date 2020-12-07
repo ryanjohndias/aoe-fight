@@ -195,7 +195,8 @@ function showBattle(a, b) {
         r.innerHTML += "<br/>&nbsp;+ " + rightReport.bonusDamage + " bonus damage";
     }
     r.innerHTML += "<br/>&nbsp;- " + a.total.ma + " melee armour";
-    this.view.renderGraph(leftReport, rightReport);
+    var chartData = new ChartData(a, leftReport, b, rightReport);
+    this.view.renderGraph(chartData);
 }
 function createBattleReport(attacker, defender) {
     var bonusDamage = 0;
@@ -271,6 +272,27 @@ var AppState = (function () {
             this.rightUnit != null;
     };
     return AppState;
+}());
+var ChartData = (function () {
+    function ChartData(left, leftReport, right, rightReport) {
+        this.leftName = left.civ.adjective + " " + left.unit.name;
+        this.rightName = right.civ.adjective + " " + right.unit.name;
+        this.leftData = rightReport.log.map(function (item) {
+            return {
+                x: item.time,
+                y: item.hpLeft,
+                unitName: left.unit.name
+            };
+        });
+        this.rightData = leftReport.log.map(function (item) {
+            return {
+                x: item.time,
+                y: item.hpLeft,
+                unitName: right.unit.name
+            };
+        });
+    }
+    return ChartData;
 }());
 var Civ = (function () {
     function Civ(id, name, adjective, image, units, meleeUpgrades, infantryArmourUpgrades, cavUpgrades, special) {
@@ -905,48 +927,64 @@ var View = (function () {
         }
         this.showOverlay();
     };
-    View.prototype.renderGraph = function (left, right) {
-        var leftData = left.log.map(function (item) {
-            return {
-                x: item.time,
-                y: item.hpLeft
-            };
-        });
-        var rightData = right.log.map(function (item) {
-            return {
-                x: item.time,
-                y: item.hpLeft
-            };
-        });
-        console.log(leftData);
+    View.prototype.renderGraph = function (data) {
         var config = {
             type: 'line',
             data: {
-                datasets: [{
-                        label: 'Engine Speed',
+                datasets: [
+                    {
+                        label: data.leftName,
                         backgroundColor: '#ff0000',
                         borderColor: '#ff0000',
                         fill: false,
-                        data: leftData,
+                        data: data.leftData
                     },
                     {
-                        label: 'Mass Air Flow - Sensor',
+                        label: data.rightName,
                         backgroundColor: '#00FFFF',
                         borderColor: '#00FFFF',
                         fill: false,
-                        data: rightData,
-                    }],
+                        data: data.rightData
+                    }
+                ],
             },
             options: {
                 responsive: true,
                 title: {
-                    display: false
+                    display: true,
+                    text: "Hit points remaining"
                 },
                 scales: {
                     xAxes: [{
                             type: 'linear',
-                            position: 'bottom'
+                            position: 'bottom',
+                            scaleLabel: {
+                                display: true,
+                                labelString: "Seconds"
+                            },
+                        }],
+                    yAxes: [{
+                            scaleLabel: {
+                                display: true,
+                                labelString: "Hit points"
+                            },
                         }]
+                },
+                tooltips: {
+                    callbacks: {
+                        title: function (tooltipItem, data) {
+                            var index = tooltipItem[0].index;
+                            var dataset = data.datasets[tooltipItem[0].datasetIndex];
+                            var item = dataset.data[index];
+                            return "Hit #" + (index + 1) + " at " + item.x + " seconds";
+                        },
+                        label: function (tooltipItem, data) {
+                            var index = tooltipItem.index;
+                            var dataset = data.datasets[tooltipItem.datasetIndex];
+                            var item = dataset.data[index];
+                            return [item.unitName + " has " + item.y + " hit points remaining"];
+                        }
+                    }
                 }
             }
         };
