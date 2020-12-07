@@ -192,18 +192,18 @@ class View {
             }
           }
 
-        // Chart.defaults.global.defaultFontColor = "black";
-        // Chart.defaults.global.defaultFontFamily = "Roboto Condensed";
+        Chart.defaults.global.defaultFontColor = "black";
+        Chart.defaults.global.defaultFontFamily = "Roboto Condensed";
     
-        // let chartElement = document.getElementById('chartCanvas') as HTMLCanvasElement
-        // var ctx = chartElement.getContext('2d');
-        // if (window.myLine == null) {
-        //     window.myLine = new Chart(ctx, config);
-        // } else {
-        //     window.myLine.config = config;
-        //     window.myLine.options = config.options;
-        //     window.myLine.update();
-        // }
+        let chartElement = document.getElementById('chartCanvas') as HTMLCanvasElement
+        var ctx = chartElement.getContext('2d');
+        if (window.myLine == null) {
+            window.myLine = new Chart(ctx, config);
+        } else {
+            window.myLine.config = config;
+            window.myLine.options = config.options;
+            window.myLine.update();
+        }
     }
 }
 

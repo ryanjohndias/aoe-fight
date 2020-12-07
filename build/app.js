@@ -1109,6 +1109,18 @@ var View = (function () {
                 }
             }
         };
+        Chart.defaults.global.defaultFontColor = "black";
+        Chart.defaults.global.defaultFontFamily = "Roboto Condensed";
+        var chartElement = document.getElementById('chartCanvas');
+        var ctx = chartElement.getContext('2d');
+        if (window.myLine == null) {
+            window.myLine = new Chart(ctx, config);
+        }
+        else {
+            window.myLine.config = config;
+            window.myLine.options = config.options;
+            window.myLine.update();
+        }
     };
     return View;
 }());
