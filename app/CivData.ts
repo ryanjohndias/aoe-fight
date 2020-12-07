@@ -38,8 +38,13 @@ class CivData {
                 [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace],
                 [upgrades.scaleMailArmor, upgrades.chainMailArmor, upgrades.plateMailArmor],
                 [upgrades.bloodlines, upgrades.scaleBardingArmor, upgrades.chainBardingArmor, upgrades.plateBardingArmor],
-                {infantry: []}
-                // TODO Stirrups, Bagains https://ageofempires.fandom.com/wiki/Bulgarians/Tree
+                {
+                    infantry: [],
+                    specificUnits: [
+                        { name: "Bagains", atk: 5, rof: 0, hp: 0, ma: 1, pa: 1, units: [UnitId.twoHandedSwordsman] },
+                        { name: "Stirrups", atk: 0, rof: 33, hp: 0, ma: 0, pa: 0, units: [UnitId.eKonnik, UnitId.cavalier] }
+                    ]
+                }
             ),
             new Civ(14, "Byzantines", "Byzantine",
                 "https://vignette.wikia.nocookie.net/ageofempires/images/2/27/CivIcon-Byzantines.png/revision/latest?cb=20191107173131",
@@ -108,7 +113,12 @@ class CivData {
                 [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace],
                 [upgrades.scaleMailArmor, upgrades.chainMailArmor, upgrades.plateMailArmor],
                 [upgrades.scaleBardingArmor, upgrades.chainBardingArmor, upgrades.plateBardingArmor],
-                {infantry: []}
+                {
+                    infantry: [],
+                    specificUnits: [
+                        { name: "Civ bonus", atk: 0, rof: 0, hp: 20, ma: 0, pa: 0, units: [ UnitId.paladin ]}
+                    ]
+                }
             ),
             new Civ(21, "Goths", "Goth",
                 "https://vignette.wikia.nocookie.net/ageofempires/images/2/24/CivIcon-Goths.png/revision/latest?cb=20191107173238",
@@ -132,15 +142,24 @@ class CivData {
                 [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace],
                 [upgrades.scaleMailArmor, upgrades.chainMailArmor, upgrades.plateMailArmor],
                 [],
-                {infantry: []}
+                {
+                    infantry: [],
+                    specificUnits: [
+                        { name: "Fabric Shields", atk: 0, rof: 0, hp: 0, ma: 1, pa: 2, units: [UnitId.eliteEagleWarrior, UnitId.eKamayuk] }
+                ]}
             ),
             new Civ(24, "Indians", "Indian",
                 "https://vignette.wikia.nocookie.net/ageofempires/images/8/8b/CivIcon-Indians.png/revision/latest?cb=20191107173239",
-                [units.champion, units.condottiero, units.halbardier, units.hussar, units.imperialCamel, units.knight],
+                [units.champion, units.condottiero, units.halbardier, units.hussar, units.imperialCamel],
                 [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace],
                 [upgrades.scaleMailArmor, upgrades.chainMailArmor],
                 [upgrades.bloodlines, upgrades.scaleBardingArmor, upgrades.chainBardingArmor],
-                {infantry: []}
+                {
+                    infantry: [],
+                    specificUnits: [
+                        { name: "Civ bonus", atk: 0, hp: 0, rof: 0, ma: 0, pa: 2, units: [UnitId.hussar, UnitId.imperialCamel] }
+                    ]
+                }
             ),
             new Civ(25, "Italians", "Italian",
                 "https://vignette.wikia.nocookie.net/ageofempires/images/e/e1/CivIcon-Italians.png/revision/latest?cb=20191116050557",
@@ -173,7 +192,12 @@ class CivData {
                 [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace],
                 [upgrades.scaleMailArmor, upgrades.chainMailArmor],
                 [upgrades.bloodlines, upgrades.scaleBardingArmor, upgrades.chainBardingArmor, upgrades.plateBardingArmor],
-                {infantry: []}
+                {
+                    infantry: [],
+                    specificUnits: [
+                        { name: "Tusk Swords", atk: 3, hp: 0, rof: 0, ma: 0, pa: 0, units: [UnitId.eBattleElephant]}
+                    ]
+                }
             ),
             new Civ(28, "Koreans", "Korean",
                 "https://vignette.wikia.nocookie.net/ageofempires/images/7/73/CivIcon-Koreans.png/revision/latest?cb=20191107173241",
@@ -225,7 +249,12 @@ class CivData {
                 [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace],
                 [upgrades.scaleMailArmor, upgrades.chainMailArmor, upgrades.plateMailArmor],
                 [],
-                {infantry: []}
+                {
+                    infantry: [],
+                    specificUnits: [
+                        { name: "El Dorado", atk: 0, hp: 67, rof: 0, ma: 0, pa: 0, units: [UnitId.eliteEagleWarrior] }
+                    ]
+                }
             ),
             new Civ(34, "Mongols", "Mongol",
                 "https://vignette.wikia.nocookie.net/ageofempires/images/1/10/CivIcon-Mongols.png/revision/latest?cb=20191107173335",
@@ -233,7 +262,12 @@ class CivData {
                 [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace],
                 [upgrades.scaleMailArmor, upgrades.chainMailArmor, upgrades.plateMailArmor],
                 [upgrades.bloodlines, upgrades.scaleBardingArmor, upgrades.chainBardingArmor],
-                {infantry: []}
+                {
+                    infantry: [],
+                    specificUnits: [
+                        { name: "Civ bonus", atk: 0, hp: 30, rof: 0, ma: 0, pa: 0, units: [UnitId.hussar] }
+                    ]
+                }
             ),
             new Civ(35, "Persians", "Persian",
                 "https://vignette.wikia.nocookie.net/ageofempires/images/a/ad/CivIcon-Persians.png/revision/latest?cb=20191107173335",
@@ -257,7 +291,12 @@ class CivData {
                 [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace],
                 [upgrades.scaleMailArmor, upgrades.chainMailArmor, upgrades.plateMailArmor],
                 [upgrades.bloodlines, upgrades.scaleBardingArmor, upgrades.chainBardingArmor, upgrades.plateBardingArmor],
-                {infantry: []}
+                {
+                    infantry: [],
+                    specificUnits: [
+                        { name: "Zealotry", atk: 0, hp: 25, rof: 0, ma: 0, pa: 0, units: [UnitId.heavyCamel] }
+                    ]
+                }
             ),
             new Civ(38, "Slavs", "Slavic",
                 "https://vignette.wikia.nocookie.net/ageofempires/images/1/12/CivIcon-Slavs.png/revision/latest?cb=20191107173337",
@@ -281,7 +320,12 @@ class CivData {
                 [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace],
                 [upgrades.scaleMailArmor],
                 [upgrades.bloodlines, upgrades.scaleBardingArmor, upgrades.chainBardingArmor, upgrades.plateBardingArmor],
-                {infantry: []}
+                {
+                    infantry: [],
+                    specificUnits: [
+                        { name: "Silk Armor", atk: 0, hp: 0, rof: 0, ma: 1, pa: 1, units: [UnitId.hussar, UnitId.eSteppeLancer] }
+                    ]
+                }
             ),
             new Civ(41, "Teutons", "Teutonic",
                 "https://vignette.wikia.nocookie.net/ageofempires/images/3/3f/CivIcon-Teutons.png/revision/latest?cb=20191107173408",
@@ -289,7 +333,12 @@ class CivData {
                 [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace],
                 [upgrades.scaleMailArmor, upgrades.chainMailArmor, upgrades.plateMailArmor],
                 [upgrades.bloodlines, upgrades.scaleBardingArmor, upgrades.chainBardingArmor, upgrades.plateBardingArmor],
-                {infantry: []}
+                {
+                    infantry: [],
+                    specificUnits: [
+                        { name: "Civ bonus", atk: 0, hp: 0, rof: 0, ma: 2, pa: 0, units: [UnitId.champion, UnitId.halbardier, UnitId.paladin, UnitId.condottiero] }
+                    ]
+                }
             ),
             new Civ(42, "Turks", "Turkish",
                 "https://vignette.wikia.nocookie.net/ageofempires/images/1/1c/CivIcon-Turks.png/revision/latest?cb=20191107173409",
