@@ -1,3 +1,5 @@
+// import { ChartData } from "./Views/Models/ChartData"
+
 window.onload = initialise
 window.onclick = function(event: MouseEvent) {
     if (event.target == view.modalOverlay) {
@@ -14,7 +16,7 @@ function initialise() {
     this.service = new Service()
     this.state = new AppState()
     initEventListeners()
-    handleHashIfNeeded()
+    handleHashIfNeeded()   
 }
 
 function initEventListeners() {
@@ -238,6 +240,10 @@ function civClicked(id: number) {
         r.innerHTML += `<br/>&nbsp;+ ${rightReport.bonusDamage} bonus damage`
     }
     r.innerHTML += `<br/>&nbsp;- ${a.total.ma} melee armour`
+
+    // Chart
+    const chartData = new ChartData(a, leftReport, b, rightReport)
+    this.view.renderGraph(chartData)
  }
 
  function createBattleReport(attacker: CivUnit, defender: CivUnit) {

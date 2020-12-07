@@ -195,6 +195,8 @@ function showBattle(a, b) {
         r.innerHTML += "<br/>&nbsp;+ " + rightReport.bonusDamage + " bonus damage";
     }
     r.innerHTML += "<br/>&nbsp;- " + a.total.ma + " melee armour";
+    var chartData = new ChartData(a, leftReport, b, rightReport);
+    this.view.renderGraph(chartData);
 }
 function createBattleReport(attacker, defender) {
     var bonusDamage = 0;
@@ -270,6 +272,27 @@ var AppState = (function () {
             this.rightUnit != null;
     };
     return AppState;
+}());
+var ChartData = (function () {
+    function ChartData(left, leftReport, right, rightReport) {
+        this.leftName = left.civ.adjective + " " + left.unit.name;
+        this.rightName = right.civ.adjective + " " + right.unit.name;
+        this.leftData = rightReport.log.map(function (item) {
+            return {
+                x: item.time,
+                y: item.hpLeft,
+                unitName: left.unit.name
+            };
+        });
+        this.rightData = leftReport.log.map(function (item) {
+            return {
+                x: item.time,
+                y: item.hpLeft,
+                unitName: right.unit.name
+            };
+        });
+    }
+    return ChartData;
 }());
 var Civ = (function () {
     function Civ(id, name, adjective, image, units, meleeUpgrades, infantryArmourUpgrades, cavUpgrades, special) {
@@ -903,6 +926,80 @@ var View = (function () {
             this.modalContent.innerHTML += this.factory.unitWidgetHtml(unit.id, unit.name, unit.img);
         }
         this.showOverlay();
+    };
+    View.prototype.renderGraph = function (data) {
+        var config = {
+            type: 'line',
+            data: {
+                datasets: [
+                    {
+                        label: data.leftName,
+                        backgroundColor: '#ff0000',
+                        borderColor: '#ff0000',
+                        fill: false,
+                        data: data.leftData
+                    },
+                    {
+                        label: data.rightName,
+                        backgroundColor: '#00FFFF',
+                        borderColor: '#00FFFF',
+                        fill: false,
+                        data: data.rightData
+                    }
+                ],
+            },
+            options: {
+                responsive: true,
+                title: {
+                    display: true,
+                    text: "Hit points remaining"
+                },
+                scales: {
+                    xAxes: [{
+                            type: 'linear',
+                            position: 'bottom',
+                            scaleLabel: {
+                                display: true,
+                                labelString: "Seconds"
+                            },
+                        }],
+                    yAxes: [{
+                            scaleLabel: {
+                                display: true,
+                                labelString: "Hit points"
+                            },
+                        }]
+                },
+                tooltips: {
+                    callbacks: {
+                        title: function (tooltipItem, data) {
+                            var index = tooltipItem[0].index;
+                            var dataset = data.datasets[tooltipItem[0].datasetIndex];
+                            var item = dataset.data[index];
+                            return "Hit #" + (index + 1) + " at " + item.x + " seconds";
+                        },
+                        label: function (tooltipItem, data) {
+                            var index = tooltipItem.index;
+                            var dataset = data.datasets[tooltipItem.datasetIndex];
+                            var item = dataset.data[index];
+                            return [item.unitName + " has " + item.y + " hit points remaining"];
+                        }
+                    }
+                }
+            }
+        };
+        Chart.defaults.global.defaultFontColor = "black";
+        Chart.defaults.global.defaultFontFamily = "Roboto Condensed";
+        var chartElement = document.getElementById('chartCanvas');
+        var ctx = chartElement.getContext('2d');
+        if (window.myLine == null) {
+            window.myLine = new Chart(ctx, config);
+        }
+        else {
+            window.myLine.config = config;
+            window.myLine.options = config.options;
+            window.myLine.update();
+        }
     };
     return View;
 }());
