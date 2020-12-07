@@ -1,6 +1,7 @@
 enum UnitType {
     infantry,
-    cavalry
+    cavalry,
+    villager
 }
 
 enum ArmourClass {
@@ -47,7 +48,8 @@ enum UnitId {
     eCataphract = "eCataphract",
     eBerserk = "eBerserk",
     eMagyarHuszar = "eMagyarHuszar",
-    eKamayuk = "eKamayuk"
+    eKamayuk = "eKamayuk",
+    villager = "villager"
 }
 
 enum Side {

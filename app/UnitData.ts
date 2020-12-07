@@ -444,6 +444,16 @@ class UnitData {
                     ArmourClass.infantry,
                     ArmourClass.uniqueUnit
                 ]
+            ),
+            villager: new Unit (
+                UnitId.villager, 42,
+                "Villager",
+                UnitType.villager,
+                "https://static.wikia.nocookie.net/ageofempires/images/f/fe/FEMALEVILLDE.jpg/revision/latest/scale-to-width-down/256?cb=20191201204928",
+                // "https://static.wikia.nocookie.net/ageofempires/images/6/68/MaleVillDE.jpg/revision/latest/scale-to-width-down/256?cb=20191201204916",
+                new Cost(50, 0, 0, 0),
+                40, 3, 2.0, 0.64, 1, 2,
+                [], []
             )
         }
     }
