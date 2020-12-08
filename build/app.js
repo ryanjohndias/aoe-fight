@@ -16,9 +16,13 @@ function initialise() {
 }
 function initEventListeners() {
     view.leftCivImage.onclick = function () { return showCivSelection(Side.left); };
+    view.leftCivPlaceholder.onclick = function () { return showCivSelection(Side.left); };
     view.rightCivImage.onclick = function () { return showCivSelection(Side.right); };
+    view.rightCivPlaceholder.onclick = function () { return showCivSelection(Side.right); };
     view.leftUnitImage.onclick = leftUnitImageClicked;
+    view.leftUnitPlaceholder.onclick = leftUnitImageClicked;
     view.rightUnitImage.onclick = rightUnitImageClicked;
+    view.rightUnitPlaceholder.onclick = rightUnitImageClicked;
     Utils.$("modalClose").onclick = view.hideOverlay;
     Utils.$("button_random").onclick = randomMatchup;
     Utils.$("button_share").onclick = copyLink;
@@ -51,11 +55,19 @@ function rightUnitImageClicked() {
 function civClicked(id) {
     var civ = service.getCiv(id);
     if (state.selectedSide == Side.left) {
+        if (state.leftCiv == null) {
+            view.leftCivPlaceholder.style.display = 'none';
+            view.leftCivImage.style.display = 'block';
+        }
         state.leftCiv = civ;
         view.leftCivImage.src = civ.image;
         Utils.$("leftCivName").textContent = civ.name;
     }
     else {
+        if (state.rightCiv == null) {
+            view.rightCivPlaceholder.style.display = 'none';
+            view.rightCivImage.style.display = 'block';
+        }
         state.rightCiv = civ;
         view.rightCivImage.src = civ.image;
         Utils.$("rightCivName").textContent = civ.name;
@@ -428,7 +440,7 @@ var CivData = (function () {
                     { name: "Fabric Shields", atk: 0, rof: 0, hp: 0, ma: 1, pa: 2, units: [UnitId.eliteEagleWarrior, UnitId.eKamayuk] }
                 ]
             }),
-            new Civ(24, "Indians", "Indian", "https://vignette.wikia.nocookie.net/ageofempires/images/8/8b/CivIcon-Indians.png/revision/latest?cb=20191107173239", [units.champion, units.condottiero, units.halbardier, units.hussar, units.imperialCamel], [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace], [upgrades.scaleMailArmor, upgrades.chainMailArmor], [upgrades.bloodlines, upgrades.scaleBardingArmor, upgrades.chainBardingArmor], {
+            new Civ(24, "Indians", "Indian", "https://vignette.wikia.nocookie.net/ageofempires/images/8/8b/CivIcon-Indians.png/revision/latest?cb=20191107173239", [units.champion, units.condottiero, units.halbardier, units.hussar, units.imperialCamel, units.villager], [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace], [upgrades.scaleMailArmor, upgrades.chainMailArmor], [upgrades.bloodlines, upgrades.scaleBardingArmor, upgrades.chainBardingArmor], {
                 infantry: [],
                 specificUnits: [
                     { name: "Civ bonus", atk: 0, hp: 0, rof: 0, ma: 0, pa: 2, units: [UnitId.hussar, UnitId.imperialCamel] }
@@ -949,6 +961,10 @@ var View = (function () {
         this.rightStatsTable = this.initElement("rightStats");
         this.modalOverlay = this.initElement("modalOverlay");
         this.modalContent = this.initElement("modalContent");
+        this.leftCivPlaceholder = this.initElement("leftCivPlaceholder");
+        this.rightCivPlaceholder = this.initElement("rightCivPlaceholder");
+        this.leftUnitPlaceholder = this.initElement("leftUnitPlaceholder");
+        this.rightUnitPlaceholder = this.initElement("rightUnitPlaceholder");
         this.factory = new Factory();
     }
     View.prototype.initElement = function (element) {

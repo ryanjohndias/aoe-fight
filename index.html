@@ -20,23 +20,39 @@
             <div style="overflow: auto;">
                 <div class="content leftContent bordered">
                     <div style="overflow: auto;">
-                        <img id="leftCivImage" style="float:left" class="mainImage"></img>
+
+                        <img id="leftCivImage" style="float:left; display: none" class="mainImage"></img>
+                        <div id="leftCivPlaceholder" class="emptySelection" style="float:left">
+                            <span>Choose Civ</span>
+                        </div>
+
                         <div style="float:left; text-align: center; width:130px">
                             <p id="leftCivName"></p>
                             <p id="leftUnitName"></p>
                         </div>
-                        <img id="leftUnitImage" style="float:right" class="mainImage"></img>
+
+                        <img id="leftUnitImage" style="float:right; display: none" class="mainImage"></img>
+                        <div id="leftUnitPlaceholder" class="emptySelection" style="float:left">
+                            <span>Choose Unit</span>
+                        </div>
+
                     </div>
                     <table id="leftStats" class="statsTable"></table>
                 </div>
                 <div class="content rightContent bordered">
                     <div style="overflow: auto;">
-                        <img id="rightCivImage" style="float:left" class="mainImage"></img>
+                        <img id="rightCivImage" style="float:left; display: none" class="mainImage"></img>
+                        <div id="rightCivPlaceholder" class="emptySelection" style="float:left">
+                            <span>Choose Civ</span>
+                        </div>
                         <div style="float:left; text-align: center; width:130px">
                             <p id="rightCivName"></p>
                             <p id="rightUnitName"></p>
                         </div>
-                        <img id="rightUnitImage" style="float:right" class="mainImage"></img>
+                        <img id="rightUnitImage" style="float:right; display: none" class="mainImage"></img>
+                        <div id="rightUnitPlaceholder" class="emptySelection" style="float:left">
+                            <span>Choose Unit</span>
+                        </div>
                     </div>
                     <table id="rightStats" class="statsTable"></table>
                 </div>

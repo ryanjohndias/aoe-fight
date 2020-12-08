@@ -11,6 +11,12 @@ class View {
     readonly modalOverlay: HTMLDivElement
     readonly modalContent: HTMLDivElement
 
+    readonly leftCivPlaceholder: HTMLDivElement
+    readonly rightCivPlaceholder: HTMLDivElement
+
+    readonly leftUnitPlaceholder: HTMLDivElement
+    readonly rightUnitPlaceholder: HTMLDivElement
+
     private readonly factory: Factory
 
     constructor() {
@@ -22,6 +28,10 @@ class View {
         this.rightStatsTable = this.initElement("rightStats") as HTMLTableElement
         this.modalOverlay = this.initElement("modalOverlay") as HTMLDivElement
         this.modalContent = this.initElement("modalContent") as HTMLDivElement
+        this.leftCivPlaceholder = this.initElement("leftCivPlaceholder") as HTMLDivElement
+        this.rightCivPlaceholder = this.initElement("rightCivPlaceholder") as HTMLDivElement
+        this.leftUnitPlaceholder = this.initElement("leftUnitPlaceholder") as HTMLDivElement
+        this.rightUnitPlaceholder = this.initElement("rightUnitPlaceholder") as HTMLDivElement
         this.factory = new Factory()
     }
 

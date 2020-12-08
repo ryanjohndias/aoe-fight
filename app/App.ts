@@ -21,9 +21,14 @@ function initialise() {
 
 function initEventListeners() {
     view.leftCivImage.onclick = () => showCivSelection(Side.left)
+    view.leftCivPlaceholder.onclick = () => showCivSelection(Side.left)
     view.rightCivImage.onclick = () => showCivSelection(Side.right)
+    view.rightCivPlaceholder.onclick = () => showCivSelection(Side.right)
     view.leftUnitImage.onclick = leftUnitImageClicked
+    view.leftUnitPlaceholder.onclick = leftUnitImageClicked
     view.rightUnitImage.onclick = rightUnitImageClicked
+    view.rightUnitPlaceholder.onclick = rightUnitImageClicked
+
     Utils.$("modalClose").onclick = view.hideOverlay
     Utils.$("button_random").onclick = randomMatchup
     Utils.$("button_share").onclick = copyLink
@@ -67,10 +72,22 @@ function civClicked(id: number) {
     const civ = service.getCiv(id)
 
     if (state.selectedSide == Side.left) {
+
+        if (state.leftCiv == null) {
+            view.leftCivPlaceholder.style.display = 'none'
+            view.leftCivImage.style.display = 'block'
+        }
+
         state.leftCiv = civ
         view.leftCivImage.src = civ.image
         Utils.$("leftCivName").textContent = civ.name
     } else {
+
+        if (state.rightCiv == null) {
+            view.rightCivPlaceholder.style.display = 'none'
+            view.rightCivImage.style.display = 'block'
+        }
+
         state.rightCiv = civ
         view.rightCivImage.src = civ.image
         Utils.$("rightCivName").textContent = civ.name
