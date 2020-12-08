@@ -276,9 +276,11 @@ function civClicked(id: number) {
     }
     r.innerHTML += `<br/>&nbsp;- ${a.total.ma} melee armour`
 
+    view.toggleEmptyState(true)
+
     // Chart
     const chartData = new ChartData(a, leftReport, b, rightReport)
-    this.view.renderGraph(chartData)
+    view.renderGraph(chartData)
  }
 
  function createBattleReport(attacker: CivUnit, defender: CivUnit) {

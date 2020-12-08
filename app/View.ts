@@ -16,6 +16,7 @@ class View {
     readonly rightUnitPlaceholder: HTMLDivElement
 
     private readonly resultText: HTMLParagraphElement
+    private readonly resultContainer: HTMLDivElement
 
     private readonly factory: Factory
 
@@ -33,6 +34,8 @@ class View {
         this.leftUnitPlaceholder = this.initElement("leftUnitPlaceholder") as HTMLDivElement
         this.rightUnitPlaceholder = this.initElement("rightUnitPlaceholder") as HTMLDivElement
         this.resultText = this.initElement("resultText") as HTMLDivElement
+        this.resultContainer = this.initElement("resultContainer") as HTMLParagraphElement
+        
         this.factory = new Factory()
     }
 
@@ -234,30 +237,35 @@ class View {
         this.leftStatsTable.innerHTML = ""
         this.rightStatsTable.innerHTML = ""
 
+        view.toggleEmptyState(false)
     }
 
-    public toggleLeftCivVisibility(flag: boolean) {
-        view.leftCivImage.style.display = flag ? 'block' : 'none'
-        view.leftCivPlaceholder.style.display = flag ? 'none' : 'table-cell'
+    public toggleLeftCivVisibility(visible: boolean) {
+        this.leftCivImage.style.display = visible ? 'block' : 'none'
+        this.leftCivPlaceholder.style.display = visible ? 'none' : 'table-cell'
     }
 
-    public toggleRightCivVisibility(flag: boolean) {
-        view.rightCivImage.style.display = flag ? 'block' : 'none'
-        view.rightCivPlaceholder.style.display = flag ? 'none' : 'table-cell'
+    public toggleRightCivVisibility(visible: boolean) {
+        this.rightCivImage.style.display = visible ? 'block' : 'none'
+        this.rightCivPlaceholder.style.display = visible ? 'none' : 'table-cell'
     }
 
-    public toggleLeftUnitVisibility(flag: boolean) {
-        view.leftUnitImage.style.display = flag ? 'block' : 'none'
-        view.leftUnitPlaceholder.style.display = flag ? 'none' : 'table-cell'
+    public toggleLeftUnitVisibility(visible: boolean) {
+        this.leftUnitImage.style.display = visible ? 'block' : 'none'
+        this.leftUnitPlaceholder.style.display = visible ? 'none' : 'table-cell'
     }
 
-    public toggleRightUnitVisibility(flag: boolean) {
-        view.rightUnitImage.style.display = flag ? 'block' : 'none'
-        view.rightUnitPlaceholder.style.display = flag ? 'none' : 'table-cell'
+    public toggleRightUnitVisibility(visible: boolean) {
+        this.rightUnitImage.style.display = visible ? 'block' : 'none'
+        this.rightUnitPlaceholder.style.display = visible ? 'none' : 'table-cell'
     }
 
     public setResultHtml(text: string) {
         this.resultText.textContent = text
+    }
+
+    public toggleEmptyState(visible: boolean) {
+        this.resultContainer.style.display = visible ? 'block' : 'none'
     }
 }
 

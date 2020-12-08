@@ -59,31 +59,33 @@
                 </div>
             </div>
 
-            <h2>Result</h2>
-            <div id="resultContainer" class="bordered">
-                <p id="resultText"></p>
-            </div>
+            <div id="resultContainer" style="display: none;">
+                <h2>Result</h2>
+                <div class="bordered">
+                    <p id="resultText"></p>
+                </div>
 
-            <h2>Summary</h2>
+                <h2>Summary</h2>
 
-            <div id="summaryContainer" style="overflow: auto;">
+                <div id="summaryContainer" style="overflow: auto;">
+                    <div class="content leftContent bordered">
+                        <p id="leftSummaryText"></p>
+                    </div>
+                    <div class="content rightContent bordered">
+                        <p id="rightSummaryText"></p>
+                    </div>
+                </div>
+
+                <h2>Hit Log</h2>
+
+                <canvas id="chartCanvas" style="width: 800px; height: 300px;"></canvas>
+
                 <div class="content leftContent bordered">
-                    <p id="leftSummaryText"></p>
+                    <table id="battleLogLeft" class="logTable"></table>
                 </div>
                 <div class="content rightContent bordered">
-                    <p id="rightSummaryText"></p>
+                    <table id="battleLogRight" class="logTable"></table>
                 </div>
-            </div>
-
-            <h2>Hit Log</h2>
-
-            <canvas id="chartCanvas" style="width: 800px; height: 300px;"></canvas>
-
-            <div class="content leftContent bordered">
-                <table id="battleLogLeft" class="logTable"></table>
-            </div>
-            <div class="content rightContent bordered">
-                <table id="battleLogRight" class="logTable"></table>
             </div>
         </div>
 

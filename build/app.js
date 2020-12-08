@@ -220,8 +220,9 @@ function showBattle(a, b) {
         r.innerHTML += "<br/>&nbsp;+ " + rightReport.bonusDamage + " bonus damage";
     }
     r.innerHTML += "<br/>&nbsp;- " + a.total.ma + " melee armour";
+    view.toggleEmptyState(true);
     var chartData = new ChartData(a, leftReport, b, rightReport);
-    this.view.renderGraph(chartData);
+    view.renderGraph(chartData);
 }
 function createBattleReport(attacker, defender) {
     var bonusDamage = 0;
@@ -979,6 +980,7 @@ var View = (function () {
         this.leftUnitPlaceholder = this.initElement("leftUnitPlaceholder");
         this.rightUnitPlaceholder = this.initElement("rightUnitPlaceholder");
         this.resultText = this.initElement("resultText");
+        this.resultContainer = this.initElement("resultContainer");
         this.factory = new Factory();
     }
     View.prototype.initElement = function (element) {
@@ -1096,25 +1098,29 @@ var View = (function () {
         Utils.$("rightCivName").textContent = "";
         this.leftStatsTable.innerHTML = "";
         this.rightStatsTable.innerHTML = "";
+        view.toggleEmptyState(false);
     };
-    View.prototype.toggleLeftCivVisibility = function (flag) {
-        view.leftCivImage.style.display = flag ? 'block' : 'none';
-        view.leftCivPlaceholder.style.display = flag ? 'none' : 'table-cell';
+    View.prototype.toggleLeftCivVisibility = function (visible) {
+        this.leftCivImage.style.display = visible ? 'block' : 'none';
+        this.leftCivPlaceholder.style.display = visible ? 'none' : 'table-cell';
     };
-    View.prototype.toggleRightCivVisibility = function (flag) {
-        view.rightCivImage.style.display = flag ? 'block' : 'none';
-        view.rightCivPlaceholder.style.display = flag ? 'none' : 'table-cell';
+    View.prototype.toggleRightCivVisibility = function (visible) {
+        this.rightCivImage.style.display = visible ? 'block' : 'none';
+        this.rightCivPlaceholder.style.display = visible ? 'none' : 'table-cell';
     };
-    View.prototype.toggleLeftUnitVisibility = function (flag) {
-        view.leftUnitImage.style.display = flag ? 'block' : 'none';
-        view.leftUnitPlaceholder.style.display = flag ? 'none' : 'table-cell';
+    View.prototype.toggleLeftUnitVisibility = function (visible) {
+        this.leftUnitImage.style.display = visible ? 'block' : 'none';
+        this.leftUnitPlaceholder.style.display = visible ? 'none' : 'table-cell';
     };
-    View.prototype.toggleRightUnitVisibility = function (flag) {
-        view.rightUnitImage.style.display = flag ? 'block' : 'none';
-        view.rightUnitPlaceholder.style.display = flag ? 'none' : 'table-cell';
+    View.prototype.toggleRightUnitVisibility = function (visible) {
+        this.rightUnitImage.style.display = visible ? 'block' : 'none';
+        this.rightUnitPlaceholder.style.display = visible ? 'none' : 'table-cell';
     };
     View.prototype.setResultHtml = function (text) {
         this.resultText.textContent = text;
+    };
+    View.prototype.toggleEmptyState = function (visible) {
+        this.resultContainer.style.display = visible ? 'block' : 'none';
     };
     return View;
 }());
