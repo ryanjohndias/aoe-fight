@@ -25,6 +25,7 @@ function initEventListeners() {
     view.rightUnitPlaceholder.onclick = rightUnitImageClicked;
     Utils.$("modalClose").onclick = view.hideOverlay;
     Utils.$("button_random").onclick = randomMatchup;
+    Utils.$("button_reset").onclick = reset;
     Utils.$("button_share").onclick = copyLink;
 }
 function handleHashIfNeeded() {
@@ -56,8 +57,7 @@ function civClicked(id) {
     var civ = service.getCiv(id);
     if (state.selectedSide == Side.left) {
         if (state.leftCiv == null) {
-            view.leftCivPlaceholder.style.display = 'none';
-            view.leftCivImage.style.display = 'block';
+            view.toggleLeftCivVisibility(true);
         }
         state.leftCiv = civ;
         view.leftCivImage.src = civ.image;
@@ -65,8 +65,7 @@ function civClicked(id) {
     }
     else {
         if (state.rightCiv == null) {
-            view.rightCivPlaceholder.style.display = 'none';
-            view.rightCivImage.style.display = 'block';
+            view.toggleRightCivVisibility(true);
         }
         state.rightCiv = civ;
         view.rightCivImage.src = civ.image;
@@ -80,6 +79,9 @@ function unitClicked(id) {
     var targetTable;
     var civ;
     if (state.selectedSide == Side.left) {
+        if (state.leftUnit == null) {
+            view.toggleLeftUnitVisibility(true);
+        }
         state.leftUnit = unit;
         view.leftUnitImage.src = unit.img;
         targetTable = "leftStats";
@@ -87,6 +89,9 @@ function unitClicked(id) {
         civ = state.leftCiv;
     }
     else {
+        if (state.rightUnit == null) {
+            view.toggleRightUnitVisibility(true);
+        }
         state.rightUnit = unit;
         view.rightUnitImage.src = unit.img;
         targetTable = "rightStats";
@@ -139,6 +144,14 @@ function copyLink() {
     var code = new ShareCode(state.leftCiv.id, state.leftUnit.numericId, state.rightCiv.id, state.rightUnit.numericId);
     Utils.copyToClipboard(code.generateLink());
 }
+function reset() {
+    state.leftCiv = null;
+    state.rightCiv = null;
+    state.leftUnit = null;
+    state.rightUnit = null;
+    state.selectedSide = null;
+    view.reset();
+}
 function populate(civA, unitA, civB, unitB) {
     state.leftCiv = null;
     state.rightCiv = null;
@@ -188,10 +201,10 @@ function showBattle(a, b) {
             winnerHealthRemaining = log.hpLeft;
         }
         var healthPerc = ((winnerHealthRemaining / winner.total.hp) * 100).toFixed(2);
-        Utils.$("resultText").innerHTML = winner.civ.adjective + " " + winner.unit.name + " defeats " + loser.civ.adjective + " " + loser.unit.name + " in " + winningReport.log.length + " hits with " + winnerHealthRemaining + " (" + healthPerc + "%) hit points remaining";
+        view.setResultHtml(winner.civ.adjective + " " + winner.unit.name + " defeats " + loser.civ.adjective + " " + loser.unit.name + " in " + winningReport.log.length + " hits with " + winnerHealthRemaining + " (" + healthPerc + "%) hit points remaining");
     }
     else {
-        Utils.$("resultText").innerHTML = "It's a draw";
+        view.setResultHtml("It's a draw");
     }
     var l = Utils.$("leftSummaryText");
     l.innerHTML = a.unit.name + " deals " + leftReport.effectiveDamagerPerHit + " damage to " + b.unit.name + " per hit:";
@@ -965,6 +978,7 @@ var View = (function () {
         this.rightCivPlaceholder = this.initElement("rightCivPlaceholder");
         this.leftUnitPlaceholder = this.initElement("leftUnitPlaceholder");
         this.rightUnitPlaceholder = this.initElement("rightUnitPlaceholder");
+        this.resultText = this.initElement("resultText");
         this.factory = new Factory();
     }
     View.prototype.initElement = function (element) {
@@ -1070,6 +1084,37 @@ var View = (function () {
             window.myLine.options = config.options;
             window.myLine.update();
         }
+    };
+    View.prototype.reset = function () {
+        view.toggleLeftCivVisibility(false);
+        view.toggleRightCivVisibility(false);
+        view.toggleLeftUnitVisibility(false);
+        view.toggleRightUnitVisibility(false);
+        Utils.$("leftUnitName").innerHTML = "";
+        Utils.$("rightUnitName").innerHTML = "";
+        Utils.$("leftCivName").textContent = "";
+        Utils.$("rightCivName").textContent = "";
+        this.leftStatsTable.innerHTML = "";
+        this.rightStatsTable.innerHTML = "";
+    };
+    View.prototype.toggleLeftCivVisibility = function (flag) {
+        view.leftCivImage.style.display = flag ? 'block' : 'none';
+        view.leftCivPlaceholder.style.display = flag ? 'none' : 'table-cell';
+    };
+    View.prototype.toggleRightCivVisibility = function (flag) {
+        view.rightCivImage.style.display = flag ? 'block' : 'none';
+        view.rightCivPlaceholder.style.display = flag ? 'none' : 'table-cell';
+    };
+    View.prototype.toggleLeftUnitVisibility = function (flag) {
+        view.leftUnitImage.style.display = flag ? 'block' : 'none';
+        view.leftUnitPlaceholder.style.display = flag ? 'none' : 'table-cell';
+    };
+    View.prototype.toggleRightUnitVisibility = function (flag) {
+        view.rightUnitImage.style.display = flag ? 'block' : 'none';
+        view.rightUnitPlaceholder.style.display = flag ? 'none' : 'table-cell';
+    };
+    View.prototype.setResultHtml = function (text) {
+        this.resultText.textContent = text;
     };
     return View;
 }());

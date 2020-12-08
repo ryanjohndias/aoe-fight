@@ -10,12 +10,12 @@ class View {
     readonly rightStatsTable: HTMLTableElement
     readonly modalOverlay: HTMLDivElement
     readonly modalContent: HTMLDivElement
-
     readonly leftCivPlaceholder: HTMLDivElement
     readonly rightCivPlaceholder: HTMLDivElement
-
     readonly leftUnitPlaceholder: HTMLDivElement
     readonly rightUnitPlaceholder: HTMLDivElement
+
+    private readonly resultText: HTMLParagraphElement
 
     private readonly factory: Factory
 
@@ -32,6 +32,7 @@ class View {
         this.rightCivPlaceholder = this.initElement("rightCivPlaceholder") as HTMLDivElement
         this.leftUnitPlaceholder = this.initElement("leftUnitPlaceholder") as HTMLDivElement
         this.rightUnitPlaceholder = this.initElement("rightUnitPlaceholder") as HTMLDivElement
+        this.resultText = this.initElement("resultText") as HTMLDivElement
         this.factory = new Factory()
     }
 
@@ -161,6 +162,10 @@ class View {
                 display: true,
                 text: "Hit points remaining"
               },
+            //   hover: {
+            //         mode: 'nearest',
+            //         intersect: true
+            //     }
               scales: {
                 xAxes: [{
                   type: 'linear',
@@ -214,6 +219,45 @@ class View {
             window.myLine.options = config.options;
             window.myLine.update();
         }
+    }
+
+    public reset() {
+        view.toggleLeftCivVisibility(false)
+        view.toggleRightCivVisibility(false)
+        view.toggleLeftUnitVisibility(false)
+        view.toggleRightUnitVisibility(false)
+        Utils.$("leftUnitName").innerHTML = ""
+        Utils.$("rightUnitName").innerHTML = ""
+        Utils.$("leftCivName").textContent = ""
+        Utils.$("rightCivName").textContent = ""
+
+        this.leftStatsTable.innerHTML = ""
+        this.rightStatsTable.innerHTML = ""
+
+    }
+
+    public toggleLeftCivVisibility(flag: boolean) {
+        view.leftCivImage.style.display = flag ? 'block' : 'none'
+        view.leftCivPlaceholder.style.display = flag ? 'none' : 'table-cell'
+    }
+
+    public toggleRightCivVisibility(flag: boolean) {
+        view.rightCivImage.style.display = flag ? 'block' : 'none'
+        view.rightCivPlaceholder.style.display = flag ? 'none' : 'table-cell'
+    }
+
+    public toggleLeftUnitVisibility(flag: boolean) {
+        view.leftUnitImage.style.display = flag ? 'block' : 'none'
+        view.leftUnitPlaceholder.style.display = flag ? 'none' : 'table-cell'
+    }
+
+    public toggleRightUnitVisibility(flag: boolean) {
+        view.rightUnitImage.style.display = flag ? 'block' : 'none'
+        view.rightUnitPlaceholder.style.display = flag ? 'none' : 'table-cell'
+    }
+
+    public setResultHtml(text: string) {
+        this.resultText.textContent = text
     }
 }
 

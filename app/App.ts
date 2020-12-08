@@ -31,6 +31,7 @@ function initEventListeners() {
 
     Utils.$("modalClose").onclick = view.hideOverlay
     Utils.$("button_random").onclick = randomMatchup
+    Utils.$("button_reset").onclick = reset
     Utils.$("button_share").onclick = copyLink
 }
 
@@ -74,8 +75,7 @@ function civClicked(id: number) {
     if (state.selectedSide == Side.left) {
 
         if (state.leftCiv == null) {
-            view.leftCivPlaceholder.style.display = 'none'
-            view.leftCivImage.style.display = 'block'
+            view.toggleLeftCivVisibility(true)
         }
 
         state.leftCiv = civ
@@ -84,8 +84,7 @@ function civClicked(id: number) {
     } else {
 
         if (state.rightCiv == null) {
-            view.rightCivPlaceholder.style.display = 'none'
-            view.rightCivImage.style.display = 'block'
+            view.toggleRightCivVisibility(true)
         }
 
         state.rightCiv = civ
@@ -103,12 +102,22 @@ function civClicked(id: number) {
     var targetTable: string
     var civ: Civ
     if (state.selectedSide == Side.left) {
+
+        if (state.leftUnit == null) {
+            view.toggleLeftUnitVisibility(true)
+        }
+
         state.leftUnit = unit
         view.leftUnitImage.src = unit.img
         targetTable = "leftStats"
         Utils.$("leftUnitName").innerHTML = unitDescriptionHtml
         civ = state.leftCiv
     } else {
+
+        if (state.rightUnit == null) {
+            view.toggleRightUnitVisibility(true)
+        }
+
         state.rightUnit = unit
         view.rightUnitImage.src = unit.img
         targetTable = "rightStats"
@@ -180,6 +189,15 @@ function civClicked(id: number) {
     Utils.copyToClipboard(code.generateLink())
  }
 
+ function reset() {
+    state.leftCiv = null
+    state.rightCiv = null
+    state.leftUnit = null
+    state.rightUnit = null
+    state.selectedSide = null
+    view.reset()
+ }
+
  function populate(civA: number, unitA: UnitId, civB: number, unitB: UnitId) {
     state.leftCiv = null
     state.rightCiv = null
@@ -236,9 +254,9 @@ function civClicked(id: number) {
         }
 
         let healthPerc = ((winnerHealthRemaining / winner.total.hp) * 100).toFixed(2)
-        Utils.$("resultText").innerHTML = `${winner.civ.adjective} ${winner.unit.name} defeats ${loser.civ.adjective} ${loser.unit.name} in ${winningReport.log.length} hits with ${winnerHealthRemaining} (${healthPerc}%) hit points remaining`
+        view.setResultHtml(`${winner.civ.adjective} ${winner.unit.name} defeats ${loser.civ.adjective} ${loser.unit.name} in ${winningReport.log.length} hits with ${winnerHealthRemaining} (${healthPerc}%) hit points remaining`)
     } else {
-        Utils.$("resultText").innerHTML = "It's a draw"
+        view.setResultHtml("It's a draw")
     }
 
     // Summary text
