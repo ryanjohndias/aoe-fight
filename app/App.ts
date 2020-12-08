@@ -190,11 +190,7 @@ function civClicked(id: number) {
  }
 
  function reset() {
-    state.leftCiv = null
-    state.rightCiv = null
-    state.leftUnit = null
-    state.rightUnit = null
-    state.selectedSide = null
+    state.reset()
     view.reset()
  }
 
@@ -218,6 +214,8 @@ function civClicked(id: number) {
 
     renderBattleReport(a, b, leftReport, "battleLogLeft")
     renderBattleReport(b, a, rightReport, "battleLogRight")
+
+    // TODO: This logic needs a refactor
 
     let winner: CivUnit
     let loser: CivUnit
@@ -245,7 +243,7 @@ function civClicked(id: number) {
         let winnerTime = winningReport.log[winningReport.log.length - 1]
         let winnerHealthRemaining = winner.total.hp
 
-        // Find the winner's HP remaing when the fight ended
+        // Find the winner's HP remaining when the fight ended
         for (const log of losingReport.log) {
             if (log.time > winnerTime.time) {
                 break
@@ -260,6 +258,7 @@ function civClicked(id: number) {
     }
 
     // Summary text
+    // TODO: Refactor into View
     let l = Utils.$("leftSummaryText")
     l.innerHTML = `${a.unit.name} deals ${leftReport.effectiveDamagerPerHit} damage to ${b.unit.name} per hit:`
     l.innerHTML += `<br/>&nbsp;+ ${a.total.atk} standard damage`
@@ -287,7 +286,6 @@ function civClicked(id: number) {
 
     // TODO: Rof and AD might be at game speed 1, so would have to cater for 1.7
 
-    // Bonus damage is currently non-accumulative
     let bonusDamage = 0
 
     for (const bonus of attacker.unit.atkBonuses) {
@@ -330,8 +328,6 @@ function civClicked(id: number) {
     let log = Utils.$(tableId) as HTMLTableElement
     let body = TableUtils.newBody(log)
 
-    let bonus = `${attacker.unit.name} deals <b>${report.bonusDamage}</b> bonus damage to ${defender.unit.name}`
-    TableUtils.createMergedRow(body, `<p style="padding-top:16px; padding-bottom:16px">${bonus}</p>`, 5);
     TableUtils.createRow(body, ["Hit", "Time", "Damage", "Total", "HP left"]);
     for (let i = 0; i < report.log.length; i++) {
         let entry = report.log[i]

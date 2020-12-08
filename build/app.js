@@ -145,11 +145,7 @@ function copyLink() {
     Utils.copyToClipboard(code.generateLink());
 }
 function reset() {
-    state.leftCiv = null;
-    state.rightCiv = null;
-    state.leftUnit = null;
-    state.rightUnit = null;
-    state.selectedSide = null;
+    state.reset();
     view.reset();
 }
 function populate(civA, unitA, civB, unitB) {
@@ -253,8 +249,6 @@ function createBattleReport(attacker, defender) {
 function renderBattleReport(attacker, defender, report, tableId) {
     var log = Utils.$(tableId);
     var body = TableUtils.newBody(log);
-    var bonus = attacker.unit.name + " deals <b>" + report.bonusDamage + "</b> bonus damage to " + defender.unit.name;
-    TableUtils.createMergedRow(body, "<p style=\"padding-top:16px; padding-bottom:16px\">" + bonus + "</p>", 5);
     TableUtils.createRow(body, ["Hit", "Time", "Damage", "Total", "HP left"]);
     for (var i = 0; i < report.log.length; i++) {
         var entry = report.log[i];
@@ -296,6 +290,13 @@ var AppState = (function () {
             this.leftUnit != null &&
             this.rightCiv != null &&
             this.rightUnit != null;
+    };
+    AppState.prototype.reset = function () {
+        this.leftCiv = null;
+        this.rightCiv = null;
+        this.leftUnit = null;
+        this.rightUnit = null;
+        this.selectedSide = null;
     };
     return AppState;
 }());
@@ -557,6 +558,13 @@ var CivUnit = (function () {
         this.total = new Upgrade(hpTotal, atkTotal, rofTotal, maTotal, paTotal);
     }
     return CivUnit;
+}());
+var Config = (function () {
+    function Config() {
+    }
+    Config.leftColour = "blue";
+    Config.rightColour = "red";
+    return Config;
 }());
 var Cost = (function () {
     function Cost(f, g, w, s) {
@@ -982,9 +990,12 @@ var View = (function () {
         this.resultText = this.initElement("resultText");
         this.resultContainer = this.initElement("resultContainer");
         this.factory = new Factory();
+        this.applyStyle();
     }
     View.prototype.initElement = function (element) {
         return document.getElementById(element);
+    };
+    View.prototype.applyStyle = function () {
     };
     View.prototype.showOverlay = function () {
         this.modalOverlay.classList.remove("modalHidden");
@@ -1020,15 +1031,15 @@ var View = (function () {
                 datasets: [
                     {
                         label: data.leftName,
-                        backgroundColor: '#ff0000',
-                        borderColor: '#ff0000',
+                        backgroundColor: Config.leftColour,
+                        borderColor: Config.leftColour,
                         fill: false,
                         data: data.leftData
                     },
                     {
                         label: data.rightName,
-                        backgroundColor: '#00FFFF',
-                        borderColor: '#00FFFF',
+                        backgroundColor: Config.rightColour,
+                        borderColor: Config.rightColour,
                         fill: false,
                         data: data.rightData
                     }
@@ -1088,10 +1099,10 @@ var View = (function () {
         }
     };
     View.prototype.reset = function () {
-        view.toggleLeftCivVisibility(false);
-        view.toggleRightCivVisibility(false);
-        view.toggleLeftUnitVisibility(false);
-        view.toggleRightUnitVisibility(false);
+        this.toggleLeftCivVisibility(false);
+        this.toggleRightCivVisibility(false);
+        this.toggleLeftUnitVisibility(false);
+        this.toggleRightUnitVisibility(false);
         Utils.$("leftUnitName").innerHTML = "";
         Utils.$("rightUnitName").innerHTML = "";
         Utils.$("leftCivName").textContent = "";

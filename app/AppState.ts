@@ -15,4 +15,12 @@ class AppState {
             this.rightCiv != null &&
             this.rightUnit != null
     }
+
+    public reset() {
+        this.leftCiv = null
+        this.rightCiv = null
+        this.leftUnit = null
+        this.rightUnit = null
+        this.selectedSide = null
+    }
 }
