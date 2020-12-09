@@ -42,7 +42,7 @@ class CivData {
                     infantry: [],
                     specificUnits: [
                         { name: "Bagains", atk: 5, rof: 0, hp: 0, ma: 1, pa: 1, units: [UnitId.twoHandedSwordsman] },
-                        { name: "Stirrups", atk: 0, rof: 33, hp: 0, ma: 0, pa: 0, units: [UnitId.eKonnik, UnitId.cavalier] }
+                        { name: "Stirrups", atk: 0, rof: 25, hp: 0, ma: 0, pa: 0, units: [UnitId.eKonnik, UnitId.cavalier] }
                     ]
                 }
             ),
@@ -72,6 +72,9 @@ class CivData {
                 {
                     infantry: [
                         { name: "Civ bonus", atk: 3, rof: 0, hp: 0, ma: 0, pa: 0 }
+                    ],
+                    specificUnits: [
+                        { name: "Howdah", atk: 0, rof: 0, hp: 0, ma: 1, pa: 1, units: [UnitId.eBattleElephant] }
                     ]
                 }
             ),
@@ -182,7 +185,7 @@ class CivData {
                 [upgrades.bloodlines, upgrades.scaleBardingArmor, upgrades.chainBardingArmor],
                 {
                     infantry: [
-                        { name: "Civ bonus", atk: 0, rof: 33, hp: 0, ma: 0, pa: 0 }
+                        { name: "Civ bonus", atk: 0, rof: 25, hp: 0, ma: 0, pa: 0 }
                     ]
                 }
             ),
@@ -355,7 +358,12 @@ class CivData {
                 [upgrades.forging, upgrades.ironCasting],
                 [upgrades.scaleMailArmor, upgrades.chainMailArmor, upgrades.plateMailArmor],
                 [upgrades.bloodlines, upgrades.scaleBardingArmor, upgrades.chainBardingArmor, upgrades.plateBardingArmor],
-                {infantry: []}
+                {
+                    infantry: [],
+                    specificUnits: [
+                        { name: "Chatras", atk: 0, hp: 16.67, rof: 0, ma: 0, pa: 0, units:[UnitId.eBattleElephant] }
+                    ]
+                }
             ),
             new Civ(44, "Vikings", "Viking",
                 "https://vignette.wikia.nocookie.net/ageofempires/images/c/c9/CivIcon-Vikings.png/revision/latest?cb=20191107173410",

@@ -30,11 +30,46 @@ class Civ {
         return hp
     }
 
-    // TODO: Pass in unit type
-    public totalSpecialHPUpgrade() {
+    public totalSpecialHPUpgrade(unitType?: UnitType, unitId?: UnitId) {
         let hp = 0
-        this.special.infantry.forEach((upgrade) => hp += upgrade.hp)
+        if (unitType == UnitType.infantry) {
+            if (this.special.infantry != undefined)
+                this.special.infantry.forEach((upgrade) => hp += upgrade.hp)
+        } else if (unitType == UnitType.cavalry ) {
+            if (this.special.cavalry != undefined)
+                this.special.cavalry.forEach((upgrade) => hp += upgrade.hp)
+        }
+        if (unitId != undefined) {
+            if (this.special.specificUnits != undefined) {
+                this.special.specificUnits.forEach(
+                    (upgrade) => {
+                        if (upgrade.units.includes(unitId)) hp += upgrade.hp
+                    } 
+                )
+            }
+        }
         return hp
+    }
+
+    public totalSpecialROFUpgrade(unitType?: UnitType, unitId?: UnitId) {
+        let rof = 0
+        if (unitType == UnitType.infantry) {
+            if (this.special.infantry != undefined)
+                this.special.infantry.forEach((upgrade) => rof += upgrade.rof)
+        } else if (unitType == UnitType.cavalry ) {
+            if (this.special.cavalry != undefined)
+                this.special.cavalry.forEach((upgrade) => rof += upgrade.rof)
+        }
+        if (unitId != undefined) {
+            if (this.special.specificUnits != undefined) {
+                this.special.specificUnits.forEach(
+                    (upgrade) => {
+                        if (upgrade.units.includes(unitId)) rof += upgrade.rof
+                    } 
+                )
+            }
+        }
+        return rof
     }
 
     public totalMeleeAtkUpgrade() {
@@ -44,9 +79,24 @@ class Civ {
         return atk
     }
 
-    public totalSpecialAtkUpgrade() {
+    public totalSpecialAtkUpgrade(unitType?: UnitType, unitId?: UnitId) {
         let atk = 0
-        this.special.infantry.forEach((upgrade) => atk += upgrade.atk)
+        if (unitType == UnitType.infantry) {
+            if (this.special.infantry != undefined)
+                this.special.infantry.forEach((upgrade) => atk += upgrade.atk)
+        } else if (unitType == UnitType.cavalry ) {
+            if (this.special.cavalry != undefined)
+                this.special.cavalry.forEach((upgrade) => atk += upgrade.atk)
+        }
+        if (unitId != undefined) {
+            if (this.special.specificUnits != undefined) {
+                this.special.specificUnits.forEach(
+                    (upgrade) => {
+                        if (upgrade.units.includes(unitId)) atk += upgrade.atk
+                    } 
+                )
+            }
+        }
         return atk
     }
 
@@ -70,33 +120,43 @@ class Civ {
         return pa
     }
     
-    public totalSpecialMAUpgrade(unitId: UnitId) {
-        if (this.special.specificUnits == null) {
-            return 0
-        }
-
+    public totalSpecialMAUpgrade(unitType?: UnitType, unitId?: UnitId) {
         let ma = 0
-        let data = this.special.specificUnits
-        for (let i = 0; i < data.length; i++) {
-            let upgrade = data[i];
-            if (this.contains(upgrade.units, unitId)) {
-                ma += upgrade.ma
+        if (unitType == UnitType.infantry) {
+            if (this.special.infantry != undefined)
+                this.special.infantry.forEach((upgrade) => ma += upgrade.ma)
+        } else if (unitType == UnitType.cavalry ) {
+            if (this.special.cavalry != undefined)
+                this.special.cavalry.forEach((upgrade) => ma += upgrade.ma)
+        }
+        if (unitId != undefined) {
+            if (this.special.specificUnits != undefined) {
+                this.special.specificUnits.forEach(
+                    (upgrade) => {
+                        if (upgrade.units.includes(unitId)) ma += upgrade.ma
+                    } 
+                )
             }
         }
         return ma
     }
 
-    public totalSpecialPAUpgrade(unitId: UnitId) {
-        if (this.special.specificUnits == null) {
-            return 0
-        }
-
+    public totalSpecialPAUpgrade(unitType?: UnitType, unitId?: UnitId) {
         let pa = 0
-        let data = this.special.specificUnits
-        for (let i = 0; i < data.length; i++) {
-            let upgrade = data[i];
-            if (this.contains(upgrade.units, unitId)) {
-                pa += upgrade.pa
+        if (unitType == UnitType.infantry) {
+            if (this.special.infantry != undefined)
+                this.special.infantry.forEach((upgrade) => pa += upgrade.pa)
+        } else if (unitType == UnitType.cavalry ) {
+            if (this.special.cavalry != undefined)
+                this.special.cavalry.forEach((upgrade) => pa += upgrade.pa)
+        }
+        if (unitId != undefined) {
+            if (this.special.specificUnits != undefined) {
+                this.special.specificUnits.forEach(
+                    (upgrade) => {
+                        if (upgrade.units.includes(unitId)) pa += upgrade.pa
+                    } 
+                )
             }
         }
         return pa

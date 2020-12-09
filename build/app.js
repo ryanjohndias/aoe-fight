@@ -340,19 +340,69 @@ var Civ = (function () {
         }
         return hp;
     };
-    Civ.prototype.totalSpecialHPUpgrade = function () {
+    Civ.prototype.totalSpecialHPUpgrade = function (unitType, unitId) {
         var hp = 0;
-        this.special.infantry.forEach(function (upgrade) { return hp += upgrade.hp; });
+        if (unitType == UnitType.infantry) {
+            if (this.special.infantry != undefined)
+                this.special.infantry.forEach(function (upgrade) { return hp += upgrade.hp; });
+        }
+        else if (unitType == UnitType.cavalry) {
+            if (this.special.cavalry != undefined)
+                this.special.cavalry.forEach(function (upgrade) { return hp += upgrade.hp; });
+        }
+        if (unitId != undefined) {
+            if (this.special.specificUnits != undefined) {
+                this.special.specificUnits.forEach(function (upgrade) {
+                    if (upgrade.units.includes(unitId))
+                        hp += upgrade.hp;
+                });
+            }
+        }
         return hp;
+    };
+    Civ.prototype.totalSpecialROFUpgrade = function (unitType, unitId) {
+        var rof = 0;
+        if (unitType == UnitType.infantry) {
+            if (this.special.infantry != undefined)
+                this.special.infantry.forEach(function (upgrade) { return rof += upgrade.rof; });
+        }
+        else if (unitType == UnitType.cavalry) {
+            if (this.special.cavalry != undefined)
+                this.special.cavalry.forEach(function (upgrade) { return rof += upgrade.rof; });
+        }
+        if (unitId != undefined) {
+            if (this.special.specificUnits != undefined) {
+                this.special.specificUnits.forEach(function (upgrade) {
+                    if (upgrade.units.includes(unitId))
+                        rof += upgrade.rof;
+                });
+            }
+        }
+        return rof;
     };
     Civ.prototype.totalMeleeAtkUpgrade = function () {
         var atk = 0;
         this.meleeUpgrades.forEach(function (upgrade) { return atk += upgrade.atk; });
         return atk;
     };
-    Civ.prototype.totalSpecialAtkUpgrade = function () {
+    Civ.prototype.totalSpecialAtkUpgrade = function (unitType, unitId) {
         var atk = 0;
-        this.special.infantry.forEach(function (upgrade) { return atk += upgrade.atk; });
+        if (unitType == UnitType.infantry) {
+            if (this.special.infantry != undefined)
+                this.special.infantry.forEach(function (upgrade) { return atk += upgrade.atk; });
+        }
+        else if (unitType == UnitType.cavalry) {
+            if (this.special.cavalry != undefined)
+                this.special.cavalry.forEach(function (upgrade) { return atk += upgrade.atk; });
+        }
+        if (unitId != undefined) {
+            if (this.special.specificUnits != undefined) {
+                this.special.specificUnits.forEach(function (upgrade) {
+                    if (upgrade.units.includes(unitId))
+                        atk += upgrade.atk;
+                });
+            }
+        }
         return atk;
     };
     Civ.prototype.totalBlacksmithMAUpgrade = function (unitType) {
@@ -375,30 +425,42 @@ var Civ = (function () {
         }
         return pa;
     };
-    Civ.prototype.totalSpecialMAUpgrade = function (unitId) {
-        if (this.special.specificUnits == null) {
-            return 0;
-        }
+    Civ.prototype.totalSpecialMAUpgrade = function (unitType, unitId) {
         var ma = 0;
-        var data = this.special.specificUnits;
-        for (var i = 0; i < data.length; i++) {
-            var upgrade = data[i];
-            if (this.contains(upgrade.units, unitId)) {
-                ma += upgrade.ma;
+        if (unitType == UnitType.infantry) {
+            if (this.special.infantry != undefined)
+                this.special.infantry.forEach(function (upgrade) { return ma += upgrade.ma; });
+        }
+        else if (unitType == UnitType.cavalry) {
+            if (this.special.cavalry != undefined)
+                this.special.cavalry.forEach(function (upgrade) { return ma += upgrade.ma; });
+        }
+        if (unitId != undefined) {
+            if (this.special.specificUnits != undefined) {
+                this.special.specificUnits.forEach(function (upgrade) {
+                    if (upgrade.units.includes(unitId))
+                        ma += upgrade.ma;
+                });
             }
         }
         return ma;
     };
-    Civ.prototype.totalSpecialPAUpgrade = function (unitId) {
-        if (this.special.specificUnits == null) {
-            return 0;
-        }
+    Civ.prototype.totalSpecialPAUpgrade = function (unitType, unitId) {
         var pa = 0;
-        var data = this.special.specificUnits;
-        for (var i = 0; i < data.length; i++) {
-            var upgrade = data[i];
-            if (this.contains(upgrade.units, unitId)) {
-                pa += upgrade.pa;
+        if (unitType == UnitType.infantry) {
+            if (this.special.infantry != undefined)
+                this.special.infantry.forEach(function (upgrade) { return pa += upgrade.pa; });
+        }
+        else if (unitType == UnitType.cavalry) {
+            if (this.special.cavalry != undefined)
+                this.special.cavalry.forEach(function (upgrade) { return pa += upgrade.pa; });
+        }
+        if (unitId != undefined) {
+            if (this.special.specificUnits != undefined) {
+                this.special.specificUnits.forEach(function (upgrade) {
+                    if (upgrade.units.includes(unitId))
+                        pa += upgrade.pa;
+                });
             }
         }
         return pa;
@@ -428,13 +490,16 @@ var CivData = (function () {
                 infantry: [],
                 specificUnits: [
                     { name: "Bagains", atk: 5, rof: 0, hp: 0, ma: 1, pa: 1, units: [UnitId.twoHandedSwordsman] },
-                    { name: "Stirrups", atk: 0, rof: 33, hp: 0, ma: 0, pa: 0, units: [UnitId.eKonnik, UnitId.cavalier] }
+                    { name: "Stirrups", atk: 0, rof: 25, hp: 0, ma: 0, pa: 0, units: [UnitId.eKonnik, UnitId.cavalier] }
                 ]
             }),
             new Civ(14, "Byzantines", "Byzantine", "https://vignette.wikia.nocookie.net/ageofempires/images/2/27/CivIcon-Byzantines.png/revision/latest?cb=20191107173131", [units.champion, units.condottiero, units.eCataphract, units.halbardier, units.hussar, units.heavyCamel, units.paladin, units.villager], [upgrades.forging, upgrades.ironCasting], [upgrades.scaleMailArmor, upgrades.chainMailArmor, upgrades.plateMailArmor], [upgrades.scaleBardingArmor, upgrades.chainBardingArmor, upgrades.plateBardingArmor], { infantry: [] }),
             new Civ(15, "Burmese", "Burmese", "https://vignette.wikia.nocookie.net/ageofempires/images/7/79/CivIcon-Burmese.png/revision/latest?cb=20191107173131", [units.cavalier, units.champion, units.condottiero, units.eBattleElephant, units.halbardier, units.hussar, units.villager], [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace], [upgrades.scaleMailArmor, upgrades.chainMailArmor, upgrades.plateMailArmor], [upgrades.bloodlines, upgrades.scaleBardingArmor, upgrades.chainBardingArmor, upgrades.plateBardingArmor], {
                 infantry: [
                     { name: "Civ bonus", atk: 3, rof: 0, hp: 0, ma: 0, pa: 0 }
+                ],
+                specificUnits: [
+                    { name: "Howdah", atk: 0, rof: 0, hp: 0, ma: 1, pa: 1, units: [UnitId.eBattleElephant] }
                 ]
             }),
             new Civ(16, "Celts", "Celtic", "https://vignette.wikia.nocookie.net/ageofempires/images/5/59/CivIcon-Celts.png/revision/latest?cb=20191107173132", [units.champion, units.condottiero, units.eWoadRaider, units.halbardier, units.hussar, units.paladin, units.villager], [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace], [upgrades.scaleMailArmor, upgrades.chainMailArmor, upgrades.plateMailArmor], [upgrades.scaleBardingArmor, upgrades.chainBardingArmor], { infantry: [] }),
@@ -455,7 +520,9 @@ var CivData = (function () {
                     { name: "Fabric Shields", atk: 0, rof: 0, hp: 0, ma: 1, pa: 2, units: [UnitId.eliteEagleWarrior, UnitId.eKamayuk] }
                 ]
             }),
+
             new Civ(24, "Indians", "Indian", "https://vignette.wikia.nocookie.net/ageofempires/images/8/8b/CivIcon-Indians.png/revision/latest?cb=20191107173239", [units.champion, units.condottiero, units.halbardier, units.hussar, units.imperialCamel, units.villager], [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace], [upgrades.scaleMailArmor, upgrades.chainMailArmor], [upgrades.bloodlines, upgrades.scaleBardingArmor, upgrades.chainBardingArmor], {
+
                 infantry: [],
                 specificUnits: [
                     { name: "Civ bonus", atk: 0, hp: 0, rof: 0, ma: 0, pa: 2, units: [UnitId.hussar, UnitId.imperialCamel] }
@@ -469,7 +536,7 @@ var CivData = (function () {
             }),
             new Civ(26, "Japanese", "Japanese", "https://vignette.wikia.nocookie.net/ageofempires/images/9/9a/CivIcon-Japanese.png/revision/latest?cb=20191107173240", [units.cavalier, units.champion, units.condottiero, units.eSamurai, units.halbardier, units.villager], [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace], [upgrades.scaleMailArmor, upgrades.chainMailArmor, upgrades.plateMailArmor], [upgrades.bloodlines, upgrades.scaleBardingArmor, upgrades.chainBardingArmor], {
                 infantry: [
-                    { name: "Civ bonus", atk: 0, rof: 33, hp: 0, ma: 0, pa: 0 }
+                    { name: "Civ bonus", atk: 0, rof: 25, hp: 0, ma: 0, pa: 0 }
                 ]
             }),
             new Civ(27, "Khmer", "Khmer", "https://vignette.wikia.nocookie.net/ageofempires/images/e/ec/CivIcon-Khmer.png/revision/latest?cb=20191107173240", [units.cavalier, units.condottiero, units.eBattleElephant, units.halbardier, units.hussar, units.twoHandedSwordsman, units.villager], [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace], [upgrades.scaleMailArmor, upgrades.chainMailArmor], [upgrades.bloodlines, upgrades.scaleBardingArmor, upgrades.chainBardingArmor, upgrades.plateBardingArmor], {
@@ -522,7 +589,12 @@ var CivData = (function () {
                 ]
             }),
             new Civ(42, "Turks", "Turkish", "https://vignette.wikia.nocookie.net/ageofempires/images/1/1c/CivIcon-Turks.png/revision/latest?cb=20191107173409", [units.cavalier, units.champion, units.condottiero, units.hussar, units.heavyCamel, units.villager], [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace], [upgrades.scaleMailArmor, upgrades.chainMailArmor, upgrades.plateMailArmor], [upgrades.bloodlines, upgrades.scaleBardingArmor, upgrades.chainBardingArmor, upgrades.plateBardingArmor], { infantry: [] }),
-            new Civ(43, "Vietnamese", "Vietnamese", "https://vignette.wikia.nocookie.net/ageofempires/images/0/07/CivIcon-Vietnamese.png/revision/latest?cb=20191107173409", [units.cavalier, units.champion, units.condottiero, units.eBattleElephant, units.halbardier, units.villager], [upgrades.forging, upgrades.ironCasting], [upgrades.scaleMailArmor, upgrades.chainMailArmor, upgrades.plateMailArmor], [upgrades.bloodlines, upgrades.scaleBardingArmor, upgrades.chainBardingArmor, upgrades.plateBardingArmor], { infantry: [] }),
+            new Civ(43, "Vietnamese", "Vietnamese", "https://vignette.wikia.nocookie.net/ageofempires/images/0/07/CivIcon-Vietnamese.png/revision/latest?cb=20191107173409", [units.cavalier, units.champion, units.condottiero, units.eBattleElephant, units.halbardier, units.villager], [upgrades.forging, upgrades.ironCasting], [upgrades.scaleMailArmor, upgrades.chainMailArmor, upgrades.plateMailArmor], [upgrades.bloodlines, upgrades.scaleBardingArmor, upgrades.chainBardingArmor, upgrades.plateBardingArmor], {
+                infantry: [],
+                specificUnits: [
+                    { name: "Chatras", atk: 0, hp: 16.67, rof: 0, ma: 0, pa: 0, units: [UnitId.eBattleElephant] }
+                ]
+            }),
             new Civ(44, "Vikings", "Viking", "https://vignette.wikia.nocookie.net/ageofempires/images/c/c9/CivIcon-Vikings.png/revision/latest?cb=20191107173410", [units.eBerserk, units.cavalier, units.champion, units.condottiero, units.villager], [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace], [upgrades.scaleMailArmor, upgrades.chainMailArmor, upgrades.plateMailArmor], [upgrades.scaleBardingArmor, upgrades.chainBardingArmor], {
                 infantry: [
                     { name: "Civ bonus", atk: 0, rof: 0, hp: 20, ma: 0, pa: 0 }
@@ -537,20 +609,17 @@ var CivUnit = (function () {
         this.unit = unit;
         this.civ = civ;
         var hpUpgrades = civ.totalHPUpgrade(unit.type);
-        var hpSpecial = civ.totalSpecialHPUpgrade();
+        var hpSpecial = civ.totalSpecialHPUpgrade(unit.type, unit.id);
         var hpTotal = unit.hp + (this.unit.hp * (hpSpecial / 100)) + hpUpgrades;
         var atkUpgrades = civ.totalMeleeAtkUpgrade();
-        var atkSpecial = civ.totalSpecialAtkUpgrade();
+        var atkSpecial = civ.totalSpecialAtkUpgrade(unit.type, unit.id);
         var atkTotal = unit.atk + atkUpgrades + atkSpecial;
-        var rofSpecial = 0;
-        civ.special.infantry.forEach(function (upgrade) {
-            rofSpecial -= upgrade.rof;
-        });
-        var rofTotal = unit.rof + (rofSpecial / 100);
+        var rofSpecial = civ.totalSpecialROFUpgrade(unit.type, unit.id);
+        var rofTotal = unit.rof * (1 - rofSpecial / 100);
         var maUpgrades = civ.totalBlacksmithMAUpgrade(unit.type);
         var paUpgrades = civ.totalBlacksmithPAUpgrade(unit.type);
-        var maSpecial = civ.totalSpecialMAUpgrade(unit.id);
-        var paSpecial = civ.totalSpecialPAUpgrade(unit.id);
+        var maSpecial = civ.totalSpecialMAUpgrade(unit.type, unit.id);
+        var paSpecial = civ.totalSpecialPAUpgrade(unit.type, unit.id);
         var maTotal = unit.ma + maSpecial + maUpgrades;
         var paTotal = unit.pa + paSpecial + paUpgrades;
         this.upgrades = new Upgrade(hpUpgrades, atkUpgrades, 0, maUpgrades, paUpgrades);
