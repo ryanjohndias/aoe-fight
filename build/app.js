@@ -16,11 +16,16 @@ function initialise() {
 }
 function initEventListeners() {
     view.leftCivImage.onclick = function () { return showCivSelection(Side.left); };
+    view.leftCivPlaceholder.onclick = function () { return showCivSelection(Side.left); };
     view.rightCivImage.onclick = function () { return showCivSelection(Side.right); };
+    view.rightCivPlaceholder.onclick = function () { return showCivSelection(Side.right); };
     view.leftUnitImage.onclick = leftUnitImageClicked;
+    view.leftUnitPlaceholder.onclick = leftUnitImageClicked;
     view.rightUnitImage.onclick = rightUnitImageClicked;
+    view.rightUnitPlaceholder.onclick = rightUnitImageClicked;
     Utils.$("modalClose").onclick = view.hideOverlay;
     Utils.$("button_random").onclick = randomMatchup;
+    Utils.$("button_reset").onclick = reset;
     Utils.$("button_share").onclick = copyLink;
 }
 function handleHashIfNeeded() {
@@ -51,11 +56,17 @@ function rightUnitImageClicked() {
 function civClicked(id) {
     var civ = service.getCiv(id);
     if (state.selectedSide == Side.left) {
+        if (state.leftCiv == null) {
+            view.toggleLeftCivVisibility(true);
+        }
         state.leftCiv = civ;
         view.leftCivImage.src = civ.image;
         Utils.$("leftCivName").textContent = civ.name;
     }
     else {
+        if (state.rightCiv == null) {
+            view.toggleRightCivVisibility(true);
+        }
         state.rightCiv = civ;
         view.rightCivImage.src = civ.image;
         Utils.$("rightCivName").textContent = civ.name;
@@ -68,6 +79,9 @@ function unitClicked(id) {
     var targetTable;
     var civ;
     if (state.selectedSide == Side.left) {
+        if (state.leftUnit == null) {
+            view.toggleLeftUnitVisibility(true);
+        }
         state.leftUnit = unit;
         view.leftUnitImage.src = unit.img;
         targetTable = "leftStats";
@@ -75,6 +89,9 @@ function unitClicked(id) {
         civ = state.leftCiv;
     }
     else {
+        if (state.rightUnit == null) {
+            view.toggleRightUnitVisibility(true);
+        }
         state.rightUnit = unit;
         view.rightUnitImage.src = unit.img;
         targetTable = "rightStats";
@@ -127,6 +144,10 @@ function copyLink() {
     var code = new ShareCode(state.leftCiv.id, state.leftUnit.numericId, state.rightCiv.id, state.rightUnit.numericId);
     Utils.copyToClipboard(code.generateLink());
 }
+function reset() {
+    state.reset();
+    view.reset();
+}
 function populate(civA, unitA, civB, unitB) {
     state.leftCiv = null;
     state.rightCiv = null;
@@ -176,10 +197,10 @@ function showBattle(a, b) {
             winnerHealthRemaining = log.hpLeft;
         }
         var healthPerc = ((winnerHealthRemaining / winner.total.hp) * 100).toFixed(2);
-        Utils.$("resultText").innerHTML = winner.civ.adjective + " " + winner.unit.name + " defeats " + loser.civ.adjective + " " + loser.unit.name + " in " + winningReport.log.length + " hits with " + winnerHealthRemaining + " (" + healthPerc + "%) hit points remaining";
+        view.setResultHtml(winner.civ.adjective + " " + winner.unit.name + " defeats " + loser.civ.adjective + " " + loser.unit.name + " in " + winningReport.log.length + " hits with " + winnerHealthRemaining + " (" + healthPerc + "%) hit points remaining");
     }
     else {
-        Utils.$("resultText").innerHTML = "It's a draw";
+        view.setResultHtml("It's a draw");
     }
     var l = Utils.$("leftSummaryText");
     l.innerHTML = a.unit.name + " deals " + leftReport.effectiveDamagerPerHit + " damage to " + b.unit.name + " per hit:";
@@ -195,8 +216,9 @@ function showBattle(a, b) {
         r.innerHTML += "<br/>&nbsp;+ " + rightReport.bonusDamage + " bonus damage";
     }
     r.innerHTML += "<br/>&nbsp;- " + a.total.ma + " melee armour";
+    view.toggleEmptyState(true);
     var chartData = new ChartData(a, leftReport, b, rightReport);
-    this.view.renderGraph(chartData);
+    view.renderGraph(chartData);
 }
 function createBattleReport(attacker, defender) {
     var bonusDamage = 0;
@@ -227,8 +249,6 @@ function createBattleReport(attacker, defender) {
 function renderBattleReport(attacker, defender, report, tableId) {
     var log = Utils.$(tableId);
     var body = TableUtils.newBody(log);
-    var bonus = attacker.unit.name + " deals <b>" + report.bonusDamage + "</b> bonus damage to " + defender.unit.name;
-    TableUtils.createMergedRow(body, "<p style=\"padding-top:16px; padding-bottom:16px\">" + bonus + "</p>", 5);
     TableUtils.createRow(body, ["Hit", "Time", "Damage", "Total", "HP left"]);
     for (var i = 0; i < report.log.length; i++) {
         var entry = report.log[i];
@@ -270,6 +290,13 @@ var AppState = (function () {
             this.leftUnit != null &&
             this.rightCiv != null &&
             this.rightUnit != null;
+    };
+    AppState.prototype.reset = function () {
+        this.leftCiv = null;
+        this.rightCiv = null;
+        this.leftUnit = null;
+        this.rightUnit = null;
+        this.selectedSide = null;
     };
     return AppState;
 }());
@@ -493,7 +520,9 @@ var CivData = (function () {
                     { name: "Fabric Shields", atk: 0, rof: 0, hp: 0, ma: 1, pa: 2, units: [UnitId.eliteEagleWarrior, UnitId.eKamayuk] }
                 ]
             }),
-            new Civ(24, "Indians", "Indian", "https://vignette.wikia.nocookie.net/ageofempires/images/8/8b/CivIcon-Indians.png/revision/latest?cb=20191107173239", [units.champion, units.condottiero, units.halbardier, units.hussar, units.imperialCamel, units.knight, units.villager], [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace], [upgrades.scaleMailArmor, upgrades.chainMailArmor], [upgrades.bloodlines, upgrades.scaleBardingArmor, upgrades.chainBardingArmor], {
+
+            new Civ(24, "Indians", "Indian", "https://vignette.wikia.nocookie.net/ageofempires/images/8/8b/CivIcon-Indians.png/revision/latest?cb=20191107173239", [units.champion, units.condottiero, units.halbardier, units.hussar, units.imperialCamel, units.villager], [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace], [upgrades.scaleMailArmor, upgrades.chainMailArmor], [upgrades.bloodlines, upgrades.scaleBardingArmor, upgrades.chainBardingArmor], {
+
                 infantry: [],
                 specificUnits: [
                     { name: "Civ bonus", atk: 0, hp: 0, rof: 0, ma: 0, pa: 2, units: [UnitId.hussar, UnitId.imperialCamel] }
@@ -598,6 +627,13 @@ var CivUnit = (function () {
         this.total = new Upgrade(hpTotal, atkTotal, rofTotal, maTotal, paTotal);
     }
     return CivUnit;
+}());
+var Config = (function () {
+    function Config() {
+    }
+    Config.leftColour = "blue";
+    Config.rightColour = "red";
+    return Config;
 }());
 var Cost = (function () {
     function Cost(f, g, w, s) {
@@ -1016,10 +1052,19 @@ var View = (function () {
         this.rightStatsTable = this.initElement("rightStats");
         this.modalOverlay = this.initElement("modalOverlay");
         this.modalContent = this.initElement("modalContent");
+        this.leftCivPlaceholder = this.initElement("leftCivPlaceholder");
+        this.rightCivPlaceholder = this.initElement("rightCivPlaceholder");
+        this.leftUnitPlaceholder = this.initElement("leftUnitPlaceholder");
+        this.rightUnitPlaceholder = this.initElement("rightUnitPlaceholder");
+        this.resultText = this.initElement("resultText");
+        this.resultContainer = this.initElement("resultContainer");
         this.factory = new Factory();
+        this.applyStyle();
     }
     View.prototype.initElement = function (element) {
         return document.getElementById(element);
+    };
+    View.prototype.applyStyle = function () {
     };
     View.prototype.showOverlay = function () {
         this.modalOverlay.classList.remove("modalHidden");
@@ -1055,15 +1100,15 @@ var View = (function () {
                 datasets: [
                     {
                         label: data.leftName,
-                        backgroundColor: '#ff0000',
-                        borderColor: '#ff0000',
+                        backgroundColor: Config.leftColour,
+                        borderColor: Config.leftColour,
                         fill: false,
                         data: data.leftData
                     },
                     {
                         label: data.rightName,
-                        backgroundColor: '#00FFFF',
-                        borderColor: '#00FFFF',
+                        backgroundColor: Config.rightColour,
+                        borderColor: Config.rightColour,
                         fill: false,
                         data: data.rightData
                     }
@@ -1121,6 +1166,41 @@ var View = (function () {
             window.myLine.options = config.options;
             window.myLine.update();
         }
+    };
+    View.prototype.reset = function () {
+        this.toggleLeftCivVisibility(false);
+        this.toggleRightCivVisibility(false);
+        this.toggleLeftUnitVisibility(false);
+        this.toggleRightUnitVisibility(false);
+        Utils.$("leftUnitName").innerHTML = "";
+        Utils.$("rightUnitName").innerHTML = "";
+        Utils.$("leftCivName").textContent = "";
+        Utils.$("rightCivName").textContent = "";
+        this.leftStatsTable.innerHTML = "";
+        this.rightStatsTable.innerHTML = "";
+        view.toggleEmptyState(false);
+    };
+    View.prototype.toggleLeftCivVisibility = function (visible) {
+        this.leftCivImage.style.display = visible ? 'block' : 'none';
+        this.leftCivPlaceholder.style.display = visible ? 'none' : 'table-cell';
+    };
+    View.prototype.toggleRightCivVisibility = function (visible) {
+        this.rightCivImage.style.display = visible ? 'block' : 'none';
+        this.rightCivPlaceholder.style.display = visible ? 'none' : 'table-cell';
+    };
+    View.prototype.toggleLeftUnitVisibility = function (visible) {
+        this.leftUnitImage.style.display = visible ? 'block' : 'none';
+        this.leftUnitPlaceholder.style.display = visible ? 'none' : 'table-cell';
+    };
+    View.prototype.toggleRightUnitVisibility = function (visible) {
+        this.rightUnitImage.style.display = visible ? 'block' : 'none';
+        this.rightUnitPlaceholder.style.display = visible ? 'none' : 'table-cell';
+    };
+    View.prototype.setResultHtml = function (text) {
+        this.resultText.textContent = text;
+    };
+    View.prototype.toggleEmptyState = function (visible) {
+        this.resultContainer.style.display = visible ? 'block' : 'none';
     };
     return View;
 }());

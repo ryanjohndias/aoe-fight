@@ -12,7 +12,8 @@
 
             <div class="debug">
                 <ul>
-                    <li id="button_random">Random Comparison</li>
+                    <li id="button_random">Randomise</li>
+                    <li id="button_reset">Reset</li>
                     <li id="button_share">Copy link</li>
                 </ul>
             </div>
@@ -20,53 +21,71 @@
             <div style="overflow: auto;">
                 <div class="content leftContent bordered">
                     <div style="overflow: auto;">
-                        <img id="leftCivImage" style="float:left" class="mainImage"></img>
+
+                        <img id="leftCivImage" style="float:left; display: none" class="mainImage"></img>
+                        <div id="leftCivPlaceholder" class="emptySelection" style="float:left">
+                            <span>Choose Civ</span>
+                        </div>
+
                         <div style="float:left; text-align: center; width:130px">
                             <p id="leftCivName"></p>
                             <p id="leftUnitName"></p>
                         </div>
-                        <img id="leftUnitImage" style="float:right" class="mainImage"></img>
+
+                        <img id="leftUnitImage" style="float:right; display: none" class="mainImage"></img>
+                        <div id="leftUnitPlaceholder" class="emptySelection" style="float:left">
+                            <span>Choose Unit</span>
+                        </div>
+
                     </div>
                     <table id="leftStats" class="statsTable"></table>
                 </div>
                 <div class="content rightContent bordered">
                     <div style="overflow: auto;">
-                        <img id="rightCivImage" style="float:left" class="mainImage"></img>
+                        <img id="rightCivImage" style="float:left; display: none" class="mainImage"></img>
+                        <div id="rightCivPlaceholder" class="emptySelection" style="float:left">
+                            <span>Choose Civ</span>
+                        </div>
                         <div style="float:left; text-align: center; width:130px">
                             <p id="rightCivName"></p>
                             <p id="rightUnitName"></p>
                         </div>
-                        <img id="rightUnitImage" style="float:right" class="mainImage"></img>
+                        <img id="rightUnitImage" style="float:right; display: none" class="mainImage"></img>
+                        <div id="rightUnitPlaceholder" class="emptySelection" style="float:left">
+                            <span>Choose Unit</span>
+                        </div>
                     </div>
                     <table id="rightStats" class="statsTable"></table>
                 </div>
             </div>
 
-            <h2>Result</h2>
-            <div id="resultContainer" class="bordered">
-                <p id="resultText"></p>
-            </div>
+            <div id="resultContainer" style="display: none;">
+                <h2>Result</h2>
+                <div class="bordered">
+                    <p id="resultText"></p>
+                </div>
 
-            <h2>Summary</h2>
+                <h2>Summary</h2>
 
-            <div id="summaryContainer" style="overflow: auto;">
+                <div id="summaryContainer" style="overflow: auto;">
+                    <div class="content leftContent bordered">
+                        <p id="leftSummaryText"></p>
+                    </div>
+                    <div class="content rightContent bordered">
+                        <p id="rightSummaryText"></p>
+                    </div>
+                </div>
+
+                <h2>Hit Log</h2>
+
+                <canvas id="chartCanvas" style="width: 800px; height: 300px;"></canvas>
+
                 <div class="content leftContent bordered">
-                    <p id="leftSummaryText"></p>
+                    <table id="battleLogLeft" class="logTable"></table>
                 </div>
                 <div class="content rightContent bordered">
-                    <p id="rightSummaryText"></p>
+                    <table id="battleLogRight" class="logTable"></table>
                 </div>
-            </div>
-
-            <h2>Hit Log</h2>
-
-            <canvas id="chartCanvas" style="width: 800px; height: 300px;"></canvas>
-
-            <div class="content leftContent bordered">
-                <table id="battleLogLeft" class="logTable"></table>
-            </div>
-            <div class="content rightContent bordered">
-                <table id="battleLogRight" class="logTable"></table>
             </div>
         </div>
 

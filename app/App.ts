@@ -21,11 +21,17 @@ function initialise() {
 
 function initEventListeners() {
     view.leftCivImage.onclick = () => showCivSelection(Side.left)
+    view.leftCivPlaceholder.onclick = () => showCivSelection(Side.left)
     view.rightCivImage.onclick = () => showCivSelection(Side.right)
+    view.rightCivPlaceholder.onclick = () => showCivSelection(Side.right)
     view.leftUnitImage.onclick = leftUnitImageClicked
+    view.leftUnitPlaceholder.onclick = leftUnitImageClicked
     view.rightUnitImage.onclick = rightUnitImageClicked
+    view.rightUnitPlaceholder.onclick = rightUnitImageClicked
+
     Utils.$("modalClose").onclick = view.hideOverlay
     Utils.$("button_random").onclick = randomMatchup
+    Utils.$("button_reset").onclick = reset
     Utils.$("button_share").onclick = copyLink
 }
 
@@ -67,10 +73,20 @@ function civClicked(id: number) {
     const civ = service.getCiv(id)
 
     if (state.selectedSide == Side.left) {
+
+        if (state.leftCiv == null) {
+            view.toggleLeftCivVisibility(true)
+        }
+
         state.leftCiv = civ
         view.leftCivImage.src = civ.image
         Utils.$("leftCivName").textContent = civ.name
     } else {
+
+        if (state.rightCiv == null) {
+            view.toggleRightCivVisibility(true)
+        }
+
         state.rightCiv = civ
         view.rightCivImage.src = civ.image
         Utils.$("rightCivName").textContent = civ.name
@@ -86,12 +102,22 @@ function civClicked(id: number) {
     var targetTable: string
     var civ: Civ
     if (state.selectedSide == Side.left) {
+
+        if (state.leftUnit == null) {
+            view.toggleLeftUnitVisibility(true)
+        }
+
         state.leftUnit = unit
         view.leftUnitImage.src = unit.img
         targetTable = "leftStats"
         Utils.$("leftUnitName").innerHTML = unitDescriptionHtml
         civ = state.leftCiv
     } else {
+
+        if (state.rightUnit == null) {
+            view.toggleRightUnitVisibility(true)
+        }
+
         state.rightUnit = unit
         view.rightUnitImage.src = unit.img
         targetTable = "rightStats"
@@ -163,6 +189,11 @@ function civClicked(id: number) {
     Utils.copyToClipboard(code.generateLink())
  }
 
+ function reset() {
+    state.reset()
+    view.reset()
+ }
+
  function populate(civA: number, unitA: UnitId, civB: number, unitB: UnitId) {
     state.leftCiv = null
     state.rightCiv = null
@@ -183,6 +214,8 @@ function civClicked(id: number) {
 
     renderBattleReport(a, b, leftReport, "battleLogLeft")
     renderBattleReport(b, a, rightReport, "battleLogRight")
+
+    // TODO: This logic needs a refactor
 
     let winner: CivUnit
     let loser: CivUnit
@@ -210,7 +243,7 @@ function civClicked(id: number) {
         let winnerTime = winningReport.log[winningReport.log.length - 1]
         let winnerHealthRemaining = winner.total.hp
 
-        // Find the winner's HP remaing when the fight ended
+        // Find the winner's HP remaining when the fight ended
         for (const log of losingReport.log) {
             if (log.time > winnerTime.time) {
                 break
@@ -219,12 +252,13 @@ function civClicked(id: number) {
         }
 
         let healthPerc = ((winnerHealthRemaining / winner.total.hp) * 100).toFixed(2)
-        Utils.$("resultText").innerHTML = `${winner.civ.adjective} ${winner.unit.name} defeats ${loser.civ.adjective} ${loser.unit.name} in ${winningReport.log.length} hits with ${winnerHealthRemaining} (${healthPerc}%) hit points remaining`
+        view.setResultHtml(`${winner.civ.adjective} ${winner.unit.name} defeats ${loser.civ.adjective} ${loser.unit.name} in ${winningReport.log.length} hits with ${winnerHealthRemaining} (${healthPerc}%) hit points remaining`)
     } else {
-        Utils.$("resultText").innerHTML = "It's a draw"
+        view.setResultHtml("It's a draw")
     }
 
     // Summary text
+    // TODO: Refactor into View
     let l = Utils.$("leftSummaryText")
     l.innerHTML = `${a.unit.name} deals ${leftReport.effectiveDamagerPerHit} damage to ${b.unit.name} per hit:`
     l.innerHTML += `<br/>&nbsp;+ ${a.total.atk} standard damage`
@@ -241,16 +275,17 @@ function civClicked(id: number) {
     }
     r.innerHTML += `<br/>&nbsp;- ${a.total.ma} melee armour`
 
+    view.toggleEmptyState(true)
+
     // Chart
     const chartData = new ChartData(a, leftReport, b, rightReport)
-    this.view.renderGraph(chartData)
+    view.renderGraph(chartData)
  }
 
  function createBattleReport(attacker: CivUnit, defender: CivUnit) {
 
     // TODO: Rof and AD might be at game speed 1, so would have to cater for 1.7
 
-    // Bonus damage is currently non-accumulative
     let bonusDamage = 0
 
     for (const bonus of attacker.unit.atkBonuses) {
@@ -293,8 +328,6 @@ function civClicked(id: number) {
     let log = Utils.$(tableId) as HTMLTableElement
     let body = TableUtils.newBody(log)
 
-    let bonus = `${attacker.unit.name} deals <b>${report.bonusDamage}</b> bonus damage to ${defender.unit.name}`
-    TableUtils.createMergedRow(body, `<p style="padding-top:16px; padding-bottom:16px">${bonus}</p>`, 5);
     TableUtils.createRow(body, ["Hit", "Time", "Damage", "Total", "HP left"]);
     for (let i = 0; i < report.log.length; i++) {
         let entry = report.log[i]

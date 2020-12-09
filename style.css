@@ -140,8 +140,13 @@ table {
  }
   
   .debug li {
-    cursor: pointer;
-    padding: 4px;
+      background-color: rgb(224, 224, 224);
+      width: 180px;
+        cursor: pointer;
+        padding: 4px;
+        margin-bottom: 12px;
+        border-radius: 4px;
+        text-align: center;
 }
 
 .debug li:hover {
@@ -166,3 +171,26 @@ table {
 /* .logTable tr:nth-child(2)  {
     font-weight: bold;
 } */
+
+
+.emptySelection {
+    display: table-cell;
+    color: var(--color-text);
+    width: 112px;
+    height: 112px;
+    line-height: 112px;
+    border-radius: 14px;
+    border-style: dashed;
+    border-width: 4px;
+    opacity: 0.5;
+    transition: all 0.2s ease 0s;
+    vertical-align: middle;
+    text-align: center;
+  }
+  
+  .emptySelection:hover {
+    cursor: pointer;
+    background-color: var(--color-charcoal-lighter);
+    opacity: 1;
+    transition: all 0.2s ease 0s;
+  }

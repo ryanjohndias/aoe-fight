@@ -10,6 +10,13 @@ class View {
     readonly rightStatsTable: HTMLTableElement
     readonly modalOverlay: HTMLDivElement
     readonly modalContent: HTMLDivElement
+    readonly leftCivPlaceholder: HTMLDivElement
+    readonly rightCivPlaceholder: HTMLDivElement
+    readonly leftUnitPlaceholder: HTMLDivElement
+    readonly rightUnitPlaceholder: HTMLDivElement
+
+    private readonly resultText: HTMLParagraphElement
+    private readonly resultContainer: HTMLDivElement
 
     private readonly factory: Factory
 
@@ -22,12 +29,25 @@ class View {
         this.rightStatsTable = this.initElement("rightStats") as HTMLTableElement
         this.modalOverlay = this.initElement("modalOverlay") as HTMLDivElement
         this.modalContent = this.initElement("modalContent") as HTMLDivElement
+        this.leftCivPlaceholder = this.initElement("leftCivPlaceholder") as HTMLDivElement
+        this.rightCivPlaceholder = this.initElement("rightCivPlaceholder") as HTMLDivElement
+        this.leftUnitPlaceholder = this.initElement("leftUnitPlaceholder") as HTMLDivElement
+        this.rightUnitPlaceholder = this.initElement("rightUnitPlaceholder") as HTMLDivElement
+        this.resultText = this.initElement("resultText") as HTMLDivElement
+        this.resultContainer = this.initElement("resultContainer") as HTMLParagraphElement
+        
         this.factory = new Factory()
+
+        this.applyStyle()
     }
 
     // TODO: Can we use generics to infer the type here? (So that it doesn't have to be cast)
     private initElement(element: string) {
         return document.getElementById(element)
+    }
+
+    private applyStyle() {
+        // Any programmatic styling that needs to be done
     }
 
     public showOverlay() {
@@ -60,86 +80,21 @@ class View {
     }
 
     public renderGraph(data: ChartData) {
-
-        //     options: {
-        //         responsive: false,
-        //         tooltips: {
-        //             mode: 'index',
-        //             intersect: false,
-        //             displayColors: false,
-        //             callbacks: {
-        //                 title: function(tooltipItem, data) {
-        //                     const index = tooltipItem[0].index;
-        //                     const dataset = data.datasets[0];
-        //                     const players = dataset.data[index];
-        //                     return "xx"
-        //                 },
-        //                 label: function(tooltipItem, data) {
-        //                     const index = tooltipItem.index;
-        //                     return ["ttrr"];
-        //                 }
-        //             }
-        //         },
-        //         hover: {
-        //             mode: 'nearest',
-        //             intersect: true
-        //         },
-        //         legend: {
-        //             display: false
-        //         },
-        //         scales: {
-        //             xAxes: [{
-        //                 display: true,
-        //                 scaleLabel: {
-        //                     display: true,
-        //                     labelString: "yy"
-        //                 },
-        //                 gridLines: {
-        //                     display: false,
-        //                     zeroLineColor: "black",
-        //                 },
-        //                 ticks: {
-        //                     maxRotation: 0,
-        //                     minRotation: 0,
-        //                     // callback: function(value, index, values) {
-        //                     // 	return '$' + value;
-        //                     // }
-        //                 }
-        //             }],
-        //             yAxes: [{
-        //                 display: true,
-        //                 scaleLabel: {
-        //                     display: true,
-        //                     labelString: "nah"
-        //                 },
-        //                 gridLines: {
-        //                     color: "black",
-        //                     zeroLineColor: "black"
-        //                 },
-        //                 ticks: {
-        //                     // suggestedMin: 985,
-        //                     // suggestedMax: 990
-        //                 }
-        //             }]
-        //         }
-        //     }
-        // };
-    
         let config = {
             type: 'line',
             data: {
               datasets: [
                   {
                     label: data.leftName,
-                    backgroundColor: '#ff0000',
-                    borderColor: '#ff0000',
+                    backgroundColor: Config.leftColour,
+                    borderColor: Config.leftColour,
                     fill: false,
                     data: data.leftData
                 },
                 {
                     label: data.rightName,
-                    backgroundColor: '#00FFFF',
-                    borderColor: '#00FFFF',
+                    backgroundColor: Config.rightColour,
+                    borderColor: Config.rightColour,
                     fill: false,
                     data: data.rightData
                 }
@@ -151,6 +106,10 @@ class View {
                 display: true,
                 text: "Hit points remaining"
               },
+            //   hover: {
+            //         mode: 'nearest',
+            //         intersect: true
+            //     }
               scales: {
                 xAxes: [{
                   type: 'linear',
@@ -204,6 +163,50 @@ class View {
             window.myLine.options = config.options;
             window.myLine.update();
         }
+    }
+
+    public reset() {
+        this.toggleLeftCivVisibility(false)
+        this.toggleRightCivVisibility(false)
+        this.toggleLeftUnitVisibility(false)
+        this.toggleRightUnitVisibility(false)
+        Utils.$("leftUnitName").innerHTML = ""
+        Utils.$("rightUnitName").innerHTML = ""
+        Utils.$("leftCivName").textContent = ""
+        Utils.$("rightCivName").textContent = ""
+
+        this.leftStatsTable.innerHTML = ""
+        this.rightStatsTable.innerHTML = ""
+
+        view.toggleEmptyState(false)
+    }
+
+    public toggleLeftCivVisibility(visible: boolean) {
+        this.leftCivImage.style.display = visible ? 'block' : 'none'
+        this.leftCivPlaceholder.style.display = visible ? 'none' : 'table-cell'
+    }
+
+    public toggleRightCivVisibility(visible: boolean) {
+        this.rightCivImage.style.display = visible ? 'block' : 'none'
+        this.rightCivPlaceholder.style.display = visible ? 'none' : 'table-cell'
+    }
+
+    public toggleLeftUnitVisibility(visible: boolean) {
+        this.leftUnitImage.style.display = visible ? 'block' : 'none'
+        this.leftUnitPlaceholder.style.display = visible ? 'none' : 'table-cell'
+    }
+
+    public toggleRightUnitVisibility(visible: boolean) {
+        this.rightUnitImage.style.display = visible ? 'block' : 'none'
+        this.rightUnitPlaceholder.style.display = visible ? 'none' : 'table-cell'
+    }
+
+    public setResultHtml(text: string) {
+        this.resultText.textContent = text
+    }
+
+    public toggleEmptyState(visible: boolean) {
+        this.resultContainer.style.display = visible ? 'block' : 'none'
     }
 }
 

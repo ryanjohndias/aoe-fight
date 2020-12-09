@@ -153,7 +153,7 @@ class CivData {
             ),
             new Civ(24, "Indians", "Indian",
                 "https://vignette.wikia.nocookie.net/ageofempires/images/8/8b/CivIcon-Indians.png/revision/latest?cb=20191107173239",
-                [units.champion, units.condottiero, units.halbardier, units.hussar, units.imperialCamel, units.knight, units.villager],
+                [units.champion, units.condottiero, units.halbardier, units.hussar, units.imperialCamel, units.villager],
                 [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace],
                 [upgrades.scaleMailArmor, upgrades.chainMailArmor],
                 [upgrades.bloodlines, upgrades.scaleBardingArmor, upgrades.chainBardingArmor],
@@ -350,6 +350,7 @@ class CivData {
                 [upgrades.scaleMailArmor, upgrades.chainMailArmor, upgrades.plateMailArmor],
                 [upgrades.bloodlines, upgrades.scaleBardingArmor, upgrades.chainBardingArmor, upgrades.plateBardingArmor],
                 {infantry: []}
+                // TODO: Scout Cavalry, Light Cavalry, and Hussar units gain +1 pierce armor.
             ),
             new Civ(43, "Vietnamese", "Vietnamese",
                 "https://vignette.wikia.nocookie.net/ageofempires/images/0/07/CivIcon-Vietnamese.png/revision/latest?cb=20191107173409",
