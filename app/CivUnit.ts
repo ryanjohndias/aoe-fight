@@ -18,7 +18,7 @@ class CivUnit {
         const hpTotal = unit.hp + (this.unit.hp * (hpSpecial/100)) + hpUpgrades
 
         // ATK modification
-        const atkUpgrades = civ.totalMeleeAtkUpgrade()
+        const atkUpgrades = civ.totalMeleeAtkUpgrade(unit.type)
         const atkSpecial = civ.totalSpecialAtkUpgrade(unit.type, unit.id)
         const atkTotal = unit.atk + atkUpgrades + atkSpecial
 

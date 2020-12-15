@@ -72,11 +72,14 @@ class Civ {
         return rof
     }
 
-    public totalMeleeAtkUpgrade() {
+    public totalMeleeAtkUpgrade(unitType?: UnitType) {
         // return this.meleeUpgrades.reduce(function(a, b) { return a + b.atk })
         let atk = 0
         this.meleeUpgrades.forEach((upgrade) => atk += upgrade.atk)
-        return atk
+        if (unitType != UnitType.villager || this.id == 23)
+            return atk
+        else
+            return 0
     }
 
     public totalSpecialAtkUpgrade(unitType?: UnitType, unitId?: UnitId) {
@@ -106,6 +109,8 @@ class Civ {
             this.infantryArmourUpgrades.forEach((upgrade) => ma += upgrade.ma)
         } else if (unitType == UnitType.cavalry ) {
             this.cavUpgrades.forEach((upgrade) => ma += upgrade.ma)
+        } else if (unitType == UnitType.villager && this.id == 23){
+            this.infantryArmourUpgrades.forEach((upgrade) => ma += upgrade.ma)
         }
         return ma
     }
@@ -116,6 +121,8 @@ class Civ {
             this.infantryArmourUpgrades.forEach((upgrade) => pa += upgrade.pa)
         } else if (unitType == UnitType.cavalry) {
             this.cavUpgrades.forEach((upgrade) => pa += upgrade.pa)
+        } else if (unitType == UnitType.villager && this.id == 23){
+            this.infantryArmourUpgrades.forEach((upgrade) => pa += upgrade.pa)
         }
         return pa
     }
