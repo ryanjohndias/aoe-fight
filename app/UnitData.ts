@@ -454,6 +454,24 @@ class UnitData {
                 new Cost(50, 0, 0, 0),
                 40, 3, 2.0, 0.64, 1, 2,
                 [], []
+            ),
+            pikeman: new Unit (
+                UnitId.pikeman, 43,
+                "Pikeman",
+                UnitType.infantry,
+                "https://static.wikia.nocookie.net/ageofempires/images/a/a6/Aoe2-infantry-2-pikeman.png/revision/latest?cb=20200402184138",
+                new Cost(35, 25, 0, 0),
+                55, 4, 3.05, 0.5, 0, 0,
+                [
+                    new AttackBonus(ArmourClass.cavalry, 22),
+                    new AttackBonus(ArmourClass.camel, 18),
+                    new AttackBonus(ArmourClass.warElephant, 25),
+                    new AttackBonus(ArmourClass.eagleWarrior, 1)
+                ], 
+                [
+                    ArmourClass.infantry,
+                    ArmourClass.spearman
+                ]
             )
         }
     }

@@ -30,15 +30,8 @@ class Civ {
         return hp
     }
 
-    public totalSpecialHPUpgrade(unitType?: UnitType, unitId?: UnitId) {
+    public totalSpecialHPUpgrade(unitId?: UnitId) {
         let hp = 0
-        if (unitType == UnitType.infantry) {
-            if (this.special.infantry != undefined)
-                this.special.infantry.forEach((upgrade) => hp += upgrade.hp)
-        } else if (unitType == UnitType.cavalry ) {
-            if (this.special.cavalry != undefined)
-                this.special.cavalry.forEach((upgrade) => hp += upgrade.hp)
-        }
         if (unitId != undefined) {
             if (this.special.specificUnits != undefined) {
                 this.special.specificUnits.forEach(
@@ -51,15 +44,8 @@ class Civ {
         return hp
     }
 
-    public totalSpecialROFUpgrade(unitType?: UnitType, unitId?: UnitId) {
+    public totalSpecialROFUpgrade(unitId?: UnitId) {
         let rof = 0
-        if (unitType == UnitType.infantry) {
-            if (this.special.infantry != undefined)
-                this.special.infantry.forEach((upgrade) => rof += upgrade.rof)
-        } else if (unitType == UnitType.cavalry ) {
-            if (this.special.cavalry != undefined)
-                this.special.cavalry.forEach((upgrade) => rof += upgrade.rof)
-        }
         if (unitId != undefined) {
             if (this.special.specificUnits != undefined) {
                 this.special.specificUnits.forEach(
@@ -82,15 +68,8 @@ class Civ {
             return 0
     }
 
-    public totalSpecialAtkUpgrade(unitType?: UnitType, unitId?: UnitId) {
+    public totalSpecialAtkUpgrade(unitId?: UnitId) {
         let atk = 0
-        if (unitType == UnitType.infantry) {
-            if (this.special.infantry != undefined)
-                this.special.infantry.forEach((upgrade) => atk += upgrade.atk)
-        } else if (unitType == UnitType.cavalry ) {
-            if (this.special.cavalry != undefined)
-                this.special.cavalry.forEach((upgrade) => atk += upgrade.atk)
-        }
         if (unitId != undefined) {
             if (this.special.specificUnits != undefined) {
                 this.special.specificUnits.forEach(
@@ -127,15 +106,8 @@ class Civ {
         return pa
     }
     
-    public totalSpecialMAUpgrade(unitType?: UnitType, unitId?: UnitId) {
+    public totalSpecialMAUpgrade(unitId?: UnitId) {
         let ma = 0
-        if (unitType == UnitType.infantry) {
-            if (this.special.infantry != undefined)
-                this.special.infantry.forEach((upgrade) => ma += upgrade.ma)
-        } else if (unitType == UnitType.cavalry ) {
-            if (this.special.cavalry != undefined)
-                this.special.cavalry.forEach((upgrade) => ma += upgrade.ma)
-        }
         if (unitId != undefined) {
             if (this.special.specificUnits != undefined) {
                 this.special.specificUnits.forEach(
@@ -148,15 +120,8 @@ class Civ {
         return ma
     }
 
-    public totalSpecialPAUpgrade(unitType?: UnitType, unitId?: UnitId) {
+    public totalSpecialPAUpgrade(unitId?: UnitId) {
         let pa = 0
-        if (unitType == UnitType.infantry) {
-            if (this.special.infantry != undefined)
-                this.special.infantry.forEach((upgrade) => pa += upgrade.pa)
-        } else if (unitType == UnitType.cavalry ) {
-            if (this.special.cavalry != undefined)
-                this.special.cavalry.forEach((upgrade) => pa += upgrade.pa)
-        }
         if (unitId != undefined) {
             if (this.special.specificUnits != undefined) {
                 this.special.specificUnits.forEach(

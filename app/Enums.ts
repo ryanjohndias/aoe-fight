@@ -49,7 +49,8 @@ enum UnitId {
     eBerserk = "eBerserk",
     eMagyarHuszar = "eMagyarHuszar",
     eKamayuk = "eKamayuk",
-    villager = "villager"
+    villager = "villager",
+    pikeman = "pikeman"
 }
 
 enum Side {

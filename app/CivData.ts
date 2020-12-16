@@ -6,19 +6,19 @@ class CivData {
         this.civs = [
             new Civ(10, "Aztecs", "Aztec",
                 "https://vignette.wikia.nocookie.net/ageofempires/images/0/0c/CivIcon-Aztecs.png/revision/latest?cb=20191107173129",
-                [units.champion, units.condottiero, units.eliteEagleWarrior, units.eliteJaguarWarrior, units.xolotl, units.villager],
+                [units.champion, units.condottiero, units.eliteEagleWarrior, units.eliteJaguarWarrior, units.xolotl, units.villager, units.pikeman],
                 [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace],
                 [upgrades.scaleMailArmor, upgrades.chainMailArmor, upgrades.plateMailArmor],
                 [],
                 {
-                    infantry: [
-                        { name: "Garland Wars", atk: 4, rof: 0, hp: 0, ma: 0, pa: 0 }
+                    specificUnits: [
+                        { name: "Garland Wars", atk: 4, rof: 0, hp: 0, ma: 0, pa: 0, units: [UnitId.champion, UnitId.condottiero, UnitId.eliteEagleWarrior, UnitId.eliteJaguarWarrior, UnitId.pikeman ] }
                     ]
                 }
             ),
             new Civ(11, "Berbers", "Berber",
                 "https://vignette.wikia.nocookie.net/ageofempires/images/7/71/CivIcon-Berbers.png/revision/latest?cb=20191107173130",
-                [units.cavalier, units.champion, units.condottiero, units.hussar, units.heavyCamel, units.villager],
+                [units.cavalier, units.champion, units.condottiero, units.hussar, units.heavyCamel, units.villager, units.pikeman],
                 [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace],
                 [upgrades.scaleMailArmor, upgrades.chainMailArmor, upgrades.plateMailArmor],
                 [upgrades.bloodlines, upgrades.scaleBardingArmor, upgrades.chainBardingArmor, upgrades.plateBardingArmor],
@@ -41,7 +41,7 @@ class CivData {
                 {
                     infantry: [],
                     specificUnits: [
-                        { name: "Bagains", atk: 5, rof: 0, hp: 0, ma: 1, pa: 1, units: [UnitId.twoHandedSwordsman] },
+                        { name: "Bagains", atk: 0, rof: 0, hp: 0, ma: 5, pa: 0, units: [UnitId.twoHandedSwordsman] },
                         { name: "Stirrups", atk: 0, rof: 25, hp: 0, ma: 0, pa: 0, units: [UnitId.eKonnik, UnitId.cavalier] }
                     ]
                 }
@@ -70,11 +70,10 @@ class CivData {
                 //     {type: .civBonus, age: .imperial, atk: 1}
                 // ]
                 {
-                    infantry: [
-                        { name: "Civ bonus", atk: 3, rof: 0, hp: 0, ma: 0, pa: 0 }
-                    ],
+                    infantry: [],
                     specificUnits: [
-                        { name: "Howdah", atk: 0, rof: 0, hp: 0, ma: 1, pa: 1, units: [UnitId.eBattleElephant] }
+                        { name: "Howdah", atk: 0, rof: 0, hp: 0, ma: 1, pa: 1, units: [UnitId.eBattleElephant] },
+                        { name: "Civ bonus", atk: 3, rof: 0, hp: 0, ma: 0, pa: 0, units: [UnitId.champion, UnitId.condottiero, UnitId.halbardier] }
                     ]
                 }
             ),
@@ -166,7 +165,7 @@ class CivData {
             ),
             new Civ(25, "Italians", "Italian",
                 "https://vignette.wikia.nocookie.net/ageofempires/images/e/e1/CivIcon-Italians.png/revision/latest?cb=20191116050557",
-                [units.cavalier, units.champion, units.condottiero, units.hussar, units.villager],
+                [units.cavalier, units.champion, units.condottiero, units.hussar, units.villager, units.pikeman],
                 [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace],
                 [upgrades.scaleMailArmor, upgrades.chainMailArmor, upgrades.plateMailArmor],
                 [upgrades.bloodlines, upgrades.scaleBardingArmor, upgrades.chainBardingArmor, upgrades.plateBardingArmor],
@@ -184,8 +183,8 @@ class CivData {
                 [upgrades.scaleMailArmor, upgrades.chainMailArmor, upgrades.plateMailArmor],
                 [upgrades.bloodlines, upgrades.scaleBardingArmor, upgrades.chainBardingArmor],
                 {
-                    infantry: [
-                        { name: "Civ bonus", atk: 0, rof: 25, hp: 0, ma: 0, pa: 0 }
+                    specificUnits: [
+                        { name: "Civ bonus", atk: 0, rof: 25, hp: 0, ma: 0, pa: 0, units: [UnitId.champion, UnitId.condottiero, UnitId.halbardier, UnitId.eSamurai] }
                     ]
                 }
             ),
@@ -228,13 +227,13 @@ class CivData {
             ),
             new Civ(31, "Malians", "Malian",
                 "https://vignette.wikia.nocookie.net/ageofempires/images/8/80/CivIcon-Malians.png/revision/latest?cb=20191107173334",
-                [units.cavalier, units.champion, units.condottiero, units.heavyCamel, units.villager],
+                [units.cavalier, units.champion, units.condottiero, units.heavyCamel, units.villager, units.halbardier],
                 [upgrades.forging, upgrades.ironCasting],
                 [upgrades.scaleMailArmor, upgrades.chainMailArmor, upgrades.plateMailArmor],
                 [upgrades.bloodlines, upgrades.scaleBardingArmor, upgrades.chainBardingArmor, upgrades.plateBardingArmor],
                 {
-                    infantry: [
-                        { name: "Civ bonus", atk: 0, rof: 0, hp: 0, ma: 0, pa: 3 }
+                    specificUnits: [
+                        { name: "Civ bonus", atk: 0, rof: 0, hp: 0, ma: 0, pa: 3, units: [UnitId.champion, UnitId.halbardier] }
                     ]
                 }
             ),
@@ -261,14 +260,14 @@ class CivData {
             ),
             new Civ(34, "Mongols", "Mongol",
                 "https://vignette.wikia.nocookie.net/ageofempires/images/1/10/CivIcon-Mongols.png/revision/latest?cb=20191107173335",
-                [units.cavalier, units.champion, units.condottiero, units.eSteppeLancer, units.hussar, units.heavyCamel, units.villager],
+                [units.cavalier, units.champion, units.condottiero, units.eSteppeLancer, units.hussar, units.heavyCamel, units.villager, units.pikeman],
                 [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace],
                 [upgrades.scaleMailArmor, upgrades.chainMailArmor, upgrades.plateMailArmor],
                 [upgrades.bloodlines, upgrades.scaleBardingArmor, upgrades.chainBardingArmor],
                 {
                     infantry: [],
                     specificUnits: [
-                        { name: "Civ bonus", atk: 0, hp: 30, rof: 0, ma: 0, pa: 0, units: [UnitId.hussar] }
+                        { name: "Civ bonus", atk: 0, hp: 30, rof: 0, ma: 0, pa: 0, units: [UnitId.hussar, UnitId.eSteppeLancer] }
                     ]
                 }
             ),
@@ -290,7 +289,7 @@ class CivData {
             ),
             new Civ(37, "Saracens", "Saracen",
                 "https://vignette.wikia.nocookie.net/ageofempires/images/5/59/CivIcon-Saracens.png/revision/latest?cb=20191107173336",
-                [units.champion, units.condottiero, units.hussar, units.heavyCamel, units.knight, units.villager],
+                [units.champion, units.condottiero, units.hussar, units.heavyCamel, units.knight, units.villager, units.pikeman],
                 [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace],
                 [upgrades.scaleMailArmor, upgrades.chainMailArmor, upgrades.plateMailArmor],
                 [upgrades.bloodlines, upgrades.scaleBardingArmor, upgrades.chainBardingArmor, upgrades.plateBardingArmor],
@@ -349,7 +348,12 @@ class CivData {
                 [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace],
                 [upgrades.scaleMailArmor, upgrades.chainMailArmor, upgrades.plateMailArmor],
                 [upgrades.bloodlines, upgrades.scaleBardingArmor, upgrades.chainBardingArmor, upgrades.plateBardingArmor],
-                {infantry: []}
+                {
+                    infantry: [],
+                    specificUnits: [
+                        { name: "Civ bonus", atk:0, rof:0, hp:0, ma:0, pa:1, units: [UnitId.hussar] }
+                    ]
+                }
                 // TODO: Scout Cavalry, Light Cavalry, and Hussar units gain +1 pierce armor.
             ),
             new Civ(43, "Vietnamese", "Vietnamese",
@@ -367,13 +371,13 @@ class CivData {
             ),
             new Civ(44, "Vikings", "Viking",
                 "https://vignette.wikia.nocookie.net/ageofempires/images/c/c9/CivIcon-Vikings.png/revision/latest?cb=20191107173410",
-                [units.eBerserk, units.cavalier, units.champion, units.condottiero, units.villager],
+                [units.eBerserk, units.cavalier, units.champion, units.condottiero, units.villager, units.pikeman],
                 [upgrades.forging, upgrades.ironCasting, upgrades.blastFurnace],
                 [upgrades.scaleMailArmor, upgrades.chainMailArmor, upgrades.plateMailArmor],
                 [upgrades.scaleBardingArmor, upgrades.chainBardingArmor],
                 {
-                    infantry: [
-                        { name: "Civ bonus", atk: 0, rof: 0, hp: 20, ma: 0, pa: 0 }
+                    specificUnits: [
+                        { name: "Civ bonus", atk: 0, rof: 0, hp: 20, ma: 0, pa: 0, units: [UnitId.eBerserk, UnitId.champion, UnitId.condottiero, UnitId.pikeman] }
                     ]
                 }
             )
