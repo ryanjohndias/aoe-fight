@@ -72,6 +72,21 @@ class UnitData {
                     ArmourClass.cavalry
                 ]
             ),
+            eagleWarrior: new Unit (
+                UnitId.eagleWarrior, 65, 
+                "Eagle Warrior",
+                UnitType.infantry,
+                "https://vignette.wikia.nocookie.net/ageofempires/images/a/a5/Eliteeaglewarrior_aoe2DE.png/revision/latest?cb=20200331191114",
+                new Cost(20, 50, 0, 0),
+                50, 7, 2, 0.8, 0, 3,
+                [
+                    new AttackBonus(ArmourClass.cavalry, 3),
+                    new AttackBonus(ArmourClass.camel, 2)
+                ],
+                [
+                    ArmourClass.cavalry
+                ]
+            ),
             eliteHuskarl: new Unit (
                 UnitId.eliteHuskarl, 15, 
                 "Elite Huskarl",
@@ -80,6 +95,19 @@ class UnitData {
                 new Cost(52, 26, 0, 0),
                 70, 12, 2, 0.8, 0, 8,
                 [new AttackBonus(ArmourClass.eagleWarrior, 3)],
+                [
+                    ArmourClass.infantry,
+                    ArmourClass.uniqueUnit
+                ]
+            ),
+            huskarl: new Unit (
+                UnitId.huskarl, 50, 
+                "Huskarl",
+                UnitType.infantry,
+                "https://vignette.wikia.nocookie.net/ageofempires/images/7/79/HuskarlIcon-DE.png/revision/latest?cb=20191230145804",
+                new Cost(52, 26, 0, 0),
+                60, 10, 2, 0.8, 0, 6,
+                [new AttackBonus(ArmourClass.eagleWarrior, 2)],
                 [
                     ArmourClass.infantry,
                     ArmourClass.uniqueUnit
@@ -102,6 +130,23 @@ class UnitData {
                     ArmourClass.uniqueUnit
                 ]
             ),
+            jaguarWarrior: new Unit (
+                UnitId.jaguarWarrior, 44,
+                "Jaguar Warrior",
+                UnitType.infantry,
+                "https://vignette.wikia.nocookie.net/ageofempires/images/3/32/JaguarWarriorIcon-DE.png/revision/latest?cb=20191230143816",
+                new Cost(60, 30, 0, 0),
+                50, 10, 2, 0.8, 1, 1,
+                [
+                    new AttackBonus(ArmourClass.infantry, 10),
+                    new AttackBonus(ArmourClass.eagleWarrior, 2),
+                    new AttackBonus(ArmourClass.condottiero, 10)
+                ],
+                [
+                    ArmourClass.infantry,
+                    ArmourClass.uniqueUnit
+                ]
+            ),
             eliteTeutonicKnight: new Unit (
                 UnitId.eliteTeutonicKnight, 17,
                 "Elite Teutonic Knight",
@@ -109,6 +154,19 @@ class UnitData {
                 "https://vignette.wikia.nocookie.net/ageofempires/images/9/95/TeutonicKnightIcon-DE.png/revision/latest?cb=20200325131355",
                 new Cost(85, 40, 0, 0),
                 100, 17, 2.0, 0.75, 10, 2,
+                [new AttackBonus(ArmourClass.eagleWarrior, 4)],
+                [
+                    ArmourClass.infantry,
+                    ArmourClass.uniqueUnit
+                ]
+            ),
+            teutonicKnight: new Unit (
+                UnitId.teutonicKnight, 61,
+                "Teutonic Knight",
+                UnitType.infantry,
+                "https://vignette.wikia.nocookie.net/ageofempires/images/9/95/TeutonicKnightIcon-DE.png/revision/latest?cb=20200325131355",
+                new Cost(85, 40, 0, 0),
+                80, 12, 2.0, 0.75, 5, 2,
                 [new AttackBonus(ArmourClass.eagleWarrior, 4)],
                 [
                     ArmourClass.infantry,
@@ -128,6 +186,19 @@ class UnitData {
                     ArmourClass.uniqueUnit
                 ]
             ),
+            woadRaider: new Unit (
+                UnitId.woadRaider, 48,
+                "Woad Raider",
+                UnitType.infantry,
+                "https://vignette.wikia.nocookie.net/ageofempires/images/5/55/WoadRaiderIcon-DE.png/revision/latest?cb=20191230150759",
+                new Cost(65, 25, 0, 0),
+                65, 8, 2, 0.72, 0, 1,
+                [new AttackBonus(ArmourClass.eagleWarrior, 2)],
+                [
+                    ArmourClass.infantry,
+                    ArmourClass.uniqueUnit
+                ]
+            ),
             eShotel: new Unit (
                 UnitId.eShotel, 19,
                 "Elite Shotel Warrior",
@@ -135,6 +206,19 @@ class UnitData {
                 "https://vignette.wikia.nocookie.net/ageofempires/images/0/03/Shotelwarrioricon-DE.png/revision/latest?cb=20191210075606",
                 new Cost(50, 30, 0, 0),
                 50, 18, 2, 0.75, 0, 1,
+                [new AttackBonus(ArmourClass.eagleWarrior, 2)],
+                [
+                    ArmourClass.infantry,
+                    ArmourClass.uniqueUnit
+                ]
+            ),
+            shotel: new Unit (
+                UnitId.shotel, 49,
+                "Shotel Warrior",
+                UnitType.infantry,
+                "https://vignette.wikia.nocookie.net/ageofempires/images/0/03/Shotelwarrioricon-DE.png/revision/latest?cb=20191210075606",
+                new Cost(50, 30, 0, 0),
+                40, 16, 2, 0.75, 0, 0,
                 [new AttackBonus(ArmourClass.eagleWarrior, 2)],
                 [
                     ArmourClass.infantry,
@@ -154,6 +238,19 @@ class UnitData {
                     ArmourClass.uniqueUnit
                 ]
             ),
+            karambit: new Unit (
+                UnitId.karambit, 57,
+                "Karambit Warrior",
+                UnitType.infantry,
+                "https://vignette.wikia.nocookie.net/ageofempires/images/7/75/Karambitwarrioricon-DE.png/revision/latest/scale-to-width-down/256?cb=20191117115320",
+                new Cost(25, 15, 0, 0),
+                30, 6, 2, 0.81, 0, 1,
+                [new AttackBonus(ArmourClass.eagleWarrior, 2)],
+                [
+                    ArmourClass.infantry,
+                    ArmourClass.uniqueUnit
+                ]
+            ),
             eDismountedKonnik: new Unit (
                 UnitId.eDismountedKonnik, 21,
                 "Elite Dismounted Konnik",
@@ -161,6 +258,19 @@ class UnitData {
                 "https://vignette.wikia.nocookie.net/ageofempires/images/b/b5/Konnikdismountedicon.png/revision/latest/scale-to-width-down/256?cb=20191110154253",
                 new Cost(60, 70, 0, 0),
                 50, 13, 2.4, 0.7, 0, 1,
+                [],
+                [
+                    ArmourClass.infantry,
+                    ArmourClass.uniqueUnit
+                ]
+            ),
+            dismountedKonnik: new Unit (
+                UnitId.dismountedKonnik, 45,
+                "Dismounted Konnik",
+                UnitType.infantry,
+                "https://vignette.wikia.nocookie.net/ageofempires/images/b/b5/Konnikdismountedicon.png/revision/latest/scale-to-width-down/256?cb=20191110154253",
+                new Cost(60, 70, 0, 0),
+                45, 12, 2.4, 0.7, 0, 0,
                 [],
                 [
                     ArmourClass.infantry,
@@ -287,6 +397,19 @@ class UnitData {
                     ArmourClass.warElephant
                 ]
             ),
+            battleElephant: new Unit (
+                UnitId.battleElephant, 64,
+                "Battle Elephant",
+                UnitType.cavalry,
+                "https://vignette.wikia.nocookie.net/ageofempires/images/b/b2/Elite_battle_elephant_aoe2DE.png/revision/latest/scale-to-width-down/256?cb=20200414003052",
+                new Cost(120, 70, 0, 0),
+                250, 12, 2, 0.49, 1, 2,
+                [],
+                [
+                    ArmourClass.cavalry,
+                    ArmourClass.warElephant
+                ]
+            ),
             eSteppeLancer: new Unit (
                 UnitId.eSteppeLancer, 31,
                 "Elite Steppe Lancer",
@@ -299,6 +422,18 @@ class UnitData {
                     ArmourClass.cavalry
                 ]
             ),
+            steppeLancer: new Unit (
+                UnitId.steppeLancer, 63,
+                "Steppe Lancer",
+                UnitType.cavalry,
+                "https://vignette.wikia.nocookie.net/ageofempires/images/1/1c/Elitesteppelancericon.png/revision/latest/scale-to-width-down/256?cb=20191110161918",
+                new Cost(70, 45, 0, 0),
+                60, 9, 2.3, 0.68, 0, 1,
+                [],
+                [
+                    ArmourClass.cavalry
+                ]
+            ),
             eLeitis: new Unit (
                 UnitId.eLeitis, 32,
                 "Elite Leitis",
@@ -306,6 +441,21 @@ class UnitData {
                 "https://vignette.wikia.nocookie.net/ageofempires/images/6/64/Leitisicon.png/revision/latest/scale-to-width-down/256?cb=20191110154530",
                 new Cost(70, 50, 0, 0),
                 130, 14, 1.9, 0.7, 2, 1,
+                [
+                    // TODO: Ignores unit armour
+                ],
+                [
+                    ArmourClass.cavalry,
+                    ArmourClass.uniqueUnit
+                ]
+            ),
+            leitis: new Unit (
+                UnitId.leitis, 55,
+                "Leitis",
+                UnitType.cavalry,
+                "https://vignette.wikia.nocookie.net/ageofempires/images/6/64/Leitisicon.png/revision/latest/scale-to-width-down/256?cb=20191110154530",
+                new Cost(70, 50, 0, 0),
+                100, 12, 1.9, 0.7, 1, 1,
                 [
                     // TODO: Ignores unit armour
                 ],
@@ -326,6 +476,19 @@ class UnitData {
                     ArmourClass.cavalry,
                     ArmourClass.uniqueUnit
                 ]
+            ),
+            keshik: new Unit (
+                UnitId.keshik, 60,
+                "Keshik",
+                UnitType.cavalry,
+                "https://vignette.wikia.nocookie.net/ageofempires/images/4/4c/Keshikicon.png/revision/latest/scale-to-width-down/256?cb=20191110154643",
+                new Cost(50, 40, 0, 0),
+                110, 9, 1.9, 0.7, 1, 2,
+                [],
+                [
+                    ArmourClass.cavalry,
+                    ArmourClass.uniqueUnit
+                ]
             ), 
             eKonnik: new Unit (
                 UnitId.eKonnik, 34,
@@ -334,6 +497,19 @@ class UnitData {
                 "https://vignette.wikia.nocookie.net/ageofempires/images/8/88/Konnikicon.png/revision/latest/scale-to-width-down/256?cb=20191110154203",
                 new Cost(60, 70, 0, 0),
                 120, 14, 2.4, 0.7, 2, 2,
+                [],
+                [
+                    ArmourClass.cavalry,
+                    ArmourClass.uniqueUnit
+                ]
+            ),
+            konnik: new Unit (
+                UnitId.konnik, 46,
+                "Konnik",
+                UnitType.cavalry,
+                "https://vignette.wikia.nocookie.net/ageofempires/images/8/88/Konnikicon.png/revision/latest/scale-to-width-down/256?cb=20191110154203",
+                new Cost(60, 70, 0, 0),
+                100, 12, 2.4, 0.7, 2, 1,
                 [],
                 [
                     ArmourClass.cavalry,
@@ -353,16 +529,45 @@ class UnitData {
                     ArmourClass.uniqueUnit
                 ]
             ),
+            boyar: new Unit (
+                UnitId.boyar, 59,
+                "Boyar",
+                UnitType.cavalry,
+                "https://vignette.wikia.nocookie.net/ageofempires/images/b/bf/BoyarIcon-DE.png/revision/latest/scale-to-width-down/256?cb=20191230135130",
+                new Cost(50, 80, 0, 0),
+                100, 12, 1.9, 0.7, 4, 2,
+                [],
+                [
+                    ArmourClass.cavalry,
+                    ArmourClass.uniqueUnit
+                ]
+            ),
             eSamurai: new Unit (
                 UnitId.eSamurai, 36,
                 "Elite Samurai",
                 UnitType.infantry,
                 "https://vignette.wikia.nocookie.net/ageofempires/images/1/17/SamuraiIcon-DE.png/revision/latest/scale-to-width-down/256?cb=20191230150219",
                 new Cost(60, 30, 0, 0),
-                80, 12, 1.45, 0.8, 1, 1,
+                80, 12, 1.9, 0.8, 1, 1,
                 [
                     new AttackBonus(ArmourClass.uniqueUnit, 12),
                     new AttackBonus(ArmourClass.eagleWarrior, 3)
+                ],
+                [
+                    ArmourClass.infantry,
+                    ArmourClass.uniqueUnit
+                ]
+            ),
+            samurai: new Unit (
+                UnitId.samurai, 54,
+                "Samurai",
+                UnitType.infantry,
+                "https://vignette.wikia.nocookie.net/ageofempires/images/1/17/SamuraiIcon-DE.png/revision/latest/scale-to-width-down/256?cb=20191230150219",
+                new Cost(60, 30, 0, 0),
+                60, 8, 1.9, 0.8, 1, 0,
+                [
+                    new AttackBonus(ArmourClass.uniqueUnit, 10),
+                    new AttackBonus(ArmourClass.eagleWarrior, 2)
                 ],
                 [
                     ArmourClass.infantry,
@@ -376,6 +581,20 @@ class UnitData {
                 "https://vignette.wikia.nocookie.net/ageofempires/images/a/ab/WarElephantIcon-DE.png/revision/latest/scale-to-width-down/256?cb=20191230145604",
                 new Cost(200, 75, 0, 0),
                 600, 20, 2, 0.56, 1, 3,
+                [],
+                [
+                    ArmourClass.cavalry,
+                    ArmourClass.warElephant,
+                    ArmourClass.uniqueUnit
+                ]
+            ),
+            warElephant: new Unit (
+                UnitId.warElephant, 58,
+                "War Elephant",
+                UnitType.cavalry,
+                "https://vignette.wikia.nocookie.net/ageofempires/images/a/ab/WarElephantIcon-DE.png/revision/latest/scale-to-width-down/256?cb=20191230145604",
+                new Cost(200, 75, 0, 0),
+                450, 15, 2, 0.56, 1, 2,
                 [],
                 [
                     ArmourClass.cavalry,
@@ -399,6 +618,22 @@ class UnitData {
                     ArmourClass.uniqueUnit
                 ]
             ),
+            cataphract: new Unit (
+                UnitId.cataphract, 47,
+                "Cataphract",
+                UnitType.cavalry,
+                "https://vignette.wikia.nocookie.net/ageofempires/images/b/bd/CataphractIcon-DE.png/revision/latest/scale-to-width-down/256?cb=20200325131320",
+                new Cost(70, 75, 0, 0),
+                110, 9, 1.8, 0.68, 2, 1,
+                [
+                    new AttackBonus(ArmourClass.infantry, 9),
+                    new AttackBonus(ArmourClass.condottiero, 9)
+                ],
+                [
+                    ArmourClass.cavalry, // TODO: +12
+                    ArmourClass.uniqueUnit
+                ]
+            ),
             eBerserk: new Unit (
                 UnitId.eBerserk, 39,
                 "Elite Berserk",
@@ -408,6 +643,21 @@ class UnitData {
                 62.5, 14, 2.0, 0.5, 2, 1, // TODO: Confirm this is the correct health
                 [
                     new AttackBonus(ArmourClass.eagleWarrior, 3)
+                ],
+                [
+                    ArmourClass.infantry,
+                    ArmourClass.uniqueUnit
+                ]
+            ),
+            berserk: new Unit (
+                UnitId.berserk, 62,
+                "Berserk",
+                UnitType.infantry,
+                "https://vignette.wikia.nocookie.net/ageofempires/images/0/0d/BerserkIcon-DE.png/revision/latest/scale-to-width-down/256?cb=20191230150427",
+                new Cost(65, 25, 0, 0),
+                54, 9, 2.0, 0.5, 0, 1,
+                [
+                    new AttackBonus(ArmourClass.eagleWarrior, 2)
                 ],
                 [
                     ArmourClass.infantry,
@@ -427,6 +677,19 @@ class UnitData {
                     ArmourClass.uniqueUnit
                 ]
             ),
+            magyarHuszar: new Unit (
+                UnitId.magyarHuszar, 56,
+                "Magyar Huszar",
+                UnitType.cavalry,
+                "https://vignette.wikia.nocookie.net/ageofempires/images/5/5b/MagyarHuszarIcon-DE.png/revision/latest/scale-to-width-down/256?cb=20191230140432",
+                new Cost(80, 10, 0, 0),
+                70, 9, 1.8, 0.68, 0, 2,
+                [],
+                [
+                    ArmourClass.cavalry,
+                    ArmourClass.uniqueUnit
+                ]
+            ),
             eKamayuk: new Unit (
                 UnitId.eKamayuk, 41,
                 "Elite Kamayuk",
@@ -439,6 +702,23 @@ class UnitData {
                     new AttackBonus(ArmourClass.cavalry, 12),
                     new AttackBonus(ArmourClass.camel, 10),
                     new AttackBonus(ArmourClass.mameluke, 1)
+                ],
+                [
+                    ArmourClass.infantry,
+                    ArmourClass.uniqueUnit
+                ]
+            ),
+            kamayuk: new Unit (
+                UnitId.kamayuk, 53,
+                "Kamayuk",
+                UnitType.infantry,
+                "https://vignette.wikia.nocookie.net/ageofempires/images/8/85/KamayukIcon-DE.png/revision/latest/scale-to-width-down/256?cb=20191230141856",
+                new Cost(60, 30, 0, 0),
+                60, 7, 2.0, 0.5, 0, 0,
+                [
+                    new AttackBonus(ArmourClass.warElephant, 20),
+                    new AttackBonus(ArmourClass.cavalry, 8),
+                    new AttackBonus(ArmourClass.camel, 6)
                 ],
                 [
                     ArmourClass.infantry,
@@ -471,6 +751,32 @@ class UnitData {
                 [
                     ArmourClass.infantry,
                     ArmourClass.spearman
+                ]
+            ),
+            tarkan: new Unit (
+                UnitId.tarkan, 51,
+                "Tarkan",
+                UnitType.cavalry,
+                "https://static.wikia.nocookie.net/ageofempires/images/9/9e/TarkanIcon-DE.png/revision/latest?cb=20191230143626",
+                new Cost(60, 60, 0, 0),
+                100, 8, 2.1, 0.68, 1, 3,
+                [],
+                [
+                    ArmourClass.cavalry,
+                    ArmourClass.uniqueUnit
+                ]
+            ),
+            eTarkan: new Unit (
+                UnitId.eTarkan, 52,
+                "Elite Tarkan",
+                UnitType.cavalry,
+                "https://static.wikia.nocookie.net/ageofempires/images/9/9e/TarkanIcon-DE.png/revision/latest?cb=20191230143626",
+                new Cost(60, 60, 0, 0),
+                150, 11, 2.1, 0.68, 1, 4,
+                [],
+                [
+                    ArmourClass.cavalry,
+                    ArmourClass.uniqueUnit
                 ]
             )
         }
